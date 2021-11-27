@@ -1,0 +1,19 @@
+plugins {
+    id "java"
+}
+
+group "meteordevelopment"
+version "0.1.0"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly platform("org.lwjgl:lwjgl-bom:3.3.0")
+
+    compileOnly "org.lwjgl:lwjgl"
+    compileOnly "org.lwjgl:lwjgl-opengl"
+    compileOnly "org.lwjgl:lwjgl-stb"
+    compileOnly "org.joml:joml:1.10.2"
+}

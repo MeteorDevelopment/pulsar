@@ -1,0 +1,50 @@
+text {
+    color: 255 255 255
+    font-size: 16
+}
+
+window {
+    radius: 5
+    outline-size: 2
+    outline-color: 0 0 0
+}
+
+window-header {
+    radius: 5 0 5 0
+    background-color: 135 0 255
+    padding: 3
+}
+
+.window-title {
+    align-x: center
+    font-size: 22
+    text-shadow: 15 15 15
+}
+
+.window-body {
+    radius: 0 5 0 5
+    background-color: 20 20 20 200
+    padding: 8
+    spacing: 4
+}
+
+button {
+    background-color: 10 10 10 200
+    outline-size: 1
+    outline-color: 0 0 0
+    padding: 8
+}
+
+.button-text {
+    align-x: center
+}
+
+button:hovered {
+    background-color: 20 20 20 200
+    outline-color: 10 10 10
+}
+
+button:pressed {
+    background-color: 30 30 30 200
+    outline-color: 20 20 20
+}

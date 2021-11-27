@@ -1,0 +1,6 @@
+.gradle
+
+.idea/*
+!.idea/copyright/*
+
+**/build

@@ -1,0 +1,45 @@
+widget {
+    padding: 8
+    spacing: 4
+    radius: 2
+}
+
+text {
+    color: 15 15 15
+    font-size: 16
+}
+
+.right {
+    align-x: right
+}
+
+window-header {
+    background-color: 255 60 60
+    radius: 2
+    outline-size: 2
+    outline-color: 0 0 0
+}
+
+.window-title {
+    color: 255 255 255
+    align-x: right
+    font-size: 22
+    text-shadow: 15 15 15
+}
+
+.window-body {
+    background-color: 255 255 255
+    radius: 2
+    outline-size: 2
+    outline-color: 0 0 0
+}
+
+button {
+    background-color: 225 225 225
+    outline-size: 1
+    outline-color: 0 0 0
+}
+
+.button-text {
+    align-x: left
+}
