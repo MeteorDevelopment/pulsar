@@ -2,7 +2,6 @@
 /* Theme */
 
 widget {
-    padding: 8
     spacing: 4
     radius: 2
 }
@@ -21,6 +20,7 @@ window-header {
     radius: 2
     outline-size: 2
     outline-color: 0 0 0
+    padding: 8
 }
 
 .window-title {
@@ -35,14 +35,57 @@ window-header {
     radius: 2
     outline-size: 2
     outline-color: 0 0 0
+    padding: 8
 }
 
 button {
-    background-color: 225 225 225
+    background-color: 230 230 230
     outline-size: 1
     outline-color: 0 0 0
+    padding: 8
+}
+
+button :hovered {
+    background-color: 220 220 220
+}
+
+button :pressed {
+    background-color: 210 210 210
 }
 
 .button-text {
     align-x: left
+}
+
+checkbox {
+    outline-size: 2
+    outline-color: 0 0 0
+    padding: 4
+    radius: 11
+}
+
+checkbox :hovered {
+    background-color: 240 240 240
+}
+
+checkbox :pressed {
+    background-color: 230 230 230
+}
+
+checkbox-inner {
+    background-color: 25 225 25
+    size: 14
+    radius: 7
+}
+
+checkbox-inner :hovered {
+    background-color: 40 240 40
+}
+
+checkbox-inner :pressed {
+    background-color: 55 255 55
+}
+
+horizontal-list {
+    spacing: 8
 }

@@ -78,7 +78,9 @@ public class WContainer extends Widget {
     @Override
     public void render(Renderer renderer, double mouseX, double mouseY, double delta) {
         super.render(renderer, mouseX, mouseY, delta);
-        for (Cell<?> cell : cells) cell.widget.render(renderer, mouseX, mouseY, delta);
+        for (Cell<?> cell : cells) {
+            if (cell.widget.visible) cell.widget.render(renderer, mouseX, mouseY, delta);
+        }
     }
 
     // Other

@@ -7,6 +7,7 @@ window {
     radius: 5
     outline-size: 2
     outline-color: 0 0 0
+    spacing: 0
 }
 
 window-header {
@@ -25,6 +26,9 @@ window-header {
     radius: 0 0 5 5
     background-color: 20 20 20 200
     padding: 8
+}
+
+container {
     spacing: 4
 }
 
@@ -47,4 +51,26 @@ button:hovered {
 button:pressed {
     background-color: 30 30 30 200
     outline-color: 20 20 20
+}
+
+checkbox {
+    background-color: 10 10 10 200
+    outline-size: 1
+    outline-color: 0 0 0
+    padding: 6
+}
+
+checkbox :hovered {
+    background-color: 20 20 20 200
+    outline-color: 10 10 10
+}
+
+checkbox :pressed {
+    background-color: 30 30 30 200
+    outline-color: 20 20 20
+}
+
+checkbox-inner {
+    background-color: 135 0 255
+    size: 14
 }

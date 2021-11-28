@@ -3,10 +3,7 @@ package meteordevelopment.example;
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.theme.parser.Parser;
-import meteordevelopment.pulsar.widgets.WButton;
-import meteordevelopment.pulsar.widgets.WContainer;
-import meteordevelopment.pulsar.widgets.WText;
-import meteordevelopment.pulsar.widgets.WWindow;
+import meteordevelopment.pulsar.widgets.*;
 
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
@@ -25,6 +22,11 @@ public class Main {
         WContainer widget = new WWindow("Test Window").minWidth(240);
         widget.add(new WText("Hello"));
         widget.add(new WText("COPE?!?!?!?!").id("right"));
+
+        WContainer a = widget.add(new WHorizontalList()).widget;
+        a.add(new WText("Good:"));
+        a.add(new WCheckbox(true));
+
         widget.add(new WButton("Click me")).expandX();
 
         widget.computeStyle(theme);

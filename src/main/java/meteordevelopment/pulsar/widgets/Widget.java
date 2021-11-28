@@ -7,11 +7,13 @@ import meteordevelopment.pulsar.theme.Style;
 import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.utils.Color4;
 import meteordevelopment.pulsar.utils.IColor;
+import meteordevelopment.pulsar.utils.Vec2;
 import meteordevelopment.pulsar.utils.Vec4;
 
-public abstract class Widget {
+public class Widget {
     protected static final String[] NAMES = { "widget" };
 
+    public boolean visible = true;
     protected Widget parent;
 
     private String id;
@@ -23,7 +25,9 @@ public abstract class Widget {
 
     protected boolean hovered;
 
-    public abstract String[] names();
+    public String[] names() {
+        return NAMES;
+    }
 
     // Layout
 
@@ -35,7 +39,10 @@ public abstract class Widget {
     }
 
     protected void onCalculateSize() {
+        Vec2 size = get(Properties.SIZE);
 
+        width = size.x();
+        height = size.y();
     }
 
     public void calculateWidgetPositions() {
