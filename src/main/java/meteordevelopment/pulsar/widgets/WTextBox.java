@@ -410,7 +410,6 @@ public class WTextBox extends WContainer {
         }
 
         Vec4 padding = get(Properties.PADDING);
-        double size = get(Properties.FONT_SIZE);
         Color4 color = get(Properties.COLOR);
 
         double overflowWidth = getOverflowWidthForRender();
@@ -418,7 +417,7 @@ public class WTextBox extends WContainer {
         // Text
         if (!text.isEmpty() && color != null) {
             if (overflowWidth > 0) renderer.beginScissor(x + padding.left(), y + padding.bottom(), width - padding.horizontal(), height - padding.vertical());
-            renderer.text(x + padding.left() - overflowWidth, y + padding.bottom(), text, size, color);
+            renderText(renderer, x + padding.left() - overflowWidth, y + padding.bottom(), text);
             if (overflowWidth > 0) renderer.endScissor();
         }
 

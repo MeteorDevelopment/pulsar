@@ -77,6 +77,19 @@ public class Widget {
         if (backgroundColor != null || outlineSize > 0) renderer.quad(x, y, width, height, radius, outlineSize, backgroundColor, outlineColor);
     }
 
+    protected void renderText(Renderer renderer, double x, double y, String text) {
+        double size = get(Properties.FONT_SIZE);
+
+        // Shadow
+        Color4 color = get(Properties.TEXT_SHADOW);
+        Vec2 offset = get(Properties.TEXT_SHADOW_OFFSET);
+        if (color != null) renderer.text(x + offset.x(), y + offset.y(), text, size, color);
+
+        // Text
+        color = get(Properties.COLOR);
+        if (color != null) renderer.text(x, y, text, size, color);
+    }
+
     // Input
 
     public boolean mousePressed(int button, double mouseX, double mouseY, boolean used) {
