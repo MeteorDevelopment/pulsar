@@ -29,7 +29,7 @@ void main() {
     if (v_Background != uint(0)) {
         float a = smoothstep(v_Pixel, -v_Pixel, distance);
 
-        fragColor = vec4(v_BackgroundColor.rgb, a);
+        fragColor = vec4(v_BackgroundColor.rgb, v_BackgroundColor.a * a);
     }
 
     // Outline

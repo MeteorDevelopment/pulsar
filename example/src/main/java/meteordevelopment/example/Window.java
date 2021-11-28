@@ -2,6 +2,7 @@ package meteordevelopment.example;
 
 import org.lwjgl.opengl.GL;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -12,12 +13,14 @@ public class Window {
         void run(double x, double y, double deltaX, double deltaY);
     }
 
-    private final long handle;
+    public final long handle;
     private int width, height;
-    private double lastMouseX, lastMouseY;
+    public double lastMouseX, lastMouseY;
 
     public MouseCallback mouseMoved;
     public Consumer<Integer> mousePressed, mouseReleased;
+    public BiConsumer<Integer, Integer> keyPressed, keyRepeated;
+    public Consumer<Character> charTyped;
 
     public Window() {
         glfwInit();
@@ -44,13 +47,6 @@ public class Window {
             glViewport(0, 0, width1, height1);
         });
 
-        glfwSetCursorPosCallback(handle, (window, xpos, ypos) -> {
-            if (mouseMoved != null) mouseMoved.run(xpos, height - ypos, xpos - lastMouseX, height - ypos - lastMouseY);
-
-            lastMouseX = xpos;
-            lastMouseY = height - ypos;
-        });
-
         glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> {
             if (action == GLFW_RELEASE) {
                 if (mouseReleased != null) mouseReleased.accept(button);
@@ -58,6 +54,22 @@ public class Window {
             else {
                 if (mousePressed != null) mousePressed.accept(button);
             }
+        });
+
+        glfwSetCursorPosCallback(handle, (window, xpos, ypos) -> {
+            if (mouseMoved != null) mouseMoved.run(xpos, height - ypos, xpos - lastMouseX, height - ypos - lastMouseY);
+
+            lastMouseX = xpos;
+            lastMouseY = height - ypos;
+        });
+
+        glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> {
+            if (keyPressed != null && action == GLFW_PRESS) keyPressed.accept(key, mods);
+            else if (keyRepeated != null && action == GLFW_REPEAT) keyRepeated.accept(key, mods);
+        });
+
+        glfwSetCharCallback(handle, (window, codepoint) -> {
+            if (charTyped != null) charTyped.accept((char) codepoint);
         });
 
         glfwSwapInterval(1);

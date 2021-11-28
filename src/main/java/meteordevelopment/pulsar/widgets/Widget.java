@@ -6,7 +6,6 @@ import meteordevelopment.pulsar.theme.Property;
 import meteordevelopment.pulsar.theme.Style;
 import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.utils.Color4;
-import meteordevelopment.pulsar.utils.IColor;
 import meteordevelopment.pulsar.utils.Vec2;
 import meteordevelopment.pulsar.utils.Vec4;
 
@@ -64,7 +63,7 @@ public class Widget {
     // Rendering
 
     public void render(Renderer renderer, double mouseX, double mouseY, double delta) {
-        if (style == null) computeStyle(renderer.theme);
+        computeStyle(renderer.theme);
 
         onRender(renderer, mouseX, mouseY, delta);
     }
@@ -80,24 +79,52 @@ public class Widget {
 
     // Input
 
+    public boolean mousePressed(int button, double mouseX, double mouseY, boolean used) {
+        return onMousePressed(button, mouseX, mouseY, used);
+    }
+    protected boolean onMousePressed(int button, double mouseX, double mouseY, boolean used) {
+        return false;
+    }
+
     public void mouseMoved(double mouseX, double mouseY, double deltaMouseX, double deltaMouseY) {
         boolean preHovered = hovered;
         hovered = isOver(mouseX, mouseY);
-        if (hovered != preHovered) style = null;
+        if (hovered != preHovered) {
+            style = null;
+            computeStyle(Renderer.INSTANCE.theme);
+        }
 
         onMouseMoved(mouseX, mouseY, deltaMouseX, deltaMouseY);
     }
     protected void onMouseMoved(double mouseX, double mouseY, double deltaMouseX, double deltaMouseY) {}
 
-    public void mousePressed(int button) {
-        onMousePressed(button);
+    public boolean mouseReleased(int button, double mouseX, double mouseY) {
+        return onMouseReleased(button, mouseX, mouseY);
     }
-    protected void onMousePressed(int button) {}
+    protected boolean onMouseReleased(int button, double mouseX, double mouseY) {
+        return false;
+    }
 
-    public void mouseReleased(int button) {
-        onMouseReleased(button);
+    public boolean keyPressed(int key, int mods) {
+        return onKeyPressed(key, mods);
     }
-    protected void onMouseReleased(int button) {}
+    protected boolean onKeyPressed(int key, int mods) {
+        return false;
+    }
+
+    public boolean keyRepeated(int key, int mods) {
+        return onKeyRepeated(key, mods);
+    }
+    protected boolean onKeyRepeated(int key, int mods) {
+        return false;
+    }
+
+    public boolean charTyped(char c) {
+        return onCharTyped(c);
+    }
+    protected boolean onCharTyped(char c) {
+        return false;
+    }
 
     // Other
 

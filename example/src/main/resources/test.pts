@@ -34,7 +34,7 @@ container {
 
 button {
     background-color: 10 10 10 200
-    outline-size: 1
+    outline-size: 4
     outline-color: 0 0 0
     padding: 8
 }
@@ -55,7 +55,7 @@ button:pressed {
 
 checkbox {
     background-color: 10 10 10 200
-    outline-size: 1
+    outline-size: 4
     outline-color: 0 0 0
     padding: 6
 }
@@ -73,4 +73,18 @@ checkbox :pressed {
 checkbox-inner {
     background-color: 135 0 255
     size: 14
+}
+
+text-box {
+    background-color: 10 10 10 200
+    color: 255 255 255
+    outline-size: 4
+    outline-color: 0 0 0
+    font-size: 16
+    padding: 6
+}
+
+selection {
+    background-color: 45 125 245 100
+    radius: 2
 }

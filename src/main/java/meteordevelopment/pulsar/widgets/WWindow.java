@@ -61,13 +61,20 @@ public class WWindow extends WVerticalList {
         }
 
         @Override
-        protected void onMousePressed(int button) {
-            if (hovered) dragging = true;
+        protected boolean onMousePressed(int button, double mouseX, double mouseY, boolean used) {
+            if (hovered && !used) {
+                dragging = true;
+
+                return true;
+            }
+
+            return false;
         }
 
         @Override
-        protected void onMouseReleased(int button) {
+        protected boolean onMouseReleased(int button, double mouseX, double mouseY) {
             dragging = false;
+            return false;
         }
 
         @Override

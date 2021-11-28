@@ -4,29 +4,41 @@ import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.utils.*;
 import org.joml.Matrix4f;
 
+import static org.lwjgl.opengl.GL11C.*;
+
 public class Renderer {
     private static final Color4 BLANK = new Color4(ColorFactory.create(0, 0, 0, 0));
 
     public static Renderer INSTANCE;
 
     public Theme theme;
+    public long window;
 
     private final Shader rectangleShader = new Shader("/pulsar/shaders/rectangles.vert", "/pulsar/shaders/rectangles.frag");
     private final Mesh rectangleMesh = new Mesh(Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Vec4, Mesh.Attrib.UByte, Mesh.Attrib.Color, Mesh.Attrib.Color, Mesh.Attrib.Float);
 
     private final Fonts fonts = new Fonts();
 
+    private int windowWidth, windowHeight;
+    private Matrix4f projection;
+
     public Renderer() {
         INSTANCE = this;
     }
 
-    public void begin() {
+    public void begin(int windowWidth, int windowHeight) {
+        this.windowWidth = windowWidth;
+        this.windowHeight = windowHeight;
+        projection = new Matrix4f().ortho2D(0, windowWidth, 0, windowHeight);
+
+        begin();
+    }
+
+    private void begin() {
         rectangleMesh.begin();
     }
 
-    public void end(int windowWidth, int windowHeight) {
-        Matrix4f projection = new Matrix4f().ortho2D(0, windowWidth, 0, windowHeight);
-
+    public void end() {
         // Rectangles
         rectangleShader.bind();
         rectangleShader.set("u_Proj", projection);
@@ -35,6 +47,27 @@ public class Renderer {
 
         // Text
         fonts.end(projection);
+    }
+
+    public void beginScissor(double x, double y, double width, double height) {
+        end();
+
+        glEnable(GL_SCISSOR_TEST);
+        glScissor((int) x, (int) y, (int) width, (int) height);
+
+        begin();
+    }
+
+    public void endScissor() {
+        end();
+
+        glDisable(GL_SCISSOR_TEST);
+
+        begin();
+    }
+
+    public void alpha(double alpha) {
+        rectangleMesh.alpha(alpha);
     }
 
     public void quad(double x, double y, double width, double height, Vec4 radius, double outlineSize, Color4 backgroundColor, Color4 outlineColor) {
@@ -61,7 +94,10 @@ public class Renderer {
     }
 
     public double textWidth(String text, double size) {
-        return fonts.textWidth(text, size);
+        return fonts.textWidth(text, text.length(), size);
+    }
+    public double textWidth(String text, int length, double size) {
+        return fonts.textWidth(text, length, size);
     }
 
     public double textHeight(double size) {

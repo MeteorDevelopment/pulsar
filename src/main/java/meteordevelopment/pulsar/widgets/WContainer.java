@@ -104,21 +104,49 @@ public class WContainer extends Widget {
     // Input
 
     @Override
+    public boolean mousePressed(int button, double mouseX, double mouseY, boolean used) {
+        for (Cell<?> cell : cells) {
+            if (cell.widget.mousePressed(button, mouseX, mouseY, used)) used = true;
+        }
+        return super.mousePressed(button, mouseX, mouseY, used);
+    }
+
+    @Override
     public void mouseMoved(double mouseX, double mouseY, double deltaMouseX, double deltaMouseY) {
         for (Cell<?> cell : cells) cell.widget.mouseMoved(mouseX, mouseY, deltaMouseX, deltaMouseY);
         super.mouseMoved(mouseX, mouseY, deltaMouseX, deltaMouseY);
     }
 
     @Override
-    public void mousePressed(int button) {
-        for (Cell<?> cell : cells) cell.widget.mousePressed(button);
-        super.mousePressed(button);
+    public boolean mouseReleased(int button, double mouseX, double mouseY) {
+        for (Cell<?> cell : cells) {
+            if (cell.widget.mouseReleased(button, mouseX, mouseY)) return true;
+        }
+        return super.mouseReleased(button, mouseX, mouseY);
     }
 
     @Override
-    public void mouseReleased(int button) {
-        for (Cell<?> cell : cells) cell.widget.mouseReleased(button);
-        super.mouseReleased(button);
+    public boolean keyPressed(int key, int mods) {
+        for (Cell<?> cell : cells) {
+            if (cell.widget.keyPressed(key, mods)) return true;
+        }
+        return super.keyPressed(key, mods);
+    }
+
+    @Override
+    public boolean keyRepeated(int key, int mods) {
+        for (Cell<?> cell : cells) {
+            if (cell.widget.keyRepeated(key, mods)) return true;
+        }
+        return super.keyRepeated(key, mods);
+    }
+
+    @Override
+    public boolean charTyped(char c) {
+        for (Cell<?> cell : cells) {
+            if (cell.widget.charTyped(c)) return true;
+        }
+        return super.charTyped(c);
     }
 
     // Style

@@ -17,19 +17,25 @@ public class WButton extends WContainer {
     }
 
     @Override
-    protected void onMousePressed(int button) {
-        if (hovered) {
+    protected boolean onMousePressed(int button, double mouseX, double mouseY, boolean used) {
+        if (hovered && !used) {
             pressed = true;
             style = null;
+
+            return true;
         }
+
+        return false;
     }
 
     @Override
-    protected void onMouseReleased(int button) {
+    protected boolean onMouseReleased(int button, double mouseX, double mouseY) {
         if (pressed) {
             pressed = false;
             style = null;
         }
+
+        return false;
     }
 
     @Override

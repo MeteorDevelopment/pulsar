@@ -1,7 +1,6 @@
 package meteordevelopment.pulsar.rendering;
 
 import meteordevelopment.pulsar.utils.Color4;
-import meteordevelopment.pulsar.utils.IColor;
 import org.joml.Matrix4f;
 
 import java.util.HashMap;
@@ -35,8 +34,8 @@ public class Fonts {
         }
     }
 
-    public double textWidth(String text, double size) {
-        return get(size).font.getWidth(text, text.length());
+    public double textWidth(String text, int length, double size) {
+        return get(size).font.getWidth(text, length);
     }
 
     public double textHeight(double size) {
@@ -51,7 +50,7 @@ public class Fonts {
         public final Font font;
         public final Mesh mesh;
 
-        public boolean building;
+        public boolean building, scissor;
 
         public SizedFont(double size) {
             font = new Font("/pulsar/Comfortaa.ttf", (int) size);

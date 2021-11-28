@@ -55,6 +55,8 @@ public class Mesh {
     private boolean building;
     private int vertexI, indicesCount;
 
+    private double alpha = 1;
+
     public Mesh(Attrib... attributes) {
         int stride = 0;
         for (Attrib attrib : attributes) stride += attrib.size();
@@ -97,6 +99,10 @@ public class Mesh {
         building = true;
     }
 
+    public void alpha(double alpha) {
+        this.alpha = alpha;
+    }
+
     public Mesh uByte(int v) {
         memPutByte(verticesI, (byte) v);
 
@@ -133,7 +139,7 @@ public class Mesh {
         memPutByte(verticesI, (byte) c.getR());
         memPutByte(verticesI + 1, (byte) c.getG());
         memPutByte(verticesI + 2, (byte) c.getB());
-        memPutByte(verticesI + 3, (byte) c.getA());
+        memPutByte(verticesI + 3, (byte) (c.getA() * alpha));
 
         verticesI += 4;
         return this;

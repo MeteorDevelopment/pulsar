@@ -24,24 +24,30 @@ public class WCheckbox extends WContainer {
     }
 
     @Override
-    protected void onMousePressed(int button) {
-        if (hovered) {
+    protected boolean onMousePressed(int button, double mouseX, double mouseY, boolean used) {
+        if (hovered && !used) {
             pressed = true;
             checked = !checked;
 
             style = null;
             inner.style = null;
+
+            return true;
         }
+
+        return false;
     }
 
     @Override
-    protected void onMouseReleased(int button) {
+    protected boolean onMouseReleased(int button, double mouseX, double mouseY) {
         if (pressed) {
             pressed = false;
 
             style = null;
             inner.style = null;
         }
+
+        return false;
     }
 
     @Override

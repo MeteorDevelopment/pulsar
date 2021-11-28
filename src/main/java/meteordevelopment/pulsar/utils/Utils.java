@@ -7,6 +7,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class Utils {
+    public static boolean IS_MAC = System.getProperty("os.name").contains("Mac");
+
     public static byte[] readResource(String path) {
         InputStream in = Utils.class.getResourceAsStream(path);
         if (in == null) return new byte[0];
@@ -36,6 +38,11 @@ public class Utils {
         T[] result = Arrays.copyOf(a, a.length + 1);
         result[a.length] = b;
         return result;
+    }
+
+    public static int clamp(int value, int min, int max) {
+        if (value < min) return min;
+        return Math.min(value, max);
     }
 
     public static double clamp(double value, double min, double max) {
