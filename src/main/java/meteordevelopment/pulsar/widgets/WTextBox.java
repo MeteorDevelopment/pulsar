@@ -397,6 +397,13 @@ public class WTextBox extends WContainer {
 
     // Rendering
 
+
+    @Override
+    public void render(Renderer renderer, double mouseX, double mouseY, double delta) {
+        super.render(renderer, mouseX, mouseY, delta);
+        renderer.endScissor();
+    }
+
     @Override
     protected void onRender(Renderer renderer, double mouseX, double mouseY, double delta) {
         super.onRender(renderer, mouseX, mouseY, delta);
@@ -414,11 +421,11 @@ public class WTextBox extends WContainer {
 
         double overflowWidth = getOverflowWidthForRender();
 
+        renderer.beginScissor(x + padding.left(), y + padding.bottom(), width - padding.horizontal(), height - padding.vertical());
+
         // Text
         if (!text.isEmpty() && color != null) {
-            if (overflowWidth > 0) renderer.beginScissor(x + padding.left(), y + padding.bottom(), width - padding.horizontal(), height - padding.vertical());
             renderText(renderer, x + padding.left() - overflowWidth, y + padding.bottom(), text);
-            if (overflowWidth > 0) renderer.endScissor();
         }
 
         // Cursor
