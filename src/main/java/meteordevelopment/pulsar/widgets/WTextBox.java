@@ -36,6 +36,7 @@ public class WTextBox extends WContainer {
     private double cursorTimer;
 
     private double animProgress;
+    private boolean scissor;
 
     public WTextBox(String text) {
         this.text = text;
@@ -401,7 +402,7 @@ public class WTextBox extends WContainer {
     @Override
     public void render(Renderer renderer, double mouseX, double mouseY, double delta) {
         super.render(renderer, mouseX, mouseY, delta);
-        renderer.endScissor();
+        if (scissor) renderer.endScissor();
     }
 
     @Override
@@ -421,7 +422,8 @@ public class WTextBox extends WContainer {
 
         double overflowWidth = getOverflowWidthForRender();
 
-        renderer.beginScissor(x + padding.left(), y + padding.bottom(), width - padding.horizontal(), height - padding.vertical());
+        scissor = textWidths.get(textWidths.size() - 1) > (width - padding.horizontal());
+        if (scissor) renderer.beginScissor(x + padding.left() - 1, y + padding.bottom() - 1, width - padding.horizontal() + 2, height - padding.vertical() + 2);
 
         // Text
         if (!text.isEmpty() && color != null) {
