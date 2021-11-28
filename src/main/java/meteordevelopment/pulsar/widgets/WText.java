@@ -2,6 +2,7 @@ package meteordevelopment.pulsar.widgets;
 
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.Properties;
+import meteordevelopment.pulsar.utils.Color4;
 import meteordevelopment.pulsar.utils.IColor;
 import meteordevelopment.pulsar.utils.Vec2;
 
@@ -36,7 +37,7 @@ public class WText extends Widget {
         double size = get(Properties.FONT_SIZE);
 
         // Shadow
-        IColor color = get(Properties.TEXT_SHADOW);
+        Color4 color = get(Properties.TEXT_SHADOW);
         Vec2 offset = get(Properties.TEXT_SHADOW_OFFSET);
         if (color != null) renderer.text(x + offset.x(), y + offset.y(), text, size, color);
 

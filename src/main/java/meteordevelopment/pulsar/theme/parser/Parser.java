@@ -92,6 +92,7 @@ public class Parser {
             case Vec2 -> style.set(property, vec2());
             case Vec4 -> style.set(property, vec4());
             case Color -> style.set(property, color());
+            case Color4 -> style.set(property, color4());
             case Enum -> style.set(property, enum_(property.defaultValue().getClass()));
         }
     }
@@ -153,6 +154,24 @@ public class Parser {
         if (match(TokenType.Number)) a = Double.parseDouble(previous().lexeme());
 
         return ColorFactory.create((int) Math.floor(r), (int) Math.floor(g), (int) Math.floor(b), (int) Math.floor(a));
+    }
+
+    private Color4 color4() {
+        IColor c1 = color();
+
+        if (match(TokenType.Comma)) {
+            IColor c2 = color();
+            consume(TokenType.Comma, "Expected ',' after second color value.");
+
+            IColor c3 = color();
+            consume(TokenType.Comma, "Expected ',' after third color value.");
+
+            IColor c4 = color();
+
+            return new Color4(c1, c2, c3, c4);
+        }
+
+        return new Color4(c1);
     }
 
     private Object enum_(Class<?> klass) {

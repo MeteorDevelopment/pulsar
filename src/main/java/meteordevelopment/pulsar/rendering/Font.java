@@ -1,5 +1,6 @@
 package meteordevelopment.pulsar.rendering;
 
+import meteordevelopment.pulsar.utils.Color4;
 import meteordevelopment.pulsar.utils.IColor;
 import meteordevelopment.pulsar.utils.Utils;
 import org.lwjgl.BufferUtils;
@@ -99,7 +100,7 @@ public class Font {
         return height;
     }
 
-    public double render(Mesh mesh, String string, double x, double y, IColor color) {
+    public double render(Mesh mesh, String string, double x, double y, Color4 color) {
         y += ascent * scale * 0.225;
 
         for (int i = 0; i < string.length(); i++) {
@@ -108,10 +109,10 @@ public class Font {
             CharData c = charData[cp - 32];
 
             mesh.quad(
-                    mesh.vec2(x + c.x0(), y - c.y0()).vec2(c.u0(), c.v0()).color(color).next(),
-                    mesh.vec2(x + c.x0(), y - c.y1()).vec2(c.u0(), c.v1()).color(color).next(),
-                    mesh.vec2(x + c.x1(), y - c.y1()).vec2(c.u1(), c.v1()).color(color).next(),
-                    mesh.vec2(x + c.x1(), y - c.y0()).vec2(c.u1(), c.v0()).color(color).next()
+                    mesh.vec2(x + c.x0(), y - c.y0()).vec2(c.u0(), c.v0()).color(color.bottomLeft()).next(),
+                    mesh.vec2(x + c.x0(), y - c.y1()).vec2(c.u0(), c.v1()).color(color.topLeft()).next(),
+                    mesh.vec2(x + c.x1(), y - c.y1()).vec2(c.u1(), c.v1()).color(color.topRight()).next(),
+                    mesh.vec2(x + c.x1(), y - c.y0()).vec2(c.u1(), c.v0()).color(color.bottomRight()).next()
             );
 
             x += c.xAdvance();

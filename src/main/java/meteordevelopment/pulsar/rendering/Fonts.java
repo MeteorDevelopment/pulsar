@@ -1,5 +1,6 @@
 package meteordevelopment.pulsar.rendering;
 
+import meteordevelopment.pulsar.utils.Color4;
 import meteordevelopment.pulsar.utils.IColor;
 import org.joml.Matrix4f;
 
@@ -10,7 +11,7 @@ public class Fonts {
     private final Shader shader = new Shader("/pulsar/shaders/text.vert", "/pulsar/shaders/text.frag");
     private final Map<Integer, SizedFont> fonts = new HashMap<>();
 
-    public void render(double x, double y, String text, double size, IColor color) {
+    public void render(double x, double y, String text, double size, Color4 color) {
         SizedFont font = get(size);
 
         if (!font.building) {

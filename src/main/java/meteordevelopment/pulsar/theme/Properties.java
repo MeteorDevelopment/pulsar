@@ -8,11 +8,11 @@ import java.util.Map;
 public class Properties {
     private static final Map<String, Property<?>> PROPERTIES = new HashMap<>();
 
-    public static final Property<IColor> COLOR = add(new Property<>("color", PropertyType.Color));
-    public static final Property<IColor> BACKGROUND_COLOR = add(new Property<>("background-color", PropertyType.Color));
+    public static final Property<Color4> COLOR = add(new Property<>("color", PropertyType.Color4));
+    public static final Property<Color4> BACKGROUND_COLOR = add(new Property<>("background-color", PropertyType.Color4));
 
     public static final Property<Double> OUTLINE_SIZE = add(new Property<>("outline-size", PropertyType.Number));
-    public static final Property<IColor> OUTLINE_COLOR = add(new Property<>("outline-color", PropertyType.Color));
+    public static final Property<Color4> OUTLINE_COLOR = add(new Property<>("outline-color", PropertyType.Color4));
 
     public static final Property<Vec2> SPACING = add(new Property<>("spacing", PropertyType.Vec2));
     public static final Property<Vec4> PADDING = add(new Property<>("padding", PropertyType.Vec4));
@@ -22,7 +22,7 @@ public class Properties {
     public static final Property<AlignY> ALIGN_Y = add(new Property<>("align-y", PropertyType.Enum, AlignY.Bottom));
 
     public static final Property<Double> FONT_SIZE = add(new Property<>("font-size", PropertyType.Number));
-    public static final Property<IColor> TEXT_SHADOW = add(new Property<>("text-shadow", PropertyType.Color));
+    public static final Property<Color4> TEXT_SHADOW = add(new Property<>("text-shadow", PropertyType.Color4));
     public static final Property<Vec2> TEXT_SHADOW_OFFSET = add(new Property<>("text-shadow-offset", PropertyType.Vec2, new Vec2(1, -1)));
 
     public static final Property<ListDirection> LIST_DIRECTION = add(new Property<>("list-direction", PropertyType.Enum, ListDirection.Normal));

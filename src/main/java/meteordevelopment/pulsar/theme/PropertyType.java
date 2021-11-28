@@ -8,6 +8,7 @@ public enum PropertyType {
     Vec2(new Vec2(0.0)),
     Vec4(new Vec4(0.0)),
     Color(null),
+    Color4(null),
     Enum(null);
 
     public final Object value;

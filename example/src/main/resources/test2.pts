@@ -17,7 +17,7 @@ text {
 }
 
 window-header {
-    background-color: 255 60 60
+    background-color: 255 60 60,  255 100 100,  255 100 100,  255 60 60       // Double spaces just so its more readable
     radius: 2
     outline-size: 2
     outline-color: 0 0 0

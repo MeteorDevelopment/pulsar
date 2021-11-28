@@ -1,13 +1,11 @@
 package meteordevelopment.pulsar.rendering;
 
 import meteordevelopment.pulsar.theme.Theme;
-import meteordevelopment.pulsar.utils.ColorFactory;
-import meteordevelopment.pulsar.utils.IColor;
-import meteordevelopment.pulsar.utils.Vec4;
+import meteordevelopment.pulsar.utils.*;
 import org.joml.Matrix4f;
 
 public class Renderer {
-    private static final IColor BLANK = ColorFactory.create(0, 0, 0, 0);
+    private static final Color4 BLANK = new Color4(ColorFactory.create(0, 0, 0, 0));
 
     public static Renderer INSTANCE;
 
@@ -39,22 +37,26 @@ public class Renderer {
         fonts.end(projection);
     }
 
-    public void quad(double x, double y, double width, double height, Vec4 radius, double outlineSize, IColor backgroundColor, IColor outlineColor) {
-        double s = Math.max(width, height);
-
+    public void quad(double x, double y, double width, double height, Vec4 radius, double outlineSize, Color4 backgroundColor, Color4 outlineColor) {
         int background = backgroundColor != null ? 1 : 0;
         if (backgroundColor == null) backgroundColor = BLANK;
         if (outlineColor == null) outlineColor = BLANK;
 
+        double hw = width / 2;
+        double hh = height / 2;
+
+        double lx = Utils.clamp((width - hh) / hh, -1, 1);
+        double ly = Utils.clamp((height - hw) / hw, -1, 1);
+
         rectangleMesh.quad(
-                rectangleMesh.vec2(x, y).vec2(-1, -1).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor).color(outlineColor).float_(outlineSize).next(),
-                rectangleMesh.vec2(x, y + s).vec2(-1, 1).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor).color(outlineColor).float_(outlineSize).next(),
-                rectangleMesh.vec2(x + s, y + s).vec2(1, 1).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor).color(outlineColor).float_(outlineSize).next(),
-                rectangleMesh.vec2(x + s, y).vec2(1, -1).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor).color(outlineColor).float_(outlineSize).next()
+                rectangleMesh.vec2(x, y).vec2(-1, -1).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.bottomLeft()).color(outlineColor.bottomLeft()).float_(outlineSize).next(),
+                rectangleMesh.vec2(x, y + height).vec2(-1, ly).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.topLeft()).color(outlineColor.topLeft()).float_(outlineSize).next(),
+                rectangleMesh.vec2(x + width, y + height).vec2(lx, ly).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.topRight()).color(outlineColor.topRight()).float_(outlineSize).next(),
+                rectangleMesh.vec2(x + width, y).vec2(lx, -1).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.bottomRight()).color(outlineColor.bottomRight()).float_(outlineSize).next()
         );
     }
 
-    public void text(double x, double y, String text, double size, IColor color) {
+    public void text(double x, double y, String text, double size, Color4 color) {
         fonts.render(x, y, text, size, color);
     }
 

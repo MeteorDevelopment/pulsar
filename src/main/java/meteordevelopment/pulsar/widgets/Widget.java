@@ -5,6 +5,7 @@ import meteordevelopment.pulsar.theme.Properties;
 import meteordevelopment.pulsar.theme.Property;
 import meteordevelopment.pulsar.theme.Style;
 import meteordevelopment.pulsar.theme.Theme;
+import meteordevelopment.pulsar.utils.Color4;
 import meteordevelopment.pulsar.utils.IColor;
 import meteordevelopment.pulsar.utils.Vec4;
 
@@ -64,8 +65,8 @@ public abstract class Widget {
     protected void onRender(Renderer renderer, double mouseX, double mouseY, double delta) {
         Vec4 radius = get(Properties.RADIUS);
         double outlineSize = get(Properties.OUTLINE_SIZE);
-        IColor backgroundColor = get(Properties.BACKGROUND_COLOR);
-        IColor outlineColor = get(Properties.OUTLINE_COLOR);
+        Color4 backgroundColor = get(Properties.BACKGROUND_COLOR);
+        Color4 outlineColor = get(Properties.OUTLINE_COLOR);
 
         if (backgroundColor != null || outlineSize > 0) renderer.quad(x, y, width, height, radius, outlineSize, backgroundColor, outlineColor);
     }

@@ -3,6 +3,7 @@ package meteordevelopment.pulsar.widgets;
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.Properties;
 import meteordevelopment.pulsar.utils.Cell;
+import meteordevelopment.pulsar.utils.Color4;
 import meteordevelopment.pulsar.utils.IColor;
 import meteordevelopment.pulsar.utils.Vec4;
 
@@ -36,8 +37,8 @@ public class WWindow extends WVerticalList {
     public void render(Renderer renderer, double mouseX, double mouseY, double delta) {
         Vec4 radius = get(Properties.RADIUS);
         double outlineSize = get(Properties.OUTLINE_SIZE);
-        IColor backgroundColor = get(Properties.BACKGROUND_COLOR);
-        IColor outlineColor = get(Properties.OUTLINE_COLOR);
+        Color4 backgroundColor = get(Properties.BACKGROUND_COLOR);
+        Color4 outlineColor = get(Properties.OUTLINE_COLOR);
 
         if (backgroundColor != null) renderer.quad(x, y, width, height, radius, 0, backgroundColor, null);
 

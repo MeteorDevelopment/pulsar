@@ -31,8 +31,9 @@ public class Scanner {
         return switch (c) {
             case '{' -> token(TokenType.LeftBrace);
             case '}' -> token(TokenType.RightBrace);
-            case ':' -> token(TokenType.Colon);
             case '.' -> token(TokenType.Dot);
+            case ',' -> token(TokenType.Comma);
+            case ':' -> token(TokenType.Colon);
 
             case '#' -> hex();
             case '"' -> string();
