@@ -120,10 +120,10 @@ public class Mesh {
     }
 
     public Mesh vec4(Vec4 v) {
-        memPutFloat(verticesI, (float) v.x());
-        memPutFloat(verticesI + 4, (float) v.y());
-        memPutFloat(verticesI + 8, (float) v.z());
-        memPutFloat(verticesI + 12, (float) v.w());
+        memPutFloat(verticesI, (float) v.topRight());
+        memPutFloat(verticesI + 4, (float) v.bottomRight());
+        memPutFloat(verticesI + 8, (float) v.topLeft());
+        memPutFloat(verticesI + 12, (float) v.bottomLeft());
 
         verticesI += 16;
         return this;

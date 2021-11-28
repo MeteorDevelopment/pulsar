@@ -63,8 +63,8 @@ public class WContainer extends Widget {
         Vec4 padding = get(Properties.PADDING);
 
         for (Cell<?> cell : cells) {
-            cell.x = padding.w() + x;
-            cell.y = padding.x() + y;
+            cell.x = padding.left() + x;
+            cell.y = padding.bottom() + y;
 
             cell.width = width - padding.horizontal();
             cell.height = height - padding.vertical();

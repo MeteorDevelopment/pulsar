@@ -40,13 +40,13 @@ public class WHorizontalList extends WContainer {
         Vec2 spacing = get(Properties.SPACING);
         boolean reversed = get(Properties.LIST_DIRECTION) == ListDirection.Reversed;
 
-        double x = padding.w() + this.x;
+        double x = padding.left() + this.x;
 
         for (int i = reversed ? cells.size() - 1 : 0; reversed ? i >= 0 : i < cells.size(); i += reversed ? -1 : 1) {
             Cell<?> cell = cells.get(i);
 
             cell.x = x;
-            cell.y = padding.x() + y;
+            cell.y = padding.bottom() + y;
 
             cell.width = cell.widget.width;
             cell.height = height - padding.vertical();

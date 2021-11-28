@@ -1,3 +1,6 @@
+// Theme
+/* Theme */
+
 widget {
     padding: 8
     spacing: 4
@@ -21,14 +24,14 @@ window-header {
 }
 
 .window-title {
-    color: 255 255 255
+    color: #FFFFFF
     align-x: right
     font-size: 22
     text-shadow: 15 15 15
 }
 
 .window-body {
-    background-color: 255 255 255
+    background-color: #FFFFFF
     radius: 2
     outline-size: 2
     outline-color: 0 0 0
