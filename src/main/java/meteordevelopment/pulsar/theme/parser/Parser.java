@@ -4,29 +4,36 @@ import meteordevelopment.pulsar.theme.Properties;
 import meteordevelopment.pulsar.theme.Property;
 import meteordevelopment.pulsar.theme.Style;
 import meteordevelopment.pulsar.theme.Theme;
+import meteordevelopment.pulsar.theme.fileresolvers.IFileResolver;
 import meteordevelopment.pulsar.utils.*;
 
-import java.io.Reader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
 public class Parser {
+    private final IFileResolver fileResolver;
     private final Scanner scanner;
     private final Theme theme;
 
     private Token next, current, previous;
 
-    private Parser(Reader reader) {
-        scanner = new Scanner(reader);
-        theme = new Theme("test", List.of("hi"));
+    private Parser(IFileResolver fileResolver, String path) {
+        InputStream in = fileResolver.get(path);
+        if (in == null) throw error(null, "Failed to read file '" + fileResolver.resolvePath(path) + "'.");
+
+        this.fileResolver = fileResolver;
+        this.scanner = new Scanner(new InputStreamReader(in));
+        this.theme = new Theme("test", List.of("hi"));
 
         advance();
         advance();
     }
 
-    public static Theme parse(Reader reader) {
-        Parser parser = new Parser(reader);
+    public static Theme parse(IFileResolver fileResolver, String path) {
+        Parser parser = new Parser(fileResolver, path);
 
         while (!parser.isAtEnd()) {
             parser.declaration();

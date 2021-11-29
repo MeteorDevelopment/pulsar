@@ -3,25 +3,25 @@ package meteordevelopment.example;
 import meteordevelopment.pulsar.rendering.DebugRenderer;
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.Theme;
+import meteordevelopment.pulsar.theme.fileresolvers.NormalFileResolver;
+import meteordevelopment.pulsar.theme.fileresolvers.ResourceFileResolver;
 import meteordevelopment.pulsar.theme.parser.Parser;
 import meteordevelopment.pulsar.widgets.*;
 
-import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11C.*;
 
 public class Main {
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) {
         Window window = new Window();
         Renderer renderer = new Renderer();
 
         AtomicBoolean debug = new AtomicBoolean(false);
 
-        Theme theme = Parser.parse(new InputStreamReader(Main.class.getResourceAsStream("/test2.pts")));
-        //Theme theme = Parser.parse(new FileReader("test.pts"));
+        Theme theme = Parser.parse(new ResourceFileResolver("/"), "test2.pts");
+        //Theme theme = Parser.parse(new NormalFileResolver("/"), "test.pts");
         renderer.theme = theme;
         renderer.window = window.handle;
 
