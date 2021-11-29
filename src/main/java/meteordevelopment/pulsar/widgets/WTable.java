@@ -42,6 +42,13 @@ public class WTable extends WContainer {
         return cell;
     }
 
+    @Override
+    public void clear() {
+        super.clear();
+        rows.clear();
+        rowI = 0;
+    }
+
     public void row() {
         rowI++;
     }

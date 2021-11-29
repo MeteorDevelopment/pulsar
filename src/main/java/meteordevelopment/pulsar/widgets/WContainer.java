@@ -26,6 +26,11 @@ public class WContainer extends Widget {
         return cell;
     }
 
+    public void clear() {
+        cells.clear();
+        invalidate();
+    }
+
     @Override
     public String[] names() {
         return NAMES;

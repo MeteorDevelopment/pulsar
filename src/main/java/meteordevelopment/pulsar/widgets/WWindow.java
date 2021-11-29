@@ -34,6 +34,11 @@ public class WWindow extends WVerticalList {
     }
 
     @Override
+    public void clear() {
+        body.clear();
+    }
+
+    @Override
     public void render(Renderer renderer, double mouseX, double mouseY, double delta) {
         Vec4 radius = get(Properties.RADIUS);
         double outlineSize = get(Properties.OUTLINE_SIZE);
