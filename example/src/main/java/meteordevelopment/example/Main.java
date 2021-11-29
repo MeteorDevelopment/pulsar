@@ -22,7 +22,7 @@ public class Main {
 
         Theme theme = Parser.parse(new ResourceFileResolver("/"), "test2.pts");
         //Theme theme = Parser.parse(new NormalFileResolver("/"), "test.pts");
-        renderer.theme = theme;
+        renderer.setTheme(theme);
         renderer.window = window.handle;
 
         WContainer widget = new WWindow("Test Window").minWidth(300);

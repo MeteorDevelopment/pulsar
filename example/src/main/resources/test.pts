@@ -1,3 +1,5 @@
+@font "Comfortaa.ttf"
+
 text {
     color: 255 255 255
     font-size: 16

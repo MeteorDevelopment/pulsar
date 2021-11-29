@@ -9,10 +9,7 @@ import java.util.Arrays;
 public class Utils {
     public static boolean IS_MAC = System.getProperty("os.name").contains("Mac");
 
-    public static byte[] readResource(String path) {
-        InputStream in = Utils.class.getResourceAsStream(path);
-        if (in == null) return new byte[0];
-
+    public static byte[] read(InputStream in) {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         byte[] bytes = new byte[1024];
 
@@ -21,13 +18,24 @@ public class Utils {
                 result.write(bytes, 0, count);
             }
 
-            in.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return result.toByteArray();
+    }
+
+    public static byte[] readResource(String path) {
+        InputStream in = Utils.class.getResourceAsStream(path);
+        if (in == null) return new byte[0];
+
+        return read(in);
     }
 
     public static String readResourceString(String path) {

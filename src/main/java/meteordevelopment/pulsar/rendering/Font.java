@@ -1,15 +1,11 @@
 package meteordevelopment.pulsar.rendering;
 
 import meteordevelopment.pulsar.utils.Color4;
-import meteordevelopment.pulsar.utils.IColor;
-import meteordevelopment.pulsar.utils.Utils;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.stb.STBTTPackContext;
 import org.lwjgl.stb.STBTTPackedchar;
 import org.lwjgl.stb.STBTruetype;
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -21,16 +17,8 @@ public class Font {
     private final float ascent;
     private final CharData[] charData;
 
-    public Font(String path, int height) {
+    public Font(FontInfo info, int height) {
         this.height = height;
-
-        byte[] data = Utils.readResource(path);
-        ByteBuffer buffer = MemoryUtil.memAlloc(data.length).put(data);
-        buffer.rewind();
-
-        // Initialize font
-        STBTTFontinfo fontInfo = STBTTFontinfo.create();
-        STBTruetype.stbtt_InitFont(fontInfo, buffer);
 
         // Allocate STBTTPackedchar buffer
         charData = new CharData[128];
@@ -41,17 +29,18 @@ public class Font {
         STBTTPackContext packContext = STBTTPackContext.create();
         STBTruetype.stbtt_PackBegin(packContext, bitmap, 2048, 2048, 0, 1);
         STBTruetype.stbtt_PackSetOversampling(packContext, 2, 2);
-        STBTruetype.stbtt_PackFontRange(packContext, buffer, 0, height, 32, cdata);
+        STBTruetype.stbtt_PackFontRange(packContext, info.buffer, 0, height, 32, cdata);
         STBTruetype.stbtt_PackEnd(packContext);
+        info.buffer.rewind();
 
         // Create texture object and get font scale
         texture = new Texture(2048, 2048, bitmap);
-        scale = STBTruetype.stbtt_ScaleForPixelHeight(fontInfo, height);
+        scale = STBTruetype.stbtt_ScaleForPixelHeight(info.fontInfo, height);
 
         // Get font vertical ascent
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer ascent = stack.mallocInt(1);
-            STBTruetype.stbtt_GetFontVMetrics(fontInfo, ascent, null, null);
+            STBTruetype.stbtt_GetFontVMetrics(info.fontInfo, ascent, null, null);
             this.ascent = ascent.get(0);
         }
 
@@ -74,8 +63,10 @@ public class Font {
                     packedChar.xadvance()
             );
         }
+    }
 
-        MemoryUtil.memFree(buffer);
+    public void dispose() {
+        texture.dispose();
     }
 
     public Texture getTexture() {

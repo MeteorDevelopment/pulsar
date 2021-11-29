@@ -89,6 +89,11 @@ public class Mesh {
         }
     }
 
+    public void dispose() {
+        nmemFree(vertices);
+        nmemFree(indices);
+    }
+
     public void begin() {
         if (building) throw new IllegalStateException("Mesh.end() called while already building.");
 

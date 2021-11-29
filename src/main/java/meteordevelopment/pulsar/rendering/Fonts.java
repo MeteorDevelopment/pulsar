@@ -7,8 +7,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Fonts {
+    private final FontInfo fontInfo;
+
     private final Shader shader = new Shader("/pulsar/shaders/text.vert", "/pulsar/shaders/text.frag");
     private final Map<Integer, SizedFont> fonts = new HashMap<>();
+
+    public Fonts(FontInfo fontInfo) {
+        this.fontInfo = fontInfo;
+    }
+
+    public void dispose() {
+        for (SizedFont sizedFont : fonts.values()) {
+            sizedFont.font.dispose();
+            sizedFont.mesh.dispose();
+        }
+    }
 
     public void render(double x, double y, String text, double size, Color4 color) {
         SizedFont font = get(size);
@@ -46,14 +59,14 @@ public class Fonts {
         return fonts.computeIfAbsent((int) size, SizedFont::new);
     }
 
-    private static class SizedFont {
+    private class SizedFont {
         public final Font font;
         public final Mesh mesh;
 
-        public boolean building, scissor;
+        public boolean building;
 
         public SizedFont(double size) {
-            font = new Font("/pulsar/Comfortaa.ttf", (int) size);
+            font = new Font(fontInfo, (int) size);
             mesh = new Mesh(Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Color);
         }
     }

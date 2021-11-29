@@ -17,13 +17,20 @@ public class Renderer {
     private final Shader rectangleShader = new Shader("/pulsar/shaders/rectangles.vert", "/pulsar/shaders/rectangles.frag");
     private final Mesh rectangleMesh = new Mesh(Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Vec4, Mesh.Attrib.UByte, Mesh.Attrib.Color, Mesh.Attrib.Color, Mesh.Attrib.Float);
 
-    private final Fonts fonts = new Fonts();
+    private Fonts fonts;
 
     private int windowWidth, windowHeight;
     private Matrix4f projection;
 
     public Renderer() {
         INSTANCE = this;
+    }
+
+    public void setTheme(Theme theme) {
+        this.theme = theme;
+
+        if (fonts != null) fonts.dispose();
+        fonts = new Fonts(theme.getFontInfo());
     }
 
     public void begin(int windowWidth, int windowHeight) {

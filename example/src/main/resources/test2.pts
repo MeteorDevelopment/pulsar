@@ -1,6 +1,8 @@
 // Theme
 /* Theme */
 
+@font "Comfortaa.ttf"
+
 widget {
     spacing: 6
     radius: 2

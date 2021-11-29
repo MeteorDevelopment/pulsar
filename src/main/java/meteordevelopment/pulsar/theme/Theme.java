@@ -1,5 +1,6 @@
 package meteordevelopment.pulsar.theme;
 
+import meteordevelopment.pulsar.rendering.FontInfo;
 import meteordevelopment.pulsar.widgets.Widget;
 
 import java.util.Collection;
@@ -18,9 +19,20 @@ public class Theme {
     private final Map<String, WidgetNode> widgetStyles = new HashMap<>();
     private final Map<String, Style> idStyles = new HashMap<>();
 
+    private FontInfo fontInfo;
+
     public Theme(String title, Collection<String> authors) {
         this.title = title;
         this.authors = authors;
+    }
+
+    public void setFontInfo(FontInfo fontInfo) {
+        if (this.fontInfo != null) this.fontInfo.dispose();
+        this.fontInfo = fontInfo;
+    }
+
+    public FontInfo getFontInfo() {
+        return fontInfo;
     }
 
     public void addWidgetStyle(String widget, Style style) {

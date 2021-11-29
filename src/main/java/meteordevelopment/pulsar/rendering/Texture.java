@@ -43,4 +43,8 @@ public class Texture {
     public int getSlot() {
         return 0;
     }
+
+    public void dispose() {
+        glDeleteTextures(id);
+    }
 }

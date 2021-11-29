@@ -1,9 +1,7 @@
 package meteordevelopment.pulsar.theme.parser;
 
-import meteordevelopment.pulsar.theme.Properties;
-import meteordevelopment.pulsar.theme.Property;
-import meteordevelopment.pulsar.theme.Style;
-import meteordevelopment.pulsar.theme.Theme;
+import meteordevelopment.pulsar.rendering.FontInfo;
+import meteordevelopment.pulsar.theme.*;
 import meteordevelopment.pulsar.theme.fileresolvers.IFileResolver;
 import meteordevelopment.pulsar.utils.*;
 
@@ -39,12 +37,24 @@ public class Parser {
             parser.declaration();
         }
 
+        if (parser.theme.getFontInfo() == null) throw parser.error(null, "No font specified.");
+
         return parser.theme;
     }
 
     // Declarations
 
     private void declaration() {
+        // At declarations
+        if (match(TokenType.At)) {
+            Token token = consume(TokenType.Identifier, "Expected at declaration name.");
+
+            switch (token.lexeme()) {
+                case "font" -> font();
+                default -> throw error(token, "Unknown at declaration.");
+            }
+        }
+
         // Widget or widget state style
         if (match(TokenType.Identifier)) {
             Token widget = previous();
@@ -71,6 +81,18 @@ public class Parser {
 
             theme.addIdStyle(id.lexeme(), style);
         }
+    }
+
+    private void font() {
+        Token font = consume(TokenType.String, "Expected font path.");
+        String path = font.lexeme().substring(1, font.lexeme().length() - 1);
+
+        if (!path.endsWith(".ttf")) throw error(font, "Fonts must be in ttf file format.");
+
+        InputStream in = fileResolver.get(path);
+        if (in == null) throw error(font, "Failed to read file '" + fileResolver.resolvePath(path) + "'.");
+
+        theme.setFontInfo(new FontInfo(in));
     }
 
     // Styles
