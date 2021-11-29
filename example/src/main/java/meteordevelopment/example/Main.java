@@ -1,5 +1,6 @@
 package meteordevelopment.example;
 
+import meteordevelopment.pulsar.rendering.DebugRenderer;
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.theme.parser.Parser;
@@ -7,14 +8,17 @@ import meteordevelopment.pulsar.widgets.*;
 
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.lwjgl.glfw.GLFW.glfwGetTime;
+import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11C.*;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         Window window = new Window();
         Renderer renderer = new Renderer();
+
+        AtomicBoolean debug = new AtomicBoolean(false);
 
         Theme theme = Parser.parse(new InputStreamReader(Main.class.getResourceAsStream("/test2.pts")));
         //Theme theme = Parser.parse(new FileReader("test.pts"));
@@ -46,7 +50,10 @@ public class Main {
         window.mousePressed = integer -> widget.mousePressed(integer, window.lastMouseX, window.lastMouseY, false);
         window.mouseMoved = widget::mouseMoved;
         window.mouseReleased = integer -> widget.mouseReleased(integer, window.lastMouseX, window.lastMouseY);
-        window.keyPressed = widget::keyPressed;
+        window.keyPressed = (key, mods) -> {
+            widget.keyPressed(key, mods);
+            if ((mods == GLFW_MOD_CONTROL || mods == GLFW_MOD_SUPER) && key == GLFW_KEY_9) debug.set(!debug.get());
+        };
         window.keyRepeated = widget::keyRepeated;
         window.charTyped = widget::charTyped;
 
@@ -66,6 +73,8 @@ public class Main {
             renderer.begin(window.getWidth(), window.getHeight());
             widget.render(renderer, 0, 0, delta);
             renderer.end();
+
+            if (debug.get()) DebugRenderer.render(widget, window.getWidth(), window.getHeight());
 
             window.swapBuffers();
         }

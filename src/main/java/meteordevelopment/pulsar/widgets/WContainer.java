@@ -14,7 +14,7 @@ import static meteordevelopment.pulsar.utils.Utils.combine;
 public class WContainer extends Widget {
     protected static final String[] NAMES = combine(Widget.NAMES, "container");
 
-    protected final List<Cell<?>> cells = new ArrayList<>();
+    public final List<Cell<?>> cells = new ArrayList<>();
 
     public <T extends Widget> Cell<T> add(T widget) {
         Cell<T> cell = new Cell<>(widget);
@@ -103,7 +103,13 @@ public class WContainer extends Widget {
     @Override
     protected void move(double x, double y) {
         super.move(x, y);
-        for (Cell<?> cell : cells) cell.widget.move(x, y);
+
+        for (Cell<?> cell : cells) {
+            cell.x += x;
+            cell.y += y;
+
+            cell.widget.move(x, y);
+        }
     }
 
     // Input

@@ -149,6 +149,16 @@ public class Mesh {
         return vertexI++;
     }
 
+    public void line(int i1, int i2) {
+        long p = indices + indicesCount * 4L;
+
+        memPutInt(p, i1);
+        memPutInt(p + 4, i2);
+
+        indicesCount += 2;
+        growIfNeeded();
+    }
+
     public void triangle(int i1, int i2, int i3) {
         long p = indices + indicesCount * 4L;
 
@@ -214,13 +224,16 @@ public class Mesh {
         building = false;
     }
 
-    public void render() {
+    public void render(boolean lines) {
         if (building) end();
 
         if (indicesCount > 0) {
             glBindVertexArray(vao);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-            glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, 0);
+            glDrawElements(lines ? GL_LINES : GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, 0);
         }
+    }
+    public void render() {
+        render(false);
     }
 }
