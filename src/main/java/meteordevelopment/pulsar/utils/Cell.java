@@ -9,19 +9,25 @@ public class Cell<T extends Widget> {
     public double x, y;
     public double width, height;
 
-    private boolean expandX;
+    public boolean expandCellX;
+    private boolean expandWidgetX;
 
     public Cell(T widget) {
         this.widget = widget;
     }
 
+    public Cell<T> expandCellX() {
+        expandCellX = true;
+        return this;
+    }
+
     public Cell<T> expandX() {
-        expandX = true;
+        expandCellX = expandWidgetX = true;
         return this;
     }
 
     public void align() {
-        if (expandX) widget.width = width;
+        if (expandWidgetX) widget.width = width;
 
         switch (widget.get(Properties.ALIGN_X)) {
             case Left ->   widget.x = x;

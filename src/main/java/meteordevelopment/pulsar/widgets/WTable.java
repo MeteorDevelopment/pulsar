@@ -137,12 +137,12 @@ public class WTable extends WContainer {
                 cell.x = x;
                 cell.y = y;
 
-                cell.width = columnWidth + (/*cell.expandCellX ? expandXAdd : */0);
+                cell.width = columnWidth + (cell.expandCellX ? expandXAdd : 0);
                 cell.height = rowHeight;
 
                 cell.align();
 
-                x += columnWidth + (/*cell.expandCellX ? expandXAdd : */0);
+                x += columnWidth + (cell.expandCellX ? expandXAdd : 0);
             }
 
             y += rowHeight;
@@ -173,7 +173,7 @@ public class WTable extends WContainer {
                 else columnWidths.set(i, Math.max(columnWidths.get(i), cellWidth));
 
                 // Calculate row expandX count
-                //if (cell.expandCellX) rowExpandXCount++;
+                if (cell.expandCellX) rowExpandXCount++;
             }
 
             // Store calculated info
