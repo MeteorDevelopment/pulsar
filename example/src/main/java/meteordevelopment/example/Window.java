@@ -19,6 +19,7 @@ public class Window {
 
     public MouseCallback mouseMoved;
     public Consumer<Integer> mousePressed, mouseReleased;
+    public Consumer<Double> mouseScrolled;
     public BiConsumer<Integer, Integer> keyPressed, keyRepeated;
     public Consumer<Character> charTyped;
 
@@ -61,6 +62,10 @@ public class Window {
 
             lastMouseX = xpos;
             lastMouseY = height - ypos;
+        });
+
+        glfwSetScrollCallback(handle, (window, xoffset, yoffset) -> {
+            if (mouseScrolled != null) mouseScrolled.accept(yoffset);
         });
 
         glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> {

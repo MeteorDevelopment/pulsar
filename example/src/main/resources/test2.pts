@@ -105,3 +105,31 @@ selection {
     background-color: 45 125 245 100
     radius: 2
 }
+
+slider {
+    padding: 0
+}
+
+.slider-left {
+    background-color: 255 60 60
+    outline-size: 2
+    outline-color: 245 50 50
+    size: 6
+    radius: 3
+}
+
+.slider-right {
+    background-color: 240 240 240
+    outline-size: 2
+    outline-color: 230 230 230
+    size: 6
+    radius: 3
+}
+
+.slider-handle {
+    background-color: 255 20 20
+    outline-size: 2
+    outline-color: 200 20 20
+    size: 16
+    radius: 8
+}

@@ -118,6 +118,13 @@ public class Widget {
         return false;
     }
 
+    public boolean mouseScrolled(double amount) {
+        return onMouseScrolled(amount);
+    }
+    protected boolean onMouseScrolled(double amount) {
+        return false;
+    }
+
     public boolean keyPressed(int key, int mods) {
         return onKeyPressed(key, mods);
     }

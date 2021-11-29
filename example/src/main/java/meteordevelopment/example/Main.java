@@ -3,7 +3,6 @@ package meteordevelopment.example;
 import meteordevelopment.pulsar.rendering.DebugRenderer;
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.Theme;
-import meteordevelopment.pulsar.theme.fileresolvers.NormalFileResolver;
 import meteordevelopment.pulsar.theme.fileresolvers.ResourceFileResolver;
 import meteordevelopment.pulsar.theme.parser.Parser;
 import meteordevelopment.pulsar.widgets.*;
@@ -37,6 +36,10 @@ public class Main {
 
         t.add(new WText("Text:"));
         t.add(new WTextBox("Cope?").minWidth(200)).expandX();
+        t.row();
+
+        t.add(new WText("Number:"));
+        t.add(new WSlider(4, 0, 10).minWidth(200)).expandX();
 
         widget.add(new WButton("Click me")).expandX();
 
@@ -50,6 +53,7 @@ public class Main {
         window.mousePressed = integer -> widget.mousePressed(integer, window.lastMouseX, window.lastMouseY, false);
         window.mouseMoved = widget::mouseMoved;
         window.mouseReleased = integer -> widget.mouseReleased(integer, window.lastMouseX, window.lastMouseY);
+        window.mouseScrolled = widget::mouseScrolled;
         window.keyPressed = (key, mods) -> {
             widget.keyPressed(key, mods);
             if ((mods == GLFW_MOD_CONTROL || mods == GLFW_MOD_SUPER) && key == GLFW_KEY_9) debug.set(!debug.get());

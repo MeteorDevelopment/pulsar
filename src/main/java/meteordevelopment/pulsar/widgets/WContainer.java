@@ -137,6 +137,14 @@ public class WContainer extends Widget {
     }
 
     @Override
+    public boolean mouseScrolled(double amount) {
+        for (Cell<?> cell : cells) {
+            if (cell.widget.mouseScrolled(amount)) return true;
+        }
+        return super.mouseScrolled(amount);
+    }
+
+    @Override
     public boolean keyPressed(int key, int mods) {
         for (Cell<?> cell : cells) {
             if (cell.widget.keyPressed(key, mods)) return true;

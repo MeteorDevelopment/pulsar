@@ -90,3 +90,19 @@ selection {
     background-color: 45 125 245 100
     radius: 2
 }
+
+.slider-left {
+    background-color: 0 150 80
+    size: 4
+}
+
+.slider-right {
+    background-color: 50 50 50
+    size: 4
+}
+
+.slider-handle {
+    background-color: 0 255 180
+    size: 16
+    radius: 8
+}
