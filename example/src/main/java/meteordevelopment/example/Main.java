@@ -25,13 +25,14 @@ public class Main {
         widget.add(new WText("Hello"));
         widget.add(new WText("COPE?!?!?!?!").id("right"));
 
-        WContainer a = widget.add(new WHorizontalList()).widget;
-        a.add(new WText("Good:"));
-        a.add(new WCheckbox(true));
+        WTable t = widget.add(new WTable()).expandX().widget;
 
-        WContainer b = widget.add(new WHorizontalList()).widget;
-        b.add(new WText("Text:"));
-        b.add(new WTextBox("Cope?").minWidth(200)).expandX();
+        t.add(new WText("Good:"));
+        t.add(new WCheckbox(true));
+        t.row();
+
+        t.add(new WText("Text:"));
+        t.add(new WTextBox("Cope?").minWidth(200)).expandX();
 
         widget.add(new WButton("Click me")).expandX();
 
