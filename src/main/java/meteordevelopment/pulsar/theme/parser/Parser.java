@@ -1,14 +1,20 @@
 package meteordevelopment.pulsar.theme.parser;
 
 import meteordevelopment.pulsar.rendering.FontInfo;
-import meteordevelopment.pulsar.theme.*;
+import meteordevelopment.pulsar.theme.Properties;
+import meteordevelopment.pulsar.theme.Property;
+import meteordevelopment.pulsar.theme.Style;
+import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.theme.fileresolvers.IFileResolver;
 import meteordevelopment.pulsar.utils.*;
+import org.lwjgl.system.MemoryUtil;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 public class Parser {
@@ -120,6 +126,8 @@ public class Parser {
             case Number -> style.set(property, number());
             case Vec2 -> style.set(property, vec2());
             case Vec4 -> style.set(property, vec4());
+            case Identifier -> style.set(property, identifier());
+            case File -> style.set(property, file());
             case Color -> style.set(property, color());
             case Color4 -> style.set(property, color4());
             case Enum -> style.set(property, enum_(property.defaultValue().getClass()));
@@ -155,6 +163,35 @@ public class Parser {
         }
 
         return new Vec4(x, x, x, x);
+    }
+
+    private String identifier() {
+        return consume(TokenType.Identifier, "Expected identifier.").lexeme();
+    }
+
+    private String file() {
+        Token string = consume(TokenType.String, "Expected string.");
+        String path = string.lexeme().substring(1, string.lexeme().length() - 1);
+
+        InputStream in = fileResolver.get(path);
+        if (in == null) throw error(string, "Failed to read file '" + fileResolver.resolvePath(path) + "'.");
+
+        if (theme.getBuffer(path) == null) {
+            byte[] bytes = Utils.read(in);
+            ByteBuffer buffer = MemoryUtil.memAlloc(bytes.length);
+            buffer.put(bytes);
+
+            theme.putBuffer(path, buffer);
+        }
+        else {
+            try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return path;
     }
 
     private IColor color() {

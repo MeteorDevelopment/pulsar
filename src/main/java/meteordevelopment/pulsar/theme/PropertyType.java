@@ -7,6 +7,8 @@ public enum PropertyType {
     Number(0.0),
     Vec2(new Vec2(0.0)),
     Vec4(new Vec4(0.0)),
+    Identifier(null),
+    File(null),
     Color(null),
     Color4(null),
     Enum(null);

@@ -34,6 +34,11 @@ public class WWindow extends WVerticalList {
     }
 
     @Override
+    public void remove(Widget widget) {
+        body.remove(widget);
+    }
+
+    @Override
     public void clear() {
         body.clear();
     }

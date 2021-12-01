@@ -17,6 +17,10 @@ public class Renderer {
     private final Shader rectangleShader = new Shader("/pulsar/shaders/rectangles.vert", "/pulsar/shaders/rectangles.frag");
     private final Mesh rectangleMesh = new Mesh(Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Vec4, Mesh.Attrib.UByte, Mesh.Attrib.Color, Mesh.Attrib.Color, Mesh.Attrib.Float);
 
+    private final Icons icons = new Icons();
+    private final Shader iconShader = new Shader("/pulsar/shaders/texture.vert", "/pulsar/shaders/icon.frag");
+    private final Mesh iconMesh = new Mesh(Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Color);
+
     private Fonts fonts;
 
     private int windowWidth, windowHeight;
@@ -28,6 +32,8 @@ public class Renderer {
 
     public void setTheme(Theme theme) {
         this.theme = theme;
+
+        icons.setTheme(theme);
 
         if (fonts != null) fonts.dispose();
         fonts = new Fonts(theme.getFontInfo());
@@ -43,6 +49,7 @@ public class Renderer {
 
     private void begin() {
         rectangleMesh.begin();
+        iconMesh.begin();
     }
 
     public void end() {
@@ -51,6 +58,12 @@ public class Renderer {
         rectangleShader.set("u_Proj", projection);
         rectangleShader.set("u_WindowSize", windowWidth, windowHeight);
         rectangleMesh.render();
+
+        // Icons
+        iconShader.bind();
+        iconShader.set("u_Proj", projection);
+        iconShader.set("u_Texture", icons.bind());
+        iconMesh.render();
 
         // Text
         fonts.end(projection);
@@ -98,6 +111,18 @@ public class Renderer {
 
     public void text(double x, double y, String text, double size, Color4 color) {
         fonts.render(x, y, text, size, color);
+    }
+
+    public void icon(double x, double y, String path, double size, Color4 color) {
+        size = (int) size;
+        TextureRegion region = icons.get(path, (int) size);
+
+        iconMesh.quad(
+                iconMesh.vec2(x, y).vec2(region.x1(), region.y1()).color(color.bottomLeft()).next(),
+                iconMesh.vec2(x, y + size).vec2(region.x1(), region.y2()).color(color.topLeft()).next(),
+                iconMesh.vec2(x + size, y + size).vec2(region.x2(), region.y2()).color(color.topRight()).next(),
+                iconMesh.vec2(x + size, y).vec2(region.x2(), region.y1()).color(color.bottomRight()).next()
+        );
     }
 
     public double textWidth(String text, double size) {

@@ -2,7 +2,9 @@ package meteordevelopment.pulsar.theme;
 
 import meteordevelopment.pulsar.rendering.FontInfo;
 import meteordevelopment.pulsar.widgets.Widget;
+import org.lwjgl.system.MemoryUtil;
 
+import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,10 +22,16 @@ public class Theme {
     private final Map<String, Style> idStyles = new HashMap<>();
 
     private FontInfo fontInfo;
+    private final Map<String, ByteBuffer> buffers = new HashMap<>();
 
     public Theme(String title, Collection<String> authors) {
         this.title = title;
         this.authors = authors;
+    }
+
+    public void dispose() {
+        if (fontInfo != null) fontInfo.dispose();
+        for (ByteBuffer buffer : buffers.values()) MemoryUtil.memFree(buffer);
     }
 
     public void setFontInfo(FontInfo fontInfo) {
@@ -73,6 +81,14 @@ public class Theme {
         }
 
         return style;
+    }
+
+    public void putBuffer(String name, ByteBuffer buffer) {
+        buffers.put(name, buffer);
+    }
+
+    public ByteBuffer getBuffer(String name) {
+        return buffers.get(name);
     }
 
     private WidgetNode getWidget(String name, boolean create) {

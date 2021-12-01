@@ -9,7 +9,7 @@ import java.util.Map;
 public class Fonts {
     private final FontInfo fontInfo;
 
-    private final Shader shader = new Shader("/pulsar/shaders/text.vert", "/pulsar/shaders/text.frag");
+    private final Shader shader = new Shader("/pulsar/shaders/texture.vert", "/pulsar/shaders/text.frag");
     private final Map<Integer, SizedFont> fonts = new HashMap<>();
 
     public Fonts(FontInfo fontInfo) {

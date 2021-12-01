@@ -28,6 +28,9 @@ public class Properties {
 
     public static final Property<ListDirection> LIST_DIRECTION = add(new Property<>("list-direction", PropertyType.Enum, ListDirection.Normal));
 
+    public static final Property<String> ICON = add(new Property<>("icon", PropertyType.Identifier));
+    public static final Property<String> ICON_PATH = add(new Property<>("icon-path", PropertyType.File));
+
     private static <T> Property<T> add(Property<T> property) {
         PROPERTIES.put(property.name(), property);
         return property;

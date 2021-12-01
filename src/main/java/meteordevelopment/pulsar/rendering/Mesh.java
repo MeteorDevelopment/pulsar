@@ -197,7 +197,7 @@ public class Mesh {
             if (verticesCapacity % primitiveVerticesSize != 0) verticesCapacity += verticesCapacity % primitiveVerticesSize;
 
             long newVertices = nmemAllocChecked(verticesCapacity);
-            memCopy(vertices, newVertices, verticesI);
+            memCopy(vertices, newVertices, verticesI - vertices);
 
             verticesI = newVertices + (verticesI - vertices);
             vertices = newVertices;

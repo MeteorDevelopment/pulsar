@@ -10,8 +10,14 @@ import static org.lwjgl.opengl.GL13C.glActiveTexture;
 
 public class Texture {
     private final int id;
+    private final int width, height;
+    private final boolean font;
 
-    public Texture(int width, int height, ByteBuffer data) {
+    public Texture(int width, int height, ByteBuffer buffer, boolean font) {
+        this.width = width;
+        this.height = height;
+        this.font = font;
+
         id = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, id);
 
@@ -29,8 +35,14 @@ public class Texture {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        data.rewind();
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, data);
+        upload(buffer);
+    }
+
+    public void upload(ByteBuffer buffer) {
+        if (buffer != null) buffer.rewind();
+
+        glBindTexture(GL_TEXTURE_2D, id);
+        glTexImage2D(GL_TEXTURE_2D, 0, font ? GL_RED : GL_RGBA, width, height, 0, font ? GL_RED : GL_RGBA, GL_UNSIGNED_BYTE, buffer);
     }
 
     public Texture bind() {

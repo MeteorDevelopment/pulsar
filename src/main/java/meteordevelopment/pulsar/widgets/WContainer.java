@@ -7,6 +7,7 @@ import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.utils.Vec4;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static meteordevelopment.pulsar.utils.Utils.combine;
@@ -16,14 +17,27 @@ public class WContainer extends Widget {
 
     public final List<Cell<?>> cells = new ArrayList<>();
 
-    public <T extends Widget> Cell<T> add(T widget) {
+    protected <T extends Widget> Cell<T> create(T widget) {
         Cell<T> cell = new Cell<>(widget);
         widget.parent = this;
 
-        cells.add(cell);
-
         invalidate();
         return cell;
+    }
+
+    public <T extends Widget> Cell<T> add(T widget) {
+        Cell<T> cell = create(widget);
+        cells.add(cell);
+        return cell;
+    }
+
+    public void remove(Widget widget) {
+        for (Iterator<Cell<?>> it = cells.iterator(); it.hasNext();) {
+            if (it.next().widget == widget) {
+                it.remove();
+                break;
+            }
+        }
     }
 
     public void clear() {

@@ -44,7 +44,9 @@ button {
     background-color: 240 240 240
     outline-size: 1
     outline-color: 0 0 0
-    padding: 8
+    padding: 4
+    spacing: 4
+    icon: click
 }
 
 button :hovered {
@@ -54,6 +56,23 @@ button :hovered {
 button :pressed {
     background-color: 220 220 220
 }
+
+// Needs selector rewrite
+//icon .click {
+.click {
+    icon-path: "click.svg"
+    color: 0 0 0
+    size: 24
+}
+
+// Needs selector rewrite, again
+/*icon .click :hovered {
+    color: 20 20 20
+}
+
+icon .click :pressed {
+    color: 40 40 40
+}*/
 
 .button-text {
     align-x: left

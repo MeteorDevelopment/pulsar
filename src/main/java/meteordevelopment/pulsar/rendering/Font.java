@@ -34,7 +34,7 @@ public class Font {
         info.buffer.rewind();
 
         // Create texture object and get font scale
-        texture = new Texture(2048, 2048, bitmap);
+        texture = new Texture(2048, 2048, bitmap, true);
         scale = STBTruetype.stbtt_ScaleForPixelHeight(info.fontInfo, height);
 
         // Get font vertical ascent
