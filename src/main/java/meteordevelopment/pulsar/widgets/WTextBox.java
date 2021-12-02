@@ -13,7 +13,7 @@ import java.util.List;
 import static meteordevelopment.pulsar.utils.Utils.combine;
 import static org.lwjgl.glfw.GLFW.*;
 
-public class WTextBox extends WContainer {
+public class WTextBox extends WHorizontalList {
     protected static final String[] NAMES = combine(WContainer.NAMES, "text-box");
 
     public Runnable action;
@@ -21,6 +21,10 @@ public class WTextBox extends WContainer {
 
     protected String text;
     protected ICharFilter filter;
+
+    protected final WText textW;
+    protected final WSelection selectionW;
+    protected WIcon iconW;
 
     protected boolean focused;
     protected List<Double> textWidths = new ArrayList<>();
@@ -42,7 +46,8 @@ public class WTextBox extends WContainer {
         this.text = text;
         this.filter = (text1, c) -> true;
 
-        add(new WSelection());
+        selectionW = add(new WSelection()).widget;
+        textW = add(new WTextBoxText()).expandX().widget;
     }
 
     @Override
@@ -51,12 +56,31 @@ public class WTextBox extends WContainer {
     }
 
     @Override
-    protected void onCalculateSize() {
-        Vec4 padding = get(Properties.PADDING);
-        double s = Renderer.INSTANCE.textHeight(get(Properties.FONT_SIZE));
+    protected boolean skipLayoutFor(Widget widget) {
+        return widget == selectionW;
+    }
 
-        width = s + padding.horizontal();
-        height = s + padding.vertical();
+    @Override
+    public void calculateSize() {
+        if (iconW != null) {
+            remove(iconW);
+            iconW = null;
+        }
+
+        String icon = get(Properties.ICON);
+        if (icon != null) {
+            iconW = new WIcon();
+            iconW.id(icon).computeStyle(Renderer.INSTANCE.theme);
+
+            cells.add(0, create(iconW));
+        }
+
+        super.calculateSize();
+    }
+
+    @Override
+    protected void onCalculateSize() {
+        super.onCalculateSize();
 
         calculateTextWidths();
     }
@@ -78,15 +102,14 @@ public class WTextBox extends WContainer {
                 selecting = true;
 
                 double overflowWidth = getOverflowWidthForRender();
-                double relativeMouseX = mouseX - x + overflowWidth;
-                Vec4 padding = get(Properties.PADDING);
+                double relativeMouseX = mouseX - textW.x + overflowWidth;
 
                 double smallestDifference = Double.MAX_VALUE;
 
                 cursor = text.length();
 
                 for (int i = 0; i < textWidths.size(); i++) {
-                    double difference = Math.abs(textWidths.get(i) + padding.left() - relativeMouseX);
+                    double difference = Math.abs(textWidths.get(i) - relativeMouseX);
 
                     if (difference < smallestDifference) {
                         smallestDifference = difference;
@@ -113,13 +136,12 @@ public class WTextBox extends WContainer {
         if (!selecting) return;
 
         double overflowWidth = getOverflowWidthForRender();
-        double relativeMouseX = mouseX - x + overflowWidth;
-        Vec4 padding = get(Properties.PADDING);
+        double relativeMouseX = mouseX - textW.x + overflowWidth;
 
         double smallestDifference = Double.MAX_VALUE;
 
         for (int i = 0; i < textWidths.size(); i++) {
-            double difference = Math.abs(textWidths.get(i) + padding.left() - relativeMouseX);
+            double difference = Math.abs(textWidths.get(i) - relativeMouseX);
 
             if (difference < smallestDifference) {
                 smallestDifference = difference;
@@ -401,7 +423,14 @@ public class WTextBox extends WContainer {
 
     @Override
     public void render(Renderer renderer, double mouseX, double mouseY, double delta) {
-        super.render(renderer, mouseX, mouseY, delta);
+        computeStyle(Renderer.INSTANCE.theme);
+
+        if (iconW != null) iconW.render(renderer, mouseX, mouseY, delta);
+
+        onRender(renderer, mouseX, mouseY, delta);
+        textW.render(renderer, mouseX, mouseY, delta);
+        selectionW.render(renderer, mouseX, mouseY, delta);
+
         if (scissor) renderer.endScissor();
     }
 
@@ -422,13 +451,8 @@ public class WTextBox extends WContainer {
 
         double overflowWidth = getOverflowWidthForRender();
 
-        scissor = textWidths.get(textWidths.size() - 1) > (width - padding.horizontal());
-        if (scissor) renderer.beginScissor(x + padding.left() - 1, y + padding.bottom() - 1, width - padding.horizontal() + 2, height - padding.vertical() + 2);
-
-        // Text
-        if (!text.isEmpty() && color != null) {
-            renderText(renderer, x + padding.left() - overflowWidth, y + padding.bottom(), text);
-        }
+        scissor = textWidths.get(textWidths.size() - 1) > maxTextWidth();
+        if (scissor) renderer.beginScissor(textW.x - 1, y + padding.bottom() - 1, maxTextWidth() + 2, height - padding.vertical() + 2);
 
         // Cursor
         animProgress += delta * 10 * (focused && cursorVisible ? 1 : -1);
@@ -436,7 +460,7 @@ public class WTextBox extends WContainer {
 
         if (((focused && cursorVisible) || animProgress > 0) && color != null) {
             renderer.alpha(animProgress);
-            renderer.quad(x + padding.left() + getTextWidth(cursor) - overflowWidth, y + padding.bottom(), 1, height - padding.vertical(), new Vec4(0), 0, color, null);
+            renderer.quad(textW.x + getTextWidth(cursor) - overflowWidth, y + padding.bottom(), 1, height - padding.vertical(), new Vec4(0), 0, color, null);
             renderer.alpha(1);
         }
     }
@@ -463,7 +487,7 @@ public class WTextBox extends WContainer {
     // Utils
 
     protected double maxTextWidth() {
-        return width - get(Properties.PADDING).horizontal();
+        return textW.width;
     }
 
     private void clearSelection() {
@@ -506,7 +530,7 @@ public class WTextBox extends WContainer {
 
     private void calculateTextWidths() {
         textWidths.clear();
-        double size = get(Properties.FONT_SIZE);
+        double size = textW.get(Properties.FONT_SIZE);
 
         for (int i = 0; i <= text.length(); i++) {
             textWidths.add(Renderer.INSTANCE.textWidth(text, i, size));
@@ -593,6 +617,29 @@ public class WTextBox extends WContainer {
         cursor = text.length();
     }
 
+    protected class WTextBoxText extends WText {
+        protected static final String[] NAMES = combine(WText.NAMES, "text-box-text");
+
+        public WTextBoxText() {
+            super(null);
+        }
+
+        @Override
+        public String[] names() {
+            return NAMES;
+        }
+
+        @Override
+        protected double getOffsetX() {
+            return -WTextBox.this.getOverflowWidthForRender();
+        }
+
+        @Override
+        public String getText() {
+            return WTextBox.this.text;
+        }
+    }
+
     protected class WSelection extends Widget {
         protected static final String[] NAMES = combine(Widget.NAMES, "selection");
 
@@ -602,14 +649,19 @@ public class WTextBox extends WContainer {
         }
 
         @Override
+        protected void onCalculateSize() {
+            width = height = 0;
+        }
+
+        @Override
         protected void onRender(Renderer renderer, double mouseX, double mouseY, double delta) {
             double overflowWidth = getOverflowWidthForRender();
 
             if (focused && (cursor != selectionStart || cursor != selectionEnd)) {
                 Vec4 padding = WTextBox.this.get(Properties.PADDING);
 
-                double selStart = WTextBox.this.x + padding.left() + getTextWidth(selectionStart) - overflowWidth;
-                double selEnd = WTextBox.this.x + padding.left() + getTextWidth(selectionEnd) - overflowWidth;
+                double selStart = WTextBox.this.textW.x + getTextWidth(selectionStart) - overflowWidth;
+                double selEnd = WTextBox.this.textW.x + getTextWidth(selectionEnd) - overflowWidth;
 
                 x = selStart - 1;
                 y = WTextBox.this.y + padding.bottom() - 1;

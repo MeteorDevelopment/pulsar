@@ -26,7 +26,7 @@ public class WText extends Widget {
     protected void onCalculateSize() {
         double size = get(Properties.FONT_SIZE);
 
-        width = Renderer.INSTANCE.textWidth(text, size);
+        width = Renderer.INSTANCE.textWidth(getText(), size);
         height = Renderer.INSTANCE.textHeight(size);
     }
 
@@ -34,6 +34,14 @@ public class WText extends Widget {
     protected void onRender(Renderer renderer, double mouseX, double mouseY, double delta) {
         super.onRender(renderer, mouseX, mouseY, delta);
 
-        renderText(renderer, x, y, text);
+        renderText(renderer, x + getOffsetX(), y, getText());
+    }
+
+    protected double getOffsetX() {
+        return 0;
+    }
+
+    public String getText() {
+        return text;
     }
 }

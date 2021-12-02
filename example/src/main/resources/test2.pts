@@ -116,8 +116,15 @@ text-box {
     color: 15 15 15
     outline-size: 1
     outline-color: 0 0 0
-    font-size: 16
     padding: 6
+    icon: write
+    spacing: 4
+}
+
+.write {
+    icon-path: "write.svg"
+    color: 0 0 0
+    size: 16
 }
 
 selection {

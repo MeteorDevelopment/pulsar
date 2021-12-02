@@ -19,6 +19,10 @@ public class WHorizontalList extends WContainer {
         return NAMES;
     }
 
+    protected boolean skipLayoutFor(Widget widget) {
+        return false;
+    }
+
     @Override
     protected void onCalculateSize() {
         Vec4 padding = get(Properties.PADDING);
@@ -31,6 +35,7 @@ public class WHorizontalList extends WContainer {
 
         for (int i = 0; i < cells.size(); i++) {
             Cell<?> cell = cells.get(i);
+            if (skipLayoutFor(cell.widget)) continue;
 
             width += cell.widget.width;
             height = Math.max(height, cell.widget.height + padding.vertical());
@@ -53,6 +58,7 @@ public class WHorizontalList extends WContainer {
 
         for (int i = reversed ? cells.size() - 1 : 0; reversed ? i >= 0 : i < cells.size(); i += reversed ? -1 : 1) {
             Cell<?> cell = cells.get(i);
+            if (skipLayoutFor(cell.widget)) continue;
 
             cell.x = x;
             cell.y = padding.bottom() + y;
