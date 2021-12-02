@@ -26,9 +26,8 @@ public class WIcon extends Widget {
     @Override
     protected void onRender(Renderer renderer, double mouseX, double mouseY, double delta) {
         String path = get(Properties.ICON_PATH);
-        Vec2 size = get(Properties.SIZE);
         Color4 color = get(Properties.COLOR);
 
-        if (path != null && size != null && color != null) renderer.icon(x, y, path, width, color);
+        if (path != null && color != null) renderer.icon(x, y, path, width, color);
     }
 }

@@ -12,6 +12,7 @@ public class TextureAtlas {
 
     private boolean dirty;
     private int x, y;
+    private int rowHeight;
 
     public TextureAtlas() {
         texture = new Texture(SIZE, SIZE, null, false);
@@ -53,9 +54,12 @@ public class TextureAtlas {
     }
 
     private void checkPos(int width, int height) {
+        rowHeight = Math.max(rowHeight, height);
+
         if (x + width >= SIZE) {
             x = 0;
-            y += height;
+            y += rowHeight;
+            rowHeight = 0;
         }
     }
 }
