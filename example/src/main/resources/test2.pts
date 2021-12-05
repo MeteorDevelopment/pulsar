@@ -25,14 +25,14 @@ window-header {
     padding: 8
 }
 
-.window-title {
+text .window-title {
     color: #FFFFFF
     align-x: right
     font-size: 22
     text-shadow: 15 15 15
 }
 
-.window-body {
+window-body {
     background-color: #FFFFFF
     radius: 2
     outline-size: 2
@@ -57,22 +57,19 @@ button :pressed {
     background-color: 220 220 220
 }
 
-// Needs selector rewrite
-//icon .click {
-.click {
+icon .click {
     icon-path: "click.svg"
     color: 0 0 0
     size: 24
 }
 
-// Needs selector rewrite, again
-/*icon .click :hovered {
+icon .click :hovered {
     color: 20 20 20
 }
 
 icon .click :pressed {
     color: 40 40 40
-}*/
+}
 
 .button-text {
     align-x: left
@@ -119,9 +116,10 @@ text-box {
     padding: 6
     icon: write
     spacing: 4
+    minimum-size: 220 0
 }
 
-.write {
+icon .write {
     icon-path: "write.svg"
     color: 0 0 0
     size: 16
@@ -134,6 +132,7 @@ selection {
 
 slider {
     padding: 0
+    minimum-size: 220 0
 }
 
 .slider-left {
@@ -152,10 +151,20 @@ slider {
     radius: 3
 }
 
-.slider-handle {
+slider-handle {
     background-color: 255 20 20
     outline-size: 2
     outline-color: 200 20 20
     size: 16
     radius: 8
+}
+
+slider-handle :hovered {
+    background-color: 255 50 50
+    outline-color: 200 40 40
+}
+
+slider-handle :pressed {
+    background-color: 255 70 70
+    outline-color: 200 60 60
 }

@@ -3,7 +3,6 @@ package meteordevelopment.pulsar.widgets;
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.Properties;
 import meteordevelopment.pulsar.utils.Color4;
-import meteordevelopment.pulsar.utils.Vec2;
 
 import static meteordevelopment.pulsar.utils.Utils.combine;
 
@@ -16,15 +15,14 @@ public class WIcon extends Widget {
     }
 
     @Override
-    protected void onCalculateSize() {
-        Vec2 size = get(Properties.SIZE);
+    public void calculateSize() {
+        super.calculateSize();
 
-        if (size != null) width = height = Math.max(size.x(), size.y());
-        else width = height = 0;
+        width = height = Math.max(width, height);
     }
 
     @Override
-    protected void onRender(Renderer renderer, double mouseX, double mouseY, double delta) {
+    protected void onRender(Renderer renderer, double delta) {
         String path = get(Properties.ICON_PATH);
         Color4 color = get(Properties.COLOR);
 

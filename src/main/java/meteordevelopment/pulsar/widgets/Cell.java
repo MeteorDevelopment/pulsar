@@ -1,10 +1,10 @@
-package meteordevelopment.pulsar.utils;
+package meteordevelopment.pulsar.widgets;
 
 import meteordevelopment.pulsar.theme.Properties;
-import meteordevelopment.pulsar.widgets.Widget;
 
+/** Wrapper for a widget that is placed inside another widget. */
 public class Cell<T extends Widget> {
-    public final T widget;
+    private final T widget;
 
     public double x, y;
     public double width, height;
@@ -16,29 +16,37 @@ public class Cell<T extends Widget> {
         this.widget = widget;
     }
 
+    /** @return the widget this cell wraps. */
+    public T widget() {
+        return widget;
+    }
+
+    /** Makes it so this cell will try to take all available width. If multiple cells in the same row try to do so then the available width will be equally split. */
     public Cell<T> expandCellX() {
         expandCellX = true;
         return this;
     }
 
+    /** Same as {@link #expandCellX()} but also expands the widget to the same width as this cell. */
     public Cell<T> expandX() {
         expandCellX = expandWidgetX = true;
         return this;
     }
 
+    /** Aligns the widget to the bounds of this cell. */
     public void align() {
         if (expandWidgetX) widget.width = width;
 
         switch (widget.get(Properties.ALIGN_X)) {
-            case Left ->   widget.x = x;
+            case Left -> widget.x = x;
             case Center -> widget.x = x + width / 2 - widget.width / 2;
-            case Right ->  widget.x = x + width - widget.width;
+            case Right -> widget.x = x + width - widget.width;
         }
 
         switch (widget.get(Properties.ALIGN_Y)) {
             case Bottom -> widget.y = y;
             case Center -> widget.y = y + height / 2 - widget.height / 2;
-            case Top ->    widget.y = y + height - widget.height;
+            case Top -> widget.y = y + height - widget.height;
         }
     }
 }

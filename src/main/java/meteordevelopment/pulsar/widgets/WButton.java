@@ -1,19 +1,30 @@
 package meteordevelopment.pulsar.widgets;
 
-import meteordevelopment.pulsar.rendering.Renderer;
+import meteordevelopment.pulsar.input.MouseMovedEvent;
+import meteordevelopment.pulsar.layout.HorizontalLayout;
 import meteordevelopment.pulsar.theme.Properties;
 
 import static meteordevelopment.pulsar.utils.Utils.combine;
 
-public class WButton extends WHorizontalList {
-    protected static final String[] NAMES = combine(WHorizontalList.NAMES, "button");
+/** Button widget which can contain text, icon or both. */
+public class WButton extends WPressableWidget {
+    protected static final String[] NAMES = combine(Widget.NAMES, "button");
 
-    protected boolean pressed;
+    public Runnable action;
 
-    protected WIcon iconW;
+    private WText textW;
+    private WIcon iconW;
 
     public WButton(String text) {
-        add(new WText(text).id("button-text"));
+        String icon = get(Properties.ICON);
+        if (icon != null) {
+            iconW = add(new WButtonIcon()).widget();
+            iconW.tag(icon);
+
+            layout = new HorizontalLayout();
+        }
+
+        this.textW = add(new WText(text)).widget();
     }
 
     @Override
@@ -22,67 +33,40 @@ public class WButton extends WHorizontalList {
     }
 
     @Override
-    public void calculateSize() {
-        if (iconW != null) {
-            remove(iconW);
-            iconW = null;
-        }
-
-        String icon = get(Properties.ICON);
-        if (icon != null) {
-            iconW = new WButtonIcon();
-            iconW.id(icon).computeStyle(Renderer.INSTANCE.theme);
-
-            cells.add(0, create(iconW));
-        }
-
-        super.calculateSize();
+    public void invalidStyle() {
+        super.invalidStyle();
+        if (iconW != null) iconW.invalidStyle();
     }
 
     @Override
-    protected boolean onMousePressed(int button, double mouseX, double mouseY, boolean used) {
-        if (hovered && !used) {
-            pressed = true;
-            style = null;
-            if (iconW != null) iconW.style = null;
-
-            return true;
-        }
-
-        return false;
+    protected void doAction() {
+        if (action != null) action.run();
     }
 
-    @Override
-    public void mouseMoved(double mouseX, double mouseY, double deltaMouseX, double deltaMouseY) {
-        super.mouseMoved(mouseX, mouseY, deltaMouseX, deltaMouseY);
-
-        if (iconW != null && iconW.hovered != hovered) {
-            iconW.style = null;
-            iconW.computeStyle(Renderer.INSTANCE.theme);
-        }
-    }
-
-    @Override
-    protected boolean onMouseReleased(int button, double mouseX, double mouseY) {
-        if (pressed) {
-            pressed = false;
-            style = null;
-            if (iconW != null) iconW.style = null;
-        }
-
-        return false;
-    }
-
-    @Override
-    public String state() {
-        if (pressed) return "pressed";
-        return super.state();
+    public void setText(String text) {
+        if (textW == null) textW = add(new WText(text)).widget();
+        else textW.setText(text);
     }
 
     protected class WButtonIcon extends WIcon {
+        protected static final String[] NAMES = combine(WIcon.NAMES, "button-icon");
+
         @Override
-        public String state() {
-            return WButton.this.state();
+        public String[] names() {
+            return NAMES;
+        }
+
+        @Override
+        protected void detectHovered(MouseMovedEvent event) {}
+
+        @Override
+        public boolean isHovered() {
+            return WButton.this.isHovered();
+        }
+
+        @Override
+        public boolean isPressed() {
+            return WButton.this.isPressed();
         }
     }
 }

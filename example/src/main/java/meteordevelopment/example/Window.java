@@ -1,27 +1,26 @@
 package meteordevelopment.example;
 
+import meteordevelopment.pulsar.input.*;
 import org.lwjgl.opengl.GL;
 
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11C.*;
 
 public class Window {
-    public interface MouseCallback {
-        void run(double x, double y, double deltaX, double deltaY);
-    }
-
     public final long handle;
     private int width, height;
     public double lastMouseX, lastMouseY;
 
-    public MouseCallback mouseMoved;
-    public Consumer<Integer> mousePressed, mouseReleased;
-    public Consumer<Double> mouseScrolled;
-    public BiConsumer<Integer, Integer> keyPressed, keyRepeated;
-    public Consumer<Character> charTyped;
+    private final MouseButtonEvent mouseButtonEvent = new MouseButtonEvent();
+    private final MouseMovedEvent mouseMovedEvent = new MouseMovedEvent();
+    private final MouseScrolledEvent mouseScrolledEvent = new MouseScrolledEvent();
+    private final KeyEvent keyEvent = new KeyEvent();
+    private final CharTypedEvent charTypedEvent = new CharTypedEvent();
+
+    public Runnable onResized;
+    public Consumer<Event> onEvent;
 
     public Window() {
         glfwInit();
@@ -46,35 +45,32 @@ public class Window {
             height = height1;
 
             glViewport(0, 0, width1, height1);
+
+            if (onResized != null) onResized.run();
         });
 
         glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> {
-            if (action == GLFW_RELEASE) {
-                if (mouseReleased != null) mouseReleased.accept(button);
-            }
-            else {
-                if (mousePressed != null) mousePressed.accept(button);
-            }
+            onEvent.accept(mouseButtonEvent.set(action == GLFW_RELEASE ? EventType.MouseReleased : EventType.MousePressed, lastMouseX, lastMouseY, button));
         });
 
         glfwSetCursorPosCallback(handle, (window, xpos, ypos) -> {
-            if (mouseMoved != null) mouseMoved.run(xpos, height - ypos, xpos - lastMouseX, height - ypos - lastMouseY);
+            onEvent.accept(mouseMovedEvent.set(xpos, height - ypos, xpos - lastMouseX, height - ypos - lastMouseY));
 
             lastMouseX = xpos;
             lastMouseY = height - ypos;
         });
 
         glfwSetScrollCallback(handle, (window, xoffset, yoffset) -> {
-            if (mouseScrolled != null) mouseScrolled.accept(yoffset);
+            onEvent.accept(mouseScrolledEvent.set(yoffset));
         });
 
         glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> {
-            if (keyPressed != null && action == GLFW_PRESS) keyPressed.accept(key, mods);
-            else if (keyRepeated != null && action == GLFW_REPEAT) keyRepeated.accept(key, mods);
+            if (action == GLFW_PRESS) onEvent.accept(keyEvent.set(EventType.KeyPressed, key, mods));
+            else if (action == GLFW_REPEAT) onEvent.accept(keyEvent.set(EventType.KeyRepeated, key, mods));
         });
 
         glfwSetCharCallback(handle, (window, codepoint) -> {
-            if (charTyped != null) charTyped.accept((char) codepoint);
+            onEvent.accept(charTypedEvent.set((char) codepoint));
         });
 
         glfwSwapInterval(1);

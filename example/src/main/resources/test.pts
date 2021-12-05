@@ -24,7 +24,7 @@ window-header {
     text-shadow: 15 15 15
 }
 
-.window-body {
+window-body {
     radius: 0 0 5 5
     background-color: 20 20 20 200
     padding: 8
@@ -45,12 +45,12 @@ button {
     align-x: center
 }
 
-button:hovered {
+button :hovered {
     background-color: 20 20 20 200
     outline-color: 10 10 10
 }
 
-button:pressed {
+button :pressed {
     background-color: 30 30 30 200
     outline-color: 20 20 20
 }
@@ -84,11 +84,16 @@ text-box {
     outline-color: 0 0 0
     font-size: 16
     padding: 6
+    minimum-size: 220 0
 }
 
 selection {
     background-color: 45 125 245 100
     radius: 2
+}
+
+slider {
+    minimum-size: 220 0
 }
 
 .slider-left {
@@ -101,7 +106,7 @@ selection {
     size: 4
 }
 
-.slider-handle {
+slider-handle {
     background-color: 0 255 180
     size: 16
     radius: 8

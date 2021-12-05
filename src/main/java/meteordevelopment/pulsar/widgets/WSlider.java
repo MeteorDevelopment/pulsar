@@ -1,12 +1,15 @@
 package meteordevelopment.pulsar.widgets;
 
+import meteordevelopment.pulsar.input.MouseButtonEvent;
+import meteordevelopment.pulsar.input.MouseMovedEvent;
+import meteordevelopment.pulsar.input.MouseScrolledEvent;
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.utils.Utils;
 
 import static meteordevelopment.pulsar.utils.Utils.combine;
 
-public class WSlider extends WContainer {
-    protected static final String[] NAMES = combine(WContainer.NAMES, "slider");
+public class WSlider extends Widget {
+    protected static final String[] NAMES = combine(Widget.NAMES, "slider");
 
     public Runnable action;
     public Runnable actionOnRelease;
@@ -24,9 +27,9 @@ public class WSlider extends WContainer {
         this.min = min;
         this.max = max;
 
-        left = add(new Widget().id("slider-left")).expandX().widget;
-        right = add(new Widget().id("slider-right")).expandX().widget;
-        handle = add(new Widget().id("slider-handle")).widget;
+        left = add(new Widget().tag("slider-left")).expandX().widget();
+        right = add(new Widget().tag("slider-right")).expandX().widget();
+        handle = add(new WHandle()).widget();
     }
 
     @Override
@@ -35,44 +38,43 @@ public class WSlider extends WContainer {
     }
 
     @Override
-    protected boolean onMousePressed(int button, double mouseX, double mouseY, boolean used) {
-        if (hovered && !used) {
+    protected void onMousePressed(MouseButtonEvent event) {
+        if (!event.used && isHovered()) {
             valueAtDragStart = value;
             double handleSize = handle.width;
 
-            double valueWidth = mouseX - (x + handleSize / 2);
+            double valueWidth = event.x - (x + handleSize / 2);
             set((valueWidth / (width - handleSize)) * (max - min) + min);
             if (action != null) action.run();
 
             dragging = true;
-            return true;
-        }
+            handle.invalidStyle();
 
-        return false;
+            event.use();
+        }
     }
 
     @Override
-    protected void onMouseMoved(double mouseX, double mouseY, double deltaMouseX, double deltaMouseY) {
+    protected void onMouseMoved(MouseMovedEvent event) {
         double s = handle.width;
         double s2 = s / 2;
 
-        boolean mouseOverX = mouseX >= this.x + s2 && mouseX <= this.x + s2 + width - s;
-        hovered = mouseOverX && mouseY >= this.y && mouseY <= this.y + height;
+        boolean mouseOverX = event.x >= this.x + s2 && event.x <= this.x + s2 + width - s;
 
         if (dragging) {
             if (mouseOverX) {
-                double valueWidth = mouseX - (this.x + s / 2);
+                double valueWidth = event.x - (this.x + s / 2);
                 valueWidth = Utils.clamp(valueWidth, 0, width - s);
 
                 set((valueWidth / (width - s)) * (max - min) + min);
                 if (action != null) action.run();
             }
             else {
-                if (value > min && mouseX < this.x + s2) {
+                if (value > min && event.x < this.x + s2) {
                     value = min;
                     if (action != null) action.run();
                 }
-                else if (value < max && mouseX > this.x + s2 + width - s) {
+                else if (value < max && event.x > this.x + s2 + width - s) {
                     value = max;
                     if (action != null) action.run();
                 }
@@ -81,29 +83,25 @@ public class WSlider extends WContainer {
     }
 
     @Override
-    protected boolean onMouseReleased(int button, double mouseX, double mouseY) {
+    protected void onMouseReleased(MouseButtonEvent event) {
         if (dragging) {
             if (value != valueAtDragStart && actionOnRelease != null) {
                 actionOnRelease.run();
             }
 
             dragging = false;
-            return true;
+            handle.invalidStyle();
         }
-
-        return false;
     }
 
     @Override
-    protected boolean onMouseScrolled(double amount) {
-        if (hovered) {
-            set(value + 0.25 * amount);
+    protected void onMouseScrolled(MouseScrolledEvent event) {
+        if (!event.used && isHovered()) {
+            set(value + 0.25 * event.value);
 
             if (action != null) action.run();
-            return true;
+            event.use();
         }
-
-        return false;
     }
 
     public void set(double value) {
@@ -120,7 +118,7 @@ public class WSlider extends WContainer {
     }
 
     @Override
-    public void render(Renderer renderer, double mouseX, double mouseY, double delta) {
+    public void render(Renderer renderer, double delta) {
         double v = valueWidth();
         handle.x = x + v;
         v += handle.width / 2;
@@ -128,6 +126,20 @@ public class WSlider extends WContainer {
         right.x = x + v;
         right.width = width - v;
 
-        super.render(renderer, mouseX, mouseY, delta);
+        super.render(renderer, delta);
+    }
+
+    protected class WHandle extends Widget {
+        protected static final String[] NAMES = combine(Widget.NAMES, "slider-handle");
+
+        @Override
+        public String[] names() {
+            return NAMES;
+        }
+
+        @Override
+        public boolean isPressed() {
+            return dragging;
+        }
     }
 }

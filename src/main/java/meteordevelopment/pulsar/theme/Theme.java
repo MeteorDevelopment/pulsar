@@ -1,7 +1,6 @@
 package meteordevelopment.pulsar.theme;
 
 import meteordevelopment.pulsar.rendering.FontInfo;
-import meteordevelopment.pulsar.widgets.Widget;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
@@ -18,8 +17,7 @@ public class Theme {
     public final String title;
     public final Collection<String> authors;
 
-    private final Map<String, WidgetNode> widgetStyles = new HashMap<>();
-    private final Map<String, Style> idStyles = new HashMap<>();
+    private final Styles styles = new Styles();
 
     private FontInfo fontInfo;
     private final Map<String, ByteBuffer> buffers = new HashMap<>();
@@ -43,44 +41,12 @@ public class Theme {
         return fontInfo;
     }
 
-    public void addWidgetStyle(String widget, Style style) {
-        getWidget(widget, true).style = style;
+    public void addStyle(Style style) {
+        styles.add(style);
     }
 
-    public void addIdStyle(String name, Style style) {
-        idStyles.put(name, style);
-    }
-
-    public void addStateStyle(String widget, String state, Style style) {
-        getWidget(widget, true).stateStyles.put(state, style);
-    }
-
-    public Style computeStyle(Widget widget) {
-        Style style = new Style();
-
-        // Apply widget styles
-        for (String name : widget.names()) {
-            WidgetNode node = getWidget(name, false);
-            if (node != null && node.style != null) style.merge(node.style);
-        }
-
-        // Apply id style
-        if (widget.id() != null) {
-            Style idStyle = idStyles.get(widget.id());
-            if (idStyle != null) style.merge(idStyle);
-        }
-
-        // Apply state style
-        if (widget.state() != null) {
-            WidgetNode node = getWidget(widget.names()[widget.names().length - 1], false);
-
-            if (node != null) {
-                Style stateStyle = node.stateStyles.get(widget.state());
-                if (stateStyle != null) style.merge(stateStyle);
-            }
-        }
-
-        return style;
+    public Style computeStyle(IStylable widget) {
+        return styles.compute(widget);
     }
 
     public void putBuffer(String name, ByteBuffer buffer) {
@@ -89,10 +55,5 @@ public class Theme {
 
     public ByteBuffer getBuffer(String name) {
         return buffers.get(name);
-    }
-
-    private WidgetNode getWidget(String name, boolean create) {
-        if (create) return widgetStyles.computeIfAbsent(name, s -> new WidgetNode());
-        return widgetStyles.get(name);
     }
 }

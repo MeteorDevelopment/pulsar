@@ -1,26 +1,23 @@
 package meteordevelopment.pulsar.widgets;
 
-import meteordevelopment.pulsar.rendering.Renderer;
-import meteordevelopment.pulsar.theme.Properties;
-import meteordevelopment.pulsar.utils.Cell;
-import meteordevelopment.pulsar.utils.Color4;
-import meteordevelopment.pulsar.utils.IColor;
-import meteordevelopment.pulsar.utils.Vec4;
+import meteordevelopment.pulsar.input.MouseButtonEvent;
+import meteordevelopment.pulsar.input.MouseMovedEvent;
+import meteordevelopment.pulsar.layout.VerticalLayout;
 
 import static meteordevelopment.pulsar.utils.Utils.combine;
 
-public class WWindow extends WVerticalList {
-    protected static final String[] NAMES = combine(WVerticalList.NAMES, "window");
+public class WWindow extends Widget {
+    protected static final String[] NAMES = combine(Widget.NAMES, "window");
 
-    private final WContainer body;
+    private final Widget body;
 
     public WWindow(String title) {
-        // Header
-        WContainer header = super.add(new WHeader()).expandX().widget;
-        header.add(new WText(title).id("window-title"));
+        Widget header = super.add(new WHeader()).expandX().widget();
+        header.add(new WText(title).tag("window-title"));
 
-        // Body
-        body = super.add(new WVerticalList().id("window-body")).expandX().widget;
+        body = super.add(new WBody()).expandX().widget();
+
+        layout = VerticalLayout.INSTANCE;
     }
 
     @Override
@@ -34,8 +31,8 @@ public class WWindow extends WVerticalList {
     }
 
     @Override
-    public void remove(Widget widget) {
-        body.remove(widget);
+    public boolean remove(Widget widget) {
+        return body.remove(widget);
     }
 
     @Override
@@ -43,27 +40,10 @@ public class WWindow extends WVerticalList {
         body.clear();
     }
 
-    @Override
-    public void render(Renderer renderer, double mouseX, double mouseY, double delta) {
-        Vec4 radius = get(Properties.RADIUS);
-        double outlineSize = get(Properties.OUTLINE_SIZE);
-        Color4 backgroundColor = get(Properties.BACKGROUND_COLOR);
-        Color4 outlineColor = get(Properties.OUTLINE_COLOR);
+    public class WHeader extends Widget {
+        protected static final String[] NAMES = combine(Widget.NAMES, "window-header");
 
-        if (backgroundColor != null) renderer.quad(x, y, width, height, radius, 0, backgroundColor, null);
-
-        super.render(renderer, mouseX, mouseY, delta);
-
-        if (outlineSize > 0) renderer.quad(x, y, width, height, radius, outlineSize, null, outlineColor);
-    }
-
-    @Override
-    protected void onRender(Renderer renderer, double mouseX, double mouseY, double delta) {}
-
-    public class WHeader extends WContainer {
-        protected static final String[] NAMES = combine(WContainer.NAMES, "window-header");
-
-        protected boolean dragging;
+        private boolean dragging;
 
         @Override
         public String[] names() {
@@ -71,25 +51,30 @@ public class WWindow extends WVerticalList {
         }
 
         @Override
-        protected boolean onMousePressed(int button, double mouseX, double mouseY, boolean used) {
-            if (hovered && !used) {
+        protected void onMousePressed(MouseButtonEvent event) {
+            if (!event.used && isHovered()) {
                 dragging = true;
-
-                return true;
+                event.use();
             }
-
-            return false;
         }
 
         @Override
-        protected boolean onMouseReleased(int button, double mouseX, double mouseY) {
+        protected void onMouseMoved(MouseMovedEvent event) {
+            if (dragging) WWindow.this.move(event.deltaX, event.deltaY);
+        }
+
+        @Override
+        protected void onMouseReleased(MouseButtonEvent event) {
             dragging = false;
-            return false;
         }
+    }
+
+    public static class WBody extends WVerticalList {
+        protected static final String[] NAMES = combine(WVerticalList.NAMES, "window-body");
 
         @Override
-        protected void onMouseMoved(double mouseX, double mouseY, double deltaMouseX, double deltaMouseY) {
-            if (dragging) WWindow.this.move(deltaMouseX, deltaMouseY);
+        public String[] names() {
+            return NAMES;
         }
     }
 }

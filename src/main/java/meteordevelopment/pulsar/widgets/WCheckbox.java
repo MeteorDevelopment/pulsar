@@ -4,18 +4,18 @@ import meteordevelopment.pulsar.rendering.Renderer;
 
 import static meteordevelopment.pulsar.utils.Utils.combine;
 
-public class WCheckbox extends WContainer {
-    protected static final String[] NAMES = combine(WContainer.NAMES, "checkbox");
+public class WCheckbox extends WPressableWidget {
+    protected static final String[] NAMES = combine(Widget.NAMES, "checkbox");
 
-    private final WInner inner;
-
+    public Runnable action;
     public boolean checked;
-    private boolean pressed;
+
+    private final Widget inner;
 
     public WCheckbox(boolean checked) {
         this.checked = checked;
 
-        inner = add(new WInner()).widget;
+        inner = add(new WInner()).widget();
     }
 
     @Override
@@ -24,42 +24,15 @@ public class WCheckbox extends WContainer {
     }
 
     @Override
-    protected boolean onMousePressed(int button, double mouseX, double mouseY, boolean used) {
-        if (hovered && !used) {
-            pressed = true;
-            checked = !checked;
-
-            style = null;
-            inner.style = null;
-
-            return true;
-        }
-
-        return false;
+    public void invalidStyle() {
+        super.invalidStyle();
+        inner.invalidStyle();
     }
 
     @Override
-    protected boolean onMouseReleased(int button, double mouseX, double mouseY) {
-        if (pressed) {
-            pressed = false;
-
-            style = null;
-            inner.style = null;
-        }
-
-        return false;
-    }
-
-    @Override
-    public void render(Renderer renderer, double mouseX, double mouseY, double delta) {
-        inner.visible = checked;
-        super.render(renderer, mouseX, mouseY, delta);
-    }
-
-    @Override
-    public String state() {
-        if (pressed) return "pressed";
-        return super.state();
+    protected void doAction() {
+        checked = !checked;
+        if (action != null) action.run();
     }
 
     protected class WInner extends Widget {
@@ -71,9 +44,18 @@ public class WCheckbox extends WContainer {
         }
 
         @Override
-        public String state() {
-            if (pressed) return "pressed";
-            return super.state();
+        public boolean isHovered() {
+            return WCheckbox.this.isHovered();
+        }
+
+        @Override
+        public boolean isPressed() {
+            return WCheckbox.this.isPressed();
+        }
+
+        @Override
+        public void render(Renderer renderer, double delta) {
+            if (checked) super.render(renderer, delta);
         }
     }
 }

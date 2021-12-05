@@ -18,6 +18,7 @@ public class Properties {
     public static final Property<Vec4> PADDING = add(new Property<>("padding", PropertyType.Vec4));
     public static final Property<Vec4> RADIUS = add(new Property<>("radius", PropertyType.Vec4));
     public static final Property<Vec2> SIZE = add(new Property<>("size", PropertyType.Vec2));
+    public static final Property<Vec2> MINIMUM_SIZE = add(new Property<>("minimum-size", PropertyType.Vec2));
 
     public static final Property<AlignX> ALIGN_X = add(new Property<>("align-x", PropertyType.Enum, AlignX.Left));
     public static final Property<AlignY> ALIGN_Y = add(new Property<>("align-y", PropertyType.Enum, AlignY.Center));

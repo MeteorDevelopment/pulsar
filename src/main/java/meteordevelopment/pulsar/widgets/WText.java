@@ -2,16 +2,14 @@ package meteordevelopment.pulsar.widgets;
 
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.Properties;
-import meteordevelopment.pulsar.utils.Color4;
-import meteordevelopment.pulsar.utils.IColor;
-import meteordevelopment.pulsar.utils.Vec2;
 
 import static meteordevelopment.pulsar.utils.Utils.combine;
 
+/** Text widget. */
 public class WText extends Widget {
     protected static final String[] NAMES = combine(Widget.NAMES, "text");
 
-    private final String text;
+    private String text;
 
     public WText(String text) {
         this.text = text;
@@ -23,7 +21,7 @@ public class WText extends Widget {
     }
 
     @Override
-    protected void onCalculateSize() {
+    public void calculateSize() {
         double size = get(Properties.FONT_SIZE);
 
         width = Renderer.INSTANCE.textWidth(getText(), size);
@@ -31,14 +29,19 @@ public class WText extends Widget {
     }
 
     @Override
-    protected void onRender(Renderer renderer, double mouseX, double mouseY, double delta) {
-        super.onRender(renderer, mouseX, mouseY, delta);
+    protected void onRender(Renderer renderer, double delta) {
+        super.onRender(renderer, delta);
 
         renderText(renderer, x + getOffsetX(), y, getText());
     }
 
     protected double getOffsetX() {
         return 0;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+        invalidateLayout();
     }
 
     public String getText() {

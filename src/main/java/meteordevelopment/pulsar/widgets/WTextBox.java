@@ -1,5 +1,10 @@
 package meteordevelopment.pulsar.widgets;
 
+import meteordevelopment.pulsar.input.CharTypedEvent;
+import meteordevelopment.pulsar.input.KeyEvent;
+import meteordevelopment.pulsar.input.MouseButtonEvent;
+import meteordevelopment.pulsar.input.MouseMovedEvent;
+import meteordevelopment.pulsar.layout.HorizontalLayout;
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.Properties;
 import meteordevelopment.pulsar.utils.Color4;
@@ -13,8 +18,8 @@ import java.util.List;
 import static meteordevelopment.pulsar.utils.Utils.combine;
 import static org.lwjgl.glfw.GLFW.*;
 
-public class WTextBox extends WHorizontalList {
-    protected static final String[] NAMES = combine(WContainer.NAMES, "text-box");
+public class WTextBox extends Widget {
+    protected static final String[] NAMES = combine(Widget.NAMES, "text-box");
 
     public Runnable action;
     public Runnable actionOnUnfocused;
@@ -46,8 +51,18 @@ public class WTextBox extends WHorizontalList {
         this.text = text;
         this.filter = (text1, c) -> true;
 
-        selectionW = add(new WSelection()).widget;
-        textW = add(new WTextBoxText()).expandX().widget;
+        String icon = get(Properties.ICON);
+        if (icon != null) {
+            iconW = add(new WIcon()).widget();
+            iconW.tag(icon);
+
+            layout = new HorizontalLayout();
+        }
+
+        selectionW = add(new WSelection()).widget();
+        textW = add(new WTextBoxText()).expandX().widget();
+
+        calculateTextWidths();
     }
 
     @Override
@@ -56,39 +71,9 @@ public class WTextBox extends WHorizontalList {
     }
 
     @Override
-    protected boolean skipLayoutFor(Widget widget) {
-        return widget == selectionW;
-    }
-
-    @Override
-    public void calculateSize() {
-        if (iconW != null) {
-            remove(iconW);
-            iconW = null;
-        }
-
-        String icon = get(Properties.ICON);
-        if (icon != null) {
-            iconW = new WIcon();
-            iconW.id(icon).computeStyle(Renderer.INSTANCE.theme);
-
-            cells.add(0, create(iconW));
-        }
-
-        super.calculateSize();
-    }
-
-    @Override
-    protected void onCalculateSize() {
-        super.onCalculateSize();
-
-        calculateTextWidths();
-    }
-
-    @Override
-    protected boolean onMousePressed(int button, double mouseX, double mouseY, boolean used) {
-        if (hovered && !used) {
-            if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+    protected void onMousePressed(MouseButtonEvent event) {
+        if (!event.used && isHovered()) {
+            if (event.button == GLFW_MOUSE_BUTTON_RIGHT) {
                 if (!text.isEmpty()) {
                     text = "";
                     cursor = 0;
@@ -98,11 +83,11 @@ public class WTextBox extends WHorizontalList {
                     runAction();
                 }
             }
-            else if (button == GLFW_MOUSE_BUTTON_LEFT) {
+            else if (event.button == GLFW_MOUSE_BUTTON_LEFT) {
                 selecting = true;
 
                 double overflowWidth = getOverflowWidthForRender();
-                double relativeMouseX = mouseX - textW.x + overflowWidth;
+                double relativeMouseX = event.x - textW.x + overflowWidth;
 
                 double smallestDifference = Double.MAX_VALUE;
 
@@ -123,20 +108,20 @@ public class WTextBox extends WHorizontalList {
             }
 
             setFocused(true);
-            return true;
+
+            event.use();
+            return;
         }
 
         if (focused) setFocused(false);
-
-        return false;
     }
 
     @Override
-    protected void onMouseMoved(double mouseX, double mouseY, double deltaMouseX, double deltaMouseY) {
+    protected void onMouseMoved(MouseMovedEvent event) {
         if (!selecting) return;
 
         double overflowWidth = getOverflowWidthForRender();
-        double relativeMouseX = mouseX - textW.x + overflowWidth;
+        double relativeMouseX = event.x - textW.x + overflowWidth;
 
         double smallestDifference = Double.MAX_VALUE;
 
@@ -162,7 +147,7 @@ public class WTextBox extends WHorizontalList {
     }
 
     @Override
-    protected boolean onMouseReleased(int button, double mouseX, double mouseY) {
+    protected void onMouseReleased(MouseButtonEvent event) {
         selecting = false;
 
         if (selectionStart < preSelectionCursor && preSelectionCursor == selectionEnd) {
@@ -171,58 +156,60 @@ public class WTextBox extends WHorizontalList {
         else if (selectionEnd > preSelectionCursor && preSelectionCursor == selectionStart) {
             cursor = selectionEnd;
         }
-
-        return false;
     }
 
     @Override
-    protected boolean onKeyPressed(int key, int mods) {
-        if (!focused) return false;
+    protected void onKeyPressed(KeyEvent event) {
+        if (!focused || event.used) return;
 
-        boolean control = Utils.IS_MAC ? mods == GLFW_MOD_SUPER : mods == GLFW_MOD_CONTROL;
+        boolean control = Utils.IS_MAC ? event.mods == GLFW_MOD_SUPER : event.mods == GLFW_MOD_CONTROL;
 
-        if (control && key == GLFW_KEY_C) {
+        if (control && event.key == GLFW_KEY_C) {
             if (cursor != selectionStart || cursor != selectionEnd) {
                 glfwSetClipboardString(Renderer.INSTANCE.window, text.substring(selectionStart, selectionEnd));
             }
-            return true;
+
+            event.use();
         }
-        else if (control && key == GLFW_KEY_X) {
+        else if (control && event.key == GLFW_KEY_X) {
             if (cursor != selectionStart || cursor != selectionEnd) {
                 glfwSetClipboardString(Renderer.INSTANCE.window, text.substring(selectionStart, selectionEnd));
                 clearSelection();
             }
 
-            return true;
+            event.use();
         }
-        else if (control && key == GLFW_KEY_A) {
+        else if (control && event.key == GLFW_KEY_A) {
             cursor = text.length();
             selectionStart = 0;
             selectionEnd = cursor;
+
+            event.use();
         }
-        else if (mods == ((Utils.IS_MAC ? GLFW_MOD_SUPER : GLFW_MOD_CONTROL) | GLFW_MOD_SHIFT) && key == GLFW_KEY_A) {
+        else if (event.mods == ((Utils.IS_MAC ? GLFW_MOD_SUPER : GLFW_MOD_CONTROL) | GLFW_MOD_SHIFT) && event.key == GLFW_KEY_A) {
             resetSelection();
+            event.use();
         }
-        else if (key == GLFW_KEY_ENTER || key == GLFW_KEY_KP_ENTER) {
+        else if (event.key == GLFW_KEY_ENTER || event.key == GLFW_KEY_KP_ENTER) {
             setFocused(false);
 
             if (actionOnUnfocused != null) actionOnUnfocused.run();
-            return true;
+            event.use();
         }
 
-        return onKeyRepeated(key, mods);
+        onKeyRepeated(event);
     }
 
     @Override
-    protected boolean onKeyRepeated(int key, int mods) {
-        if (!focused) return false;
+    protected void onKeyRepeated(KeyEvent event) {
+        if (!focused || event.used) return;
 
-        boolean control = Utils.IS_MAC ? mods == GLFW_MOD_SUPER : mods == GLFW_MOD_CONTROL;
-        boolean shift = mods == GLFW_MOD_SHIFT;
-        boolean controlShift = mods == ((Utils.IS_MAC ? GLFW_MOD_SUPER : GLFW_MOD_ALT) | GLFW_MOD_SHIFT);
-        boolean altShift = mods == ((Utils.IS_MAC ? GLFW_MOD_ALT : GLFW_MOD_CONTROL) | GLFW_MOD_SHIFT);
+        boolean control = Utils.IS_MAC ? event.mods == GLFW_MOD_SUPER :event. mods == GLFW_MOD_CONTROL;
+        boolean shift = event.mods == GLFW_MOD_SHIFT;
+        boolean controlShift = event.mods == ((Utils.IS_MAC ? GLFW_MOD_SUPER : GLFW_MOD_ALT) | GLFW_MOD_SHIFT);
+        boolean altShift = event.mods == ((Utils.IS_MAC ? GLFW_MOD_ALT : GLFW_MOD_CONTROL) | GLFW_MOD_SHIFT);
 
-        if (control && key == GLFW_KEY_V) {
+        if (control && event.key == GLFW_KEY_V) {
             clearSelection();
 
             String clipboard = glfwGetClipboardString(Renderer.INSTANCE.window);
@@ -251,15 +238,15 @@ public class WTextBox extends WHorizontalList {
                 if (!text.equals(preText)) runAction();
             }
 
-            return true;
+            event.use();
         }
-        else if (key == GLFW_KEY_BACKSPACE) {
+        else if (event.key == GLFW_KEY_BACKSPACE) {
             if (cursor > 0 && cursor == selectionStart && cursor == selectionEnd) {
                 String preText = text;
 
-                int count = mods == (Utils.IS_MAC ? GLFW_MOD_SUPER : GLFW_MOD_ALT)
+                int count = event.mods == (Utils.IS_MAC ? GLFW_MOD_SUPER : GLFW_MOD_ALT)
                         ? cursor
-                        : mods == (Utils.IS_MAC ? GLFW_MOD_ALT : GLFW_MOD_CONTROL)
+                        : event.mods == (Utils.IS_MAC ? GLFW_MOD_ALT : GLFW_MOD_CONTROL)
                         ? countToNextSpace(true)
                         : 1;
 
@@ -273,16 +260,16 @@ public class WTextBox extends WHorizontalList {
                 clearSelection();
             }
 
-            return true;
+            event.use();
         }
-        else if (key == GLFW_KEY_DELETE) {
+        else if (event.key == GLFW_KEY_DELETE) {
             if (cursor < text.length()) {
                 if (cursor == selectionStart && cursor == selectionEnd) {
                     String preText = text;
 
-                    int count = mods == (Utils.IS_MAC ? GLFW_MOD_SUPER : GLFW_MOD_ALT)
+                    int count = event.mods == (Utils.IS_MAC ? GLFW_MOD_SUPER : GLFW_MOD_ALT)
                             ? text.length() - cursor
-                            : mods == (Utils.IS_MAC ? GLFW_MOD_ALT : GLFW_MOD_CONTROL)
+                            : event.mods == (Utils.IS_MAC ? GLFW_MOD_ALT : GLFW_MOD_CONTROL)
                             ? countToNextSpace(false)
                             : 1;
 
@@ -295,15 +282,15 @@ public class WTextBox extends WHorizontalList {
                 }
             }
 
-            return true;
+            event.use();
         }
-        else if (key == GLFW_KEY_LEFT) {
+        else if (event.key == GLFW_KEY_LEFT) {
             if (cursor > 0) {
-                if (mods == (Utils.IS_MAC ? GLFW_MOD_ALT : GLFW_MOD_CONTROL)) {
+                if (event.mods == (Utils.IS_MAC ? GLFW_MOD_ALT : GLFW_MOD_CONTROL)) {
                     cursor -= countToNextSpace(true);
                     resetSelection();
                 }
-                else if (mods == (Utils.IS_MAC ? GLFW_MOD_SUPER : GLFW_MOD_ALT)) {
+                else if (event.mods == (Utils.IS_MAC ? GLFW_MOD_SUPER : GLFW_MOD_ALT)) {
                     cursor = 0;
                     resetSelection();
                 }
@@ -347,22 +334,23 @@ public class WTextBox extends WHorizontalList {
                 }
 
                 cursorChanged();
+                event.use();
             }
-            else if (selectionStart != selectionEnd && selectionStart == 0 && mods == 0) {
+            else if (selectionStart != selectionEnd && selectionStart == 0 && event.mods == 0) {
                 cursor = 0;
                 resetSelection();
                 cursorChanged();
-            }
 
-            return true;
+                event.use();
+            }
         }
-        else if (key == GLFW_KEY_RIGHT) {
+        else if (event.key == GLFW_KEY_RIGHT) {
             if (cursor < text.length()) {
-                if (mods == (Utils.IS_MAC ? GLFW_MOD_ALT : GLFW_MOD_CONTROL)) {
+                if (event.mods == (Utils.IS_MAC ? GLFW_MOD_ALT : GLFW_MOD_CONTROL)) {
                     cursor += countToNextSpace(false);
                     resetSelection();
                 }
-                else if (mods == (Utils.IS_MAC ? GLFW_MOD_SUPER : GLFW_MOD_ALT)) {
+                else if (event.mods == (Utils.IS_MAC ? GLFW_MOD_SUPER : GLFW_MOD_ALT)) {
                     cursor = text.length();
                     resetSelection();
                 }
@@ -405,38 +393,51 @@ public class WTextBox extends WHorizontalList {
                 }
 
                 cursorChanged();
+                event.use();
             }
-            else if (selectionStart != selectionEnd && selectionEnd == text.length() && mods == 0) {
+            else if (selectionStart != selectionEnd && selectionEnd == text.length() && event.mods == 0) {
                 cursor = text.length();
                 resetSelection();
                 cursorChanged();
+
+                event.use();
             }
-
-            return true;
         }
+    }
 
-        return false;
+    @Override
+    protected void onCharTyped(CharTypedEvent event) {
+        if (!focused || event.used) return;
+
+        if (filter.filter(text, event.c)) {
+            clearSelection();
+
+            text = text.substring(0, cursor) + event.c + text.substring(cursor);
+
+            cursor++;
+            resetSelection();
+
+            runAction();
+            event.use();
+        }
     }
 
     // Rendering
 
-
     @Override
-    public void render(Renderer renderer, double mouseX, double mouseY, double delta) {
-        computeStyle(Renderer.INSTANCE.theme);
+    public void render(Renderer renderer, double delta) {
+        if (iconW != null) iconW.render(renderer, delta);
 
-        if (iconW != null) iconW.render(renderer, mouseX, mouseY, delta);
-
-        onRender(renderer, mouseX, mouseY, delta);
-        textW.render(renderer, mouseX, mouseY, delta);
-        selectionW.render(renderer, mouseX, mouseY, delta);
+        onRender(renderer, delta);
+        textW.render(renderer, delta);
+        selectionW.render(renderer, delta);
 
         if (scissor) renderer.endScissor();
     }
 
     @Override
-    protected void onRender(Renderer renderer, double mouseX, double mouseY, double delta) {
-        super.onRender(renderer, mouseX, mouseY, delta);
+    protected void onRender(Renderer renderer, double delta) {
+        super.onRender(renderer, delta);
 
         if (cursorTimer >= 1) {
             cursorVisible = !cursorVisible;
@@ -463,25 +464,6 @@ public class WTextBox extends WHorizontalList {
             renderer.quad(textW.x + getTextWidth(cursor) - overflowWidth, y + padding.bottom(), 1, height - padding.vertical(), new Vec4(0), 0, color, null);
             renderer.alpha(1);
         }
-    }
-
-    @Override
-    public boolean onCharTyped(char c) {
-        if (!focused) return false;
-
-        if (filter.filter(text, c)) {
-            clearSelection();
-
-            text = text.substring(0, cursor) + c + text.substring(cursor);
-
-            cursor++;
-            resetSelection();
-
-            runAction();
-            return true;
-        }
-
-        return false;
     }
 
     // Utils
@@ -649,12 +631,12 @@ public class WTextBox extends WHorizontalList {
         }
 
         @Override
-        protected void onCalculateSize() {
-            width = height = 0;
+        public boolean shouldSkipLayout() {
+            return true;
         }
 
         @Override
-        protected void onRender(Renderer renderer, double mouseX, double mouseY, double delta) {
+        protected void onRender(Renderer renderer, double delta) {
             double overflowWidth = getOverflowWidthForRender();
 
             if (focused && (cursor != selectionStart || cursor != selectionEnd)) {
@@ -669,7 +651,7 @@ public class WTextBox extends WHorizontalList {
                 width = selEnd - selStart + 2;
                 height = WTextBox.this.height - padding.vertical() + 2;
 
-                super.onRender(renderer, mouseX, mouseY, delta);
+                super.onRender(renderer, delta);
             }
         }
     }

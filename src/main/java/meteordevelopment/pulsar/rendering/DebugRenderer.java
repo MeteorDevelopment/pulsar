@@ -1,9 +1,8 @@
 package meteordevelopment.pulsar.rendering;
 
-import meteordevelopment.pulsar.utils.Cell;
 import meteordevelopment.pulsar.utils.ColorFactory;
 import meteordevelopment.pulsar.utils.IColor;
-import meteordevelopment.pulsar.widgets.WContainer;
+import meteordevelopment.pulsar.widgets.Cell;
 import meteordevelopment.pulsar.widgets.Widget;
 import org.joml.Matrix4f;
 
@@ -35,11 +34,9 @@ public class DebugRenderer {
     private static void render(Widget widget) {
         lineBox(widget.x, widget.y, widget.width, widget.height, WIDGET_COLOR);
 
-        if (widget instanceof WContainer) {
-            for (Cell<?> cell : ((WContainer) widget).cells) {
-                lineBox(cell.x, cell.y, cell.width, cell.height, CELL_COLOR);
-                render(cell.widget);
-            }
+        for (Cell<?> cell : widget) {
+            lineBox(cell.x, cell.y, cell.width, cell.height, CELL_COLOR);
+            render(cell.widget());
         }
     }
 

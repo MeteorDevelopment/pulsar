@@ -1,74 +1,178 @@
 package meteordevelopment.pulsar.widgets;
 
+import meteordevelopment.pulsar.input.Event;
+import meteordevelopment.pulsar.input.EventHandler;
+import meteordevelopment.pulsar.input.EventType;
+import meteordevelopment.pulsar.input.MouseMovedEvent;
+import meteordevelopment.pulsar.layout.BasicLayout;
+import meteordevelopment.pulsar.layout.Layout;
 import meteordevelopment.pulsar.rendering.Renderer;
+import meteordevelopment.pulsar.theme.IStylable;
 import meteordevelopment.pulsar.theme.Properties;
 import meteordevelopment.pulsar.theme.Property;
 import meteordevelopment.pulsar.theme.Style;
-import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.utils.Color4;
 import meteordevelopment.pulsar.utils.Vec2;
 import meteordevelopment.pulsar.utils.Vec4;
 
-public class Widget {
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+/** Base class for all widgets */
+public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>> {
     protected static final String[] NAMES = { "widget" };
 
-    public boolean visible = true;
     protected Widget parent;
 
-    private String id;
-    protected Style style;
+    private final List<String> tags = new ArrayList<>();
+    private final List<Cell<?>> cells = new ArrayList<>();
+
+    public Layout layout = BasicLayout.INSTANCE;
 
     public double x, y;
     public double width, height;
-    private double minWidth, minHeight;
 
-    protected boolean hovered;
+    private boolean hovered;
+    public Style style;
 
+    public Widget() {
+        style = Renderer.INSTANCE.theme.computeStyle(this);
+    }
+
+    @Override
     public String[] names() {
         return NAMES;
     }
 
-    // Layout
+    // Cells
 
-    public void calculateSize() {
-        onCalculateSize();
+    /**
+     * Adds the specified widget as a children of this widget.
+     * @return cell which contains the newly added widget.
+     */
+    public <T extends Widget> Cell<T> add(T widget) {
+        Cell<T> cell = new Cell<>(widget);
 
-        width = Math.round(Math.max(width, minWidth));
-        height = Math.round(Math.max(height, minHeight));
+        widget.parent = this;
+        invalidateLayout();
+
+        cells.add(cell);
+        layout.onAdd(this, cell);
+
+        return cell;
     }
 
-    protected void onCalculateSize() {
-        Vec2 size = get(Properties.SIZE);
+    /**
+     * Removes the specified widget from the children of this widget.
+     * @return true if the widget was removed.
+     */
+    public boolean remove(Widget widget) {
+        for (Iterator<Cell<?>> it = cells.iterator(); it.hasNext();) {
+            if (it.next().widget() == widget) {
+                it.remove();
 
-        width = size.x();
-        height = size.y();
+                invalidateLayout();
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    public void calculateWidgetPositions() {
-        x = Math.round(x);
-        y = Math.round(y);
+    /** Removes every child widget. */
+    public void clear() {
+        cells.clear();
+        layout.onClear(this);
 
-        onCalculateWidgetPositions();
+        invalidateLayout();
     }
 
-    protected void onCalculateWidgetPositions() {
-
+    public boolean hasChildren() {
+        return cells.size() > 0;
     }
 
-    protected void move(double x, double y) {
+    public void move(double x, double y) {
         this.x += x;
         this.y += y;
+
+        for (Cell<?> cell : cells) {
+            cell.x += x;
+            cell.y += y;
+
+            cell.widget().move(x, y);
+        }
+    }
+
+    @Override
+    public Iterator<Cell<?>> iterator() {
+        return cells.iterator();
+    }
+
+    public CellIterator iterator(boolean reversed) {
+        return new CellIterator(reversed);
+    }
+
+    // Layout
+
+    /** If this widget should not be included in layout calculations. */
+    public boolean shouldSkipLayout() {
+        return false;
+    }
+
+    /** Called when the widget has no children. */
+    public void calculateSize() {
+        Vec2 size = get(Properties.SIZE);
+
+        if (size != null) {
+            width = size.x();
+            height = size.y();
+        }
+    }
+
+    /** Invalidates all widgets in this root causing a recalculation of layouts on the next frame. */
+    public void invalidateLayout() {
+        if (parent != null) parent.invalidateLayout();
+    }
+
+    // Input
+
+    @Override
+    public void dispatch(Event event) {
+        for (Cell<?> cell : cells) cell.widget().dispatch(event);
+        super.dispatch(event);
+
+        if (event.type == EventType.MouseMoved) detectHovered((MouseMovedEvent) event);
+    }
+
+    // State
+
+    protected void detectHovered(MouseMovedEvent event) {
+        boolean lastHovered = hovered;
+        hovered = event.x >= x && event.x <= x + width && event.y >= y && event.y <= y + height;
+
+        if (hovered != lastHovered) invalidStyle();
+    }
+
+    @Override
+    public boolean isHovered() {
+        return hovered;
+    }
+
+    @Override
+    public boolean isPressed() {
+        return false;
     }
 
     // Rendering
 
-    public void render(Renderer renderer, double mouseX, double mouseY, double delta) {
-        computeStyle(renderer.theme);
+    public void render(Renderer renderer, double delta) {
+        onRender(renderer, delta);
 
-        onRender(renderer, mouseX, mouseY, delta);
+        for (Cell<?> cell : cells) cell.widget().render(renderer, delta);
     }
 
-    protected void onRender(Renderer renderer, double mouseX, double mouseY, double delta) {
+    protected void onRender(Renderer renderer, double delta) {
         Vec4 radius = get(Properties.RADIUS);
         double outlineSize = get(Properties.OUTLINE_SIZE);
         Color4 backgroundColor = get(Properties.BACKGROUND_COLOR);
@@ -90,102 +194,61 @@ public class Widget {
         if (color != null) renderer.text(x, y, text, size, color);
     }
 
-    // Input
-
-    public boolean mousePressed(int button, double mouseX, double mouseY, boolean used) {
-        return onMousePressed(button, mouseX, mouseY, used);
-    }
-    protected boolean onMousePressed(int button, double mouseX, double mouseY, boolean used) {
-        return false;
-    }
-
-    public void mouseMoved(double mouseX, double mouseY, double deltaMouseX, double deltaMouseY) {
-        boolean preHovered = hovered;
-        hovered = isOver(mouseX, mouseY);
-        if (hovered != preHovered) {
-            style = null;
-            computeStyle(Renderer.INSTANCE.theme);
-        }
-
-        onMouseMoved(mouseX, mouseY, deltaMouseX, deltaMouseY);
-    }
-    protected void onMouseMoved(double mouseX, double mouseY, double deltaMouseX, double deltaMouseY) {}
-
-    public boolean mouseReleased(int button, double mouseX, double mouseY) {
-        return onMouseReleased(button, mouseX, mouseY);
-    }
-    protected boolean onMouseReleased(int button, double mouseX, double mouseY) {
-        return false;
-    }
-
-    public boolean mouseScrolled(double amount) {
-        return onMouseScrolled(amount);
-    }
-    protected boolean onMouseScrolled(double amount) {
-        return false;
-    }
-
-    public boolean keyPressed(int key, int mods) {
-        return onKeyPressed(key, mods);
-    }
-    protected boolean onKeyPressed(int key, int mods) {
-        return false;
-    }
-
-    public boolean keyRepeated(int key, int mods) {
-        return onKeyRepeated(key, mods);
-    }
-    protected boolean onKeyRepeated(int key, int mods) {
-        return false;
-    }
-
-    public boolean charTyped(char c) {
-        return onCharTyped(c);
-    }
-    protected boolean onCharTyped(char c) {
-        return false;
-    }
-
-    // Other
-
-    public void invalidate() {
-        if (parent != null) parent.invalidate();
-    }
-
-    protected boolean isOver(double x, double y) {
-        return x >= this.x && x <= this.x + width && y >= this.y && y <= this.y + height;
-    }
-
-    public Widget minWidth(double minWidth) {
-        this.minWidth = minWidth;
-        return this;
-    }
-
-    public Widget minHeight(double minHeight) {
-        this.minHeight = minHeight;
-        return this;
-    }
-
     // Style
 
-    public void computeStyle(Theme theme) {
-        if (style == null) style = theme.computeStyle(this);
-    }
-
+    /** @return a value for the specified property. */
     public <T> T get(Property<T> property) {
         return style.get(property);
     }
 
-    public Widget id(String id) {
-        this.id = id;
+    public void invalidStyle() {
+        style = Renderer.INSTANCE.theme.computeStyle(this);
+    }
+
+    // Tags
+
+    @Override
+    public List<String> tags() {
+        return tags;
+    }
+
+    /** Adds or removes specified tag based on if this widget already contains the tag. */
+    public Widget tag(String tag) {
+        if (tags.contains(tag)) tags.remove(tag);
+        else tags.add(tag);
+
+        invalidStyle();
         return this;
     }
 
-    public String id() {
-        return id;
+    /** @return true if this widget has the specified tag. */
+    public boolean hasTag(String tag) {
+        return tags.contains(tag);
     }
 
-    public String state() {
-        return hovered ? "hovered" : null;
+    public class CellIterator implements Iterator<Cell<?>> {
+        private final boolean reversed;
+        private int i;
+        private int count;
+
+        public CellIterator(boolean reversed) {
+            this.reversed = reversed;
+            this.i = reversed ? cells.size() : -1;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return reversed ? i >= 1 : i < cells.size() - 1;
+        }
+
+        @Override
+        public Cell<?> next() {
+            count++;
+            return cells.get(i += (reversed ? -1 : 1));
+        }
+
+        public boolean isNotFirst() {
+            return count > 1;
+        }
     }
 }

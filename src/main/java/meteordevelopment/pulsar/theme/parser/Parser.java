@@ -1,10 +1,7 @@
 package meteordevelopment.pulsar.theme.parser;
 
 import meteordevelopment.pulsar.rendering.FontInfo;
-import meteordevelopment.pulsar.theme.Properties;
-import meteordevelopment.pulsar.theme.Property;
-import meteordevelopment.pulsar.theme.Style;
-import meteordevelopment.pulsar.theme.Theme;
+import meteordevelopment.pulsar.theme.*;
 import meteordevelopment.pulsar.theme.fileresolvers.IFileResolver;
 import meteordevelopment.pulsar.utils.*;
 import org.lwjgl.system.MemoryUtil;
@@ -61,32 +58,46 @@ public class Parser {
             }
         }
 
-        // Widget or widget state style
+        // Style
+        Style style = new Style();
+
+        //     Name
         if (match(TokenType.Identifier)) {
-            Token widget = previous();
+            style.name = previous().lexeme();
 
-            // Widget state style
+            // Tag
+            if (match(TokenType.Dot)) {
+                Token tag = consume(TokenType.Identifier, "Expected tag.");
+                style.tags = List.of(tag.lexeme());
+
+                // State
+                if (match(TokenType.Colon)) {
+                    Token state = consume(TokenType.Identifier, "Expected state");
+                    style.state = Style.State.of(state.lexeme());
+                }
+            }
+            // State
+            else if (match(TokenType.Colon)) {
+                Token state = consume(TokenType.Identifier, "Expected state");
+                style.state = Style.State.of(state.lexeme());
+            }
+        }
+        //     Tag
+        else if (match(TokenType.Dot)) {
+            Token tag = consume(TokenType.Identifier, "Expected tag.");
+            style.tags = List.of(tag.lexeme());
+
+            // State
             if (match(TokenType.Colon)) {
-                Token state = consume(TokenType.Identifier, "Expected widget state.");
-                Style style = style();
-
-                theme.addStateStyle(widget.lexeme(), state.lexeme(), style);
-            }
-            // Widget style
-            else {
-                Style style = style();
-
-                theme.addWidgetStyle(widget.lexeme(), style);
+                Token state = consume(TokenType.Identifier, "Expected state");
+                style.state = Style.State.of(state.lexeme());
             }
         }
-        // ID style
-        else {
-            consume(TokenType.Dot, "Expected '.' before ID style.");
-            Token id = consume(TokenType.Identifier, "Expected ID.");
-            Style style = style();
 
-            theme.addIdStyle(id.lexeme(), style);
-        }
+        if (style.name == null && style.tags == null && style.state == null) throw error(peek(), "Expected style selector.");
+
+        style(style);
+        theme.addStyle(style);
     }
 
     private void font() {
@@ -103,14 +114,12 @@ public class Parser {
 
     // Styles
 
-    private Style style() {
+    private void style(Style style) {
         consume(TokenType.LeftBrace, "Expected '{' before style body.");
-        Style style = new Style();
 
         while (!check(TokenType.RightBrace)) property(style);
 
         consume(TokenType.RightBrace, "Expected '' after style body.");
-        return style;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
