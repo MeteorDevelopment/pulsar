@@ -79,7 +79,7 @@ checkbox {
     outline-size: 2
     outline-color: 0 0 0
     padding: 4
-    radius: 11
+    radius: 6
 }
 
 checkbox :hovered {
@@ -91,17 +91,17 @@ checkbox :pressed {
 }
 
 checkbox-inner {
-    background-color: 25 225 25
+    color: 0 0 0
     size: 14
-    radius: 7
+    icon-path: "check.svg"
 }
 
 checkbox-inner :hovered {
-    background-color: 40 240 40
+    color: 20 20 20
 }
 
 checkbox-inner :pressed {
-    background-color: 55 255 55
+    color: 40 40 40
 }
 
 horizontal-list {

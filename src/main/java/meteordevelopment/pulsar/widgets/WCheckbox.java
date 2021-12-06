@@ -1,6 +1,8 @@
 package meteordevelopment.pulsar.widgets;
 
 import meteordevelopment.pulsar.rendering.Renderer;
+import meteordevelopment.pulsar.theme.Properties;
+import meteordevelopment.pulsar.utils.Color4;
 
 import static meteordevelopment.pulsar.utils.Utils.combine;
 
@@ -37,10 +39,25 @@ public class WCheckbox extends WPressableWidget {
 
     protected class WInner extends Widget {
         protected static final String[] NAMES = combine(Widget.NAMES, "checkbox-inner");
+        protected static final String[] ICON_NAMES = combine(WIcon.NAMES, "checkbox-inner");
+
+        private final boolean isIcon;
+
+        public WInner() {
+            isIcon = get(Properties.ICON_PATH) != null;
+        }
 
         @Override
         public String[] names() {
+            if (isIcon) return ICON_NAMES;
             return NAMES;
+        }
+
+        @Override
+        public void calculateSize() {
+            super.calculateSize();
+
+            if (isIcon) width = height = Math.max(width, height);
         }
 
         @Override
@@ -55,7 +72,15 @@ public class WCheckbox extends WPressableWidget {
 
         @Override
         public void render(Renderer renderer, double delta) {
-            if (checked) super.render(renderer, delta);
+            if (checked) {
+                if (isIcon) {
+                    String path = get(Properties.ICON_PATH);
+                    Color4 color = get(Properties.COLOR);
+
+                    if (path != null && color != null) renderer.icon(x, y, path, width, color);
+                }
+                else super.render(renderer, delta);
+            }
         }
     }
 }
