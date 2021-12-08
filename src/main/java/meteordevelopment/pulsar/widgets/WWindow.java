@@ -11,6 +11,8 @@ public class WWindow extends Widget {
 
     private final Widget body;
 
+    private double lastX = -1, lastY;
+
     public WWindow(String title) {
         Widget header = super.add(new WHeader()).expandX().widget();
         header.add(new WText(title).tag("window-title"));
@@ -38,6 +40,21 @@ public class WWindow extends Widget {
     @Override
     public void clear() {
         body.clear();
+    }
+
+    @Override
+    public void afterLayout() {
+        if (lastX != -1) {
+            move(lastX - x, lastY - y);
+        }
+    }
+
+    @Override
+    public void move(double x, double y) {
+        super.move(x, y);
+
+        lastX = this.x;
+        lastY = this.y;
     }
 
     public class WHeader extends Widget {
