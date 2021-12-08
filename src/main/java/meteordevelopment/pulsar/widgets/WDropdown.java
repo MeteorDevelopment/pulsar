@@ -147,17 +147,27 @@ public class WDropdown<T> extends WPressable {
         textW.setText(value.toString());
     }
 
+    private Vec2 getMinSize() {
+        Vec2 minSize = get(Properties.SIZE);
+
+        if (minSize == null) return this.minSize;
+        else {
+            if (this.minSize == null) return minSize;
+            return new Vec2(Math.max(minSize.x(), this.minSize.x()), Math.max(minSize.y(), this.minSize.y()));
+        }
+    }
+
     private class MainLayout extends BasicLayout {
         @Override
         protected Vec2 getMinSize(Widget widget) {
-            return minSize;
+            return WDropdown.this.getMinSize();
         }
     }
 
     private class MainHorizontalLayout extends HorizontalLayout {
         @Override
         protected Vec2 getMinSize(Widget widget) {
-            return minSize;
+            return WDropdown.this.getMinSize();
         }
     }
 
