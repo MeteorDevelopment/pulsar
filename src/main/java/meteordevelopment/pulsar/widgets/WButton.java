@@ -7,7 +7,7 @@ import meteordevelopment.pulsar.theme.Properties;
 import static meteordevelopment.pulsar.utils.Utils.combine;
 
 /** Button widget which can contain text, icon or both. */
-public class WButton extends WPressableWidget {
+public class WButton extends WPressable {
     protected static final String[] NAMES = combine(Widget.NAMES, "button");
 
     public Runnable action;

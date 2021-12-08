@@ -11,7 +11,7 @@ import meteordevelopment.pulsar.widgets.Widget;
 public class VerticalLayout extends Layout {
     public static final VerticalLayout INSTANCE = new VerticalLayout();
 
-    private VerticalLayout() {}
+    protected VerticalLayout() {}
 
     @Override
     protected void calculateSizeImpl(Widget widget) {

@@ -9,7 +9,7 @@ import meteordevelopment.pulsar.widgets.Widget;
 public class BasicLayout extends Layout {
     public static final BasicLayout INSTANCE = new BasicLayout();
 
-    private BasicLayout() {}
+    protected BasicLayout() {}
 
     @Override
     protected void calculateSizeImpl(Widget widget) {

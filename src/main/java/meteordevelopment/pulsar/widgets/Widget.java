@@ -135,6 +135,9 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
         if (parent != null) parent.invalidateLayout();
     }
 
+    /** Called after children widget positions have been calculated. */
+    public void afterLayout() {}
+
     // Input
 
     @Override
@@ -149,7 +152,7 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
 
     protected void detectHovered(MouseMovedEvent event) {
         boolean lastHovered = hovered;
-        hovered = event.x >= x && event.x <= x + width && event.y >= y && event.y <= y + height;
+        hovered = event.x >= x && event.x <= x + width && event.y >= y + 1 && event.y <= y + height;
 
         if (hovered != lastHovered) invalidStyle();
     }

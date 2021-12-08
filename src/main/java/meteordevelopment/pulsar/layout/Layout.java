@@ -18,7 +18,7 @@ public abstract class Layout {
         if (widget.hasChildren()) calculateSizeImpl(widget);
         else widget.calculateSize();
 
-        Vec2 minSize = widget.get(Properties.MINIMUM_SIZE);
+        Vec2 minSize = getMinSize(widget);
         if (minSize != null) {
             widget.width = Math.max(widget.width, minSize.x());
             widget.height = Math.max(widget.height, minSize.y());
@@ -31,6 +31,10 @@ public abstract class Layout {
     /** The actual implementation for size calculation. */
     protected abstract void calculateSizeImpl(Widget widget);
 
+    protected Vec2 getMinSize(Widget widget) {
+        return widget.get(Properties.MINIMUM_SIZE);
+    }
+
     /** Position's children widgets and its children according to this layout. */
     public final void positionChildren(Widget widget) {
         positionChildrenImpl(widget);
@@ -40,6 +44,8 @@ public abstract class Layout {
 
             cell.widget().x = Math.round(cell.widget().x);
             cell.widget().y = Math.round(cell.widget().y);
+
+            cell.widget().afterLayout();
         }
     }
 

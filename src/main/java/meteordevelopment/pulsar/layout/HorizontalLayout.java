@@ -42,7 +42,7 @@ public class HorizontalLayout extends Layout {
         Vec2 spacing = widget.get(Properties.SPACING);
         boolean reversed = widget.get(Properties.LIST_DIRECTION) == ListDirection.Reversed;
 
-        double x = widget.x + padding.x();
+        double x = widget.x + padding.left();
         double expandWidth = (widget.width - calculatedWidth) / expandCellCount;
 
         for (Widget.CellIterator it = widget.iterator(reversed); it.hasNext();) {

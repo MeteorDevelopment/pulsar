@@ -4,6 +4,7 @@ import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.theme.fileresolvers.ResourceFileResolver;
 import meteordevelopment.pulsar.theme.parser.Parser;
+import meteordevelopment.pulsar.utils.AlignX;
 import meteordevelopment.pulsar.widgets.*;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
@@ -28,6 +29,10 @@ public class Main {
         w.add(new WText("COPE?!?!?!!?").tag("right"));
 
         WTable t = w.add(new WTable()).expandX().widget();
+
+        t.add(new WText("Something:"));
+        t.add(new WDropdown<>(AlignX.Center));
+        t.row();
 
         t.add(new WText("Good:"));
         t.add(new WCheckbox(true));

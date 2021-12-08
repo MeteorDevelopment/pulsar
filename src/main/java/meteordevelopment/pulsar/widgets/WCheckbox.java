@@ -6,7 +6,7 @@ import meteordevelopment.pulsar.utils.Color4;
 
 import static meteordevelopment.pulsar.utils.Utils.combine;
 
-public class WCheckbox extends WPressableWidget {
+public class WCheckbox extends WPressable {
     protected static final String[] NAMES = combine(Widget.NAMES, "checkbox");
 
     public Runnable action;

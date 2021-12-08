@@ -4,6 +4,9 @@ import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.utils.*;
 import org.joml.Matrix4f;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.lwjgl.opengl.GL11C.*;
 
 public class Renderer {
@@ -23,6 +26,7 @@ public class Renderer {
     private final Shader iconShader = new Shader("/pulsar/shaders/texture.vert", "/pulsar/shaders/icon.frag");
     private final Mesh iconMesh = new Mesh(Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Color);
 
+    private final List<Runnable> afterRunnables = new ArrayList<>();
     private Fonts fonts;
 
     private int windowWidth, windowHeight;
@@ -55,6 +59,19 @@ public class Renderer {
     }
 
     public void end() {
+        end_();
+
+        if (afterRunnables.size() > 0) {
+            begin();
+
+            for (Runnable runnable : afterRunnables) runnable.run();
+            afterRunnables.clear();
+
+            end_();
+        }
+    }
+
+    private void end_() {
         // Rectangles
         rectangleShader.bind();
         rectangleShader.set("u_Proj", projection);
@@ -72,7 +89,7 @@ public class Renderer {
     }
 
     public void beginScissor(double x, double y, double width, double height) {
-        end();
+        end_();
 
         glEnable(GL_SCISSOR_TEST);
         glScissor((int) x, (int) y, (int) width, (int) height);
@@ -81,7 +98,7 @@ public class Renderer {
     }
 
     public void endScissor() {
-        end();
+        end_();
 
         glDisable(GL_SCISSOR_TEST);
 
@@ -136,5 +153,9 @@ public class Renderer {
 
     public double textHeight(double size) {
         return fonts.textHeight(size);
+    }
+
+    public void after(Runnable runnable) {
+        afterRunnables.add(runnable);
     }
 }

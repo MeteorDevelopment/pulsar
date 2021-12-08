@@ -3,7 +3,7 @@ package meteordevelopment.pulsar.widgets;
 import meteordevelopment.pulsar.input.MouseButtonEvent;
 
 /** Base class for all widgets that can be pressed. */
-public abstract class WPressableWidget extends Widget {
+public abstract class WPressable extends Widget {
     private boolean pressed;
 
     @Override
