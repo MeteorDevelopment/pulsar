@@ -6,6 +6,10 @@ import meteordevelopment.pulsar.layout.Layout;
 import meteordevelopment.pulsar.rendering.DebugRenderer;
 import meteordevelopment.pulsar.rendering.Renderer;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+
 import static meteordevelopment.pulsar.utils.Utils.combine;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -41,6 +45,42 @@ public class WRoot extends Widget {
             debug = !debug;
             event.use();
         }
+        else if (!event.used && event.key == GLFW_KEY_TAB) {
+            AtomicReference<WTextBox> firstTextBox = new AtomicReference<>(null);
+            AtomicBoolean done = new AtomicBoolean(false);
+            AtomicBoolean foundFocused = new AtomicBoolean(false);
+
+            loopWidgets(this, wWidget -> {
+                if (done.get() || !(wWidget instanceof WTextBox textBox)) return;
+
+                if (foundFocused.get()) {
+                    textBox.setFocused(true);
+                    textBox.setCursorMax();
+
+                    done.set(true);
+                }
+                else {
+                    if (textBox.isFocused()) {
+                        textBox.setFocused(false);
+                        foundFocused.set(true);
+                    }
+                }
+
+                if (firstTextBox.get() == null) firstTextBox.set(textBox);
+            });
+
+            if (!done.get() && firstTextBox.get() != null) {
+                firstTextBox.get().setFocused(true);
+                firstTextBox.get().setCursorMax();
+            }
+
+            event.use();
+        }
+    }
+
+    private void loopWidgets(Widget widget, Consumer<Widget> action) {
+        action.accept(widget);
+        for (Cell<?> cell : widget) loopWidgets(cell.widget(), action);
     }
 
     @Override
@@ -52,9 +92,9 @@ public class WRoot extends Widget {
             invalid = false;
         }
 
-        renderer.begin(windowWidth, windowHeight);
+        renderer.setup(windowWidth, windowHeight);
         super.render(renderer, delta);
-        renderer.end();
+        renderer.render();
 
         if (debug) DebugRenderer.render(this, windowWidth, windowHeight);
     }

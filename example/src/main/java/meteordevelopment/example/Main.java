@@ -11,19 +11,8 @@ import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.opengl.GL11C.*;
 
 public class Main {
-    public static void main(String[] args) {
-        Window window = new Window();
-        Renderer renderer = new Renderer();
-
-        Theme theme = Parser.parse(new ResourceFileResolver("/"), "test2.pts");
-        //Theme theme = Parser.parse(new NormalFileResolver("/"), "test.pts");
-        renderer.setTheme(theme);
-        renderer.window = window.handle;
-
-        WRoot root = new WRoot.FullScreen();
-        root.setWindowSize(window.getWidth(), window.getHeight());
-
-        WWindow w = root.add(new WWindow("Test Window")).widget();
+    private static WWindow createMainWindow() {
+        WWindow w = new WWindow("Test Window");
 
         w.add(new WText("Hello"));
         w.add(new WText("COPE?!?!?!!?").tag("right"));
@@ -46,6 +35,40 @@ public class Main {
         t.add(new WSlider(4, 0, 10)).expandX();
 
         w.add(new WButton("Click me")).expandX();
+
+        return w;
+    }
+
+    private static WWindow createLoginWindow() {
+        WWindow w = new WWindow("Login");
+        WTable t = w.add(new WTable()).expandX().widget();
+
+        t.add(new WText("Username:"));
+        t.add(new WTextBox("", "Username")).expandX();
+        t.row();
+
+        t.add(new WText("Password:"));
+        t.add(new WTextBox("", "Password", '*')).expandX();
+
+        w.add(new WButton("Login")).expandX();
+
+        return w;
+    }
+
+    public static void main(String[] args) {
+        Window window = new Window();
+        Renderer renderer = new Renderer();
+
+        Theme theme = Parser.parse(new ResourceFileResolver("/"), "test2.pts");
+        //Theme theme = Parser.parse(new NormalFileResolver("/"), "test.pts");
+        renderer.setTheme(theme);
+        renderer.window = window.handle;
+
+        WRoot root = new WRoot.FullScreen();
+        root.setWindowSize(window.getWidth(), window.getHeight());
+
+        root.add(createMainWindow());
+        root.add(createLoginWindow());
 
         window.onResized = () -> root.setWindowSize(window.getWidth(), window.getHeight());
         window.onEvent = root::dispatch;

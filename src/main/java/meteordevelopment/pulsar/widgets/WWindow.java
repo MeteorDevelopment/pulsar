@@ -72,8 +72,14 @@ public class WWindow extends Widget {
 
     @Override
     public void render(Renderer renderer, double delta) {
+        renderer.render();
+        renderer.begin();
+
         header.render(renderer, delta);
         if (expanded) body.render(renderer, delta);
+
+        renderer.end();
+        renderer.begin();
     }
 
     public class WHeader extends Widget {

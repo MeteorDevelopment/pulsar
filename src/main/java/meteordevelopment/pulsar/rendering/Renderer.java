@@ -1,7 +1,10 @@
 package meteordevelopment.pulsar.rendering;
 
 import meteordevelopment.pulsar.theme.Theme;
-import meteordevelopment.pulsar.utils.*;
+import meteordevelopment.pulsar.utils.Color4;
+import meteordevelopment.pulsar.utils.ColorFactory;
+import meteordevelopment.pulsar.utils.Utils;
+import meteordevelopment.pulsar.utils.Vec4;
 import org.joml.Matrix4f;
 
 import java.util.ArrayList;
@@ -45,21 +48,21 @@ public class Renderer {
         fonts = new Fonts(theme.getFontInfo());
     }
 
-    public void begin(int windowWidth, int windowHeight) {
+    public void setup(int windowWidth, int windowHeight) {
         this.windowWidth = windowWidth;
         this.windowHeight = windowHeight;
-        projection = new Matrix4f().ortho2D(0, windowWidth, 0, windowHeight);
+        projection = new Matrix4f().ortho(0, windowWidth, 0, windowHeight, -10000, 10000);
 
         begin();
     }
 
-    private void begin() {
+    public void begin() {
         rectangleMesh.begin();
         iconMesh.begin();
     }
 
-    public void end() {
-        end_();
+    public void render() {
+        end();
 
         if (afterRunnables.size() > 0) {
             begin();
@@ -67,11 +70,11 @@ public class Renderer {
             for (Runnable runnable : afterRunnables) runnable.run();
             afterRunnables.clear();
 
-            end_();
+            end();
         }
     }
 
-    private void end_() {
+    public void end() {
         // Rectangles
         rectangleShader.bind();
         rectangleShader.set("u_Proj", projection);
@@ -89,7 +92,7 @@ public class Renderer {
     }
 
     public void beginScissor(double x, double y, double width, double height) {
-        end_();
+        end();
 
         glEnable(GL_SCISSOR_TEST);
         glScissor((int) x, (int) y, (int) width, (int) height);
@@ -98,7 +101,7 @@ public class Renderer {
     }
 
     public void endScissor() {
-        end_();
+        end();
 
         glDisable(GL_SCISSOR_TEST);
 
@@ -107,6 +110,7 @@ public class Renderer {
 
     public void alpha(double alpha) {
         rectangleMesh.alpha(alpha);
+        iconMesh.alpha(alpha);
     }
 
     public void quad(double x, double y, double width, double height, Vec4 radius, double outlineSize, Color4 backgroundColor, Color4 outlineColor) {
@@ -132,6 +136,10 @@ public class Renderer {
         fonts.render(x, y, text, size, color);
     }
 
+    public void chars(double x, double y, char c, int count, double size, Color4 color) {
+        fonts.renderChars(x, y, c, count, size, color);
+    }
+
     public void icon(double x, double y, String path, double size, Color4 color) {
         size = (int) size;
         TextureRegion region = icons.get(path, (int) size);
@@ -149,6 +157,10 @@ public class Renderer {
     }
     public double textWidth(String text, int length, double size) {
         return fonts.textWidth(text, length, size);
+    }
+
+    public double charWidth(char c, double size) {
+        return fonts.charWidth(c, size);
     }
 
     public double textHeight(double size) {

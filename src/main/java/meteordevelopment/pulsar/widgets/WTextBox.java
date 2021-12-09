@@ -7,10 +7,9 @@ import meteordevelopment.pulsar.input.MouseMovedEvent;
 import meteordevelopment.pulsar.layout.HorizontalLayout;
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.Properties;
-import meteordevelopment.pulsar.utils.Color4;
-import meteordevelopment.pulsar.utils.ICharFilter;
-import meteordevelopment.pulsar.utils.Utils;
-import meteordevelopment.pulsar.utils.Vec4;
+import meteordevelopment.pulsar.theme.Selector;
+import meteordevelopment.pulsar.theme.Style;
+import meteordevelopment.pulsar.utils.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +22,9 @@ public class WTextBox extends Widget {
 
     public Runnable action;
     public Runnable actionOnUnfocused;
+
+    private final String placeholder;
+    private final char replacementChar;
 
     protected String text;
     protected ICharFilter filter;
@@ -47,8 +49,10 @@ public class WTextBox extends Widget {
     private double animProgress;
     private boolean scissor;
 
-    public WTextBox(String text) {
+    public WTextBox(String text, String placeholder, char replacementChar) {
         this.text = text;
+        this.placeholder = placeholder;
+        this.replacementChar = replacementChar;
         this.filter = (text1, c) -> true;
 
         String icon = get(Properties.ICON);
@@ -63,6 +67,14 @@ public class WTextBox extends Widget {
         textW = add(new WTextBoxText()).expandX().widget();
 
         calculateTextWidths();
+    }
+
+    public WTextBox(String text, String placeholder) {
+        this(text, placeholder, '\0');
+    }
+
+    public WTextBox(String text) {
+        this(text, null, '\0');
     }
 
     @Override
@@ -241,7 +253,7 @@ public class WTextBox extends Widget {
             event.use();
         }
         else if (event.key == GLFW_KEY_BACKSPACE) {
-            if (cursor > 0 && cursor == selectionStart && cursor == selectionEnd) {
+            if (cursor > 0 && selectionStart == selectionEnd) {
                 String preText = text;
 
                 int count = event.mods == (Utils.IS_MAC ? GLFW_MOD_SUPER : GLFW_MOD_ALT)
@@ -264,7 +276,7 @@ public class WTextBox extends Widget {
         }
         else if (event.key == GLFW_KEY_DELETE) {
             if (cursor < text.length()) {
-                if (cursor == selectionStart && cursor == selectionEnd) {
+                if (selectionStart == selectionEnd) {
                     String preText = text;
 
                     int count = event.mods == (Utils.IS_MAC ? GLFW_MOD_SUPER : GLFW_MOD_ALT)
@@ -515,7 +527,8 @@ public class WTextBox extends Widget {
         double size = textW.get(Properties.FONT_SIZE);
 
         for (int i = 0; i <= text.length(); i++) {
-            textWidths.add(Renderer.INSTANCE.textWidth(text, i, size));
+            if (replacementChar != '\0') textWidths.add(Renderer.INSTANCE.charWidth(replacementChar, size) * i);
+            else textWidths.add(Renderer.INSTANCE.textWidth(text, i, size));
         }
     }
 
@@ -576,8 +589,7 @@ public class WTextBox extends Widget {
         this.text = text;
 
         cursor = Utils.clamp(cursor, 0, text.length());
-        selectionStart = cursor;
-        selectionEnd = cursor;
+        resetSelection();
 
         calculateTextWidths();
         cursorChanged();
@@ -590,9 +602,14 @@ public class WTextBox extends Widget {
 
         this.focused = focused;
 
+        cursor = Utils.clamp(cursor, 0, text.length());
         resetSelection();
 
         if (wasJustFocused) onCursorChanged();
+    }
+
+    public boolean isFocused() {
+        return focused;
     }
 
     public void setCursorMax() {
@@ -601,14 +618,38 @@ public class WTextBox extends Widget {
 
     protected class WTextBoxText extends WText {
         protected static final String[] NAMES = combine(WText.NAMES, "text-box-text");
+        protected static final String[] PLACEHOLDER_NAMES = combine(WText.NAMES, "text-box-placeholder");
+
+        private Color4 placeholderColor;
+        private boolean isPlaceholder;
 
         public WTextBoxText() {
             super(null);
+
+            Style placeholderStyle = Renderer.INSTANCE.theme.computeStyle(new Selector(PLACEHOLDER_NAMES, null, false, false));
+            if (placeholderStyle != null) placeholderColor = placeholderStyle.get(Properties.COLOR);
         }
 
         @Override
         public String[] names() {
             return NAMES;
+        }
+
+        @Override
+        protected void renderText(Renderer renderer, double x, double y, String text) {
+            isPlaceholder = false;
+
+            if (text.isEmpty() && placeholder != null && placeholderColor != null) {
+                isPlaceholder = true;
+                super.renderText(renderer, x, y, placeholder);
+            }
+            else super.renderText(renderer, x, y, text);
+        }
+
+        @Override
+        protected void renderTextComponent(Renderer renderer, double x, double y, String text, double size, Color4 color) {
+            if (replacementChar != '\0' && !isPlaceholder) renderer.chars(x, y, replacementChar, text.length(), size, color);
+            else super.renderTextComponent(renderer, x, y, text, size, isPlaceholder ? placeholderColor : color);
         }
 
         @Override
@@ -639,7 +680,7 @@ public class WTextBox extends Widget {
         protected void onRender(Renderer renderer, double delta) {
             double overflowWidth = getOverflowWidthForRender();
 
-            if (focused && (cursor != selectionStart || cursor != selectionEnd)) {
+            if (focused && selectionStart != selectionEnd) {
                 Vec4 padding = WTextBox.this.get(Properties.PADDING);
 
                 double selStart = WTextBox.this.textW.x + getTextWidth(selectionStart) - overflowWidth;

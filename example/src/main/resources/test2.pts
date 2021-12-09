@@ -119,6 +119,10 @@ text-box {
     minimum-size: 220 0
 }
 
+text-box-placeholder {
+    color: 145 145 145
+}
+
 icon .write {
     icon-path: "write.svg"
     color: 0 0 0

@@ -87,6 +87,11 @@ public class Font {
         return width;
     }
 
+    public double getCharWidth(char c) {
+        CharData data = charData[c - 32];
+        return data == null ? 0 : data.xAdvance();
+    }
+
     public double getHeight() {
         return height;
     }
@@ -99,16 +104,35 @@ public class Font {
             if (cp < 32 || cp > 128) cp = 32;
             CharData c = charData[cp - 32];
 
-            mesh.quad(
-                    mesh.vec2(x + c.x0(), y - c.y0()).vec2(c.u0(), c.v0()).color(color.bottomLeft()).next(),
-                    mesh.vec2(x + c.x0(), y - c.y1()).vec2(c.u0(), c.v1()).color(color.topLeft()).next(),
-                    mesh.vec2(x + c.x1(), y - c.y1()).vec2(c.u1(), c.v1()).color(color.topRight()).next(),
-                    mesh.vec2(x + c.x1(), y - c.y0()).vec2(c.u1(), c.v0()).color(color.bottomRight()).next()
-            );
+            renderChar(mesh, x, y, c, color);
 
             x += c.xAdvance();
         }
 
         return x;
+    }
+
+    public double renderChars(Mesh mesh, double x, double y, char c, int count, Color4 color) {
+        y += ascent * scale * 0.225;
+
+        CharData data = charData[c - 32];
+        if (data == null) return x;
+
+        for (int i = 0; i < count; i++) {
+            renderChar(mesh, x, y, data, color);
+
+            x += data.xAdvance();
+        }
+
+        return x;
+    }
+
+    private static void renderChar(Mesh mesh, double x, double y, CharData c, Color4 color) {
+        mesh.quad(
+                mesh.vec2(x + c.x0(), y - c.y0()).vec2(c.u0(), c.v0()).color(color.bottomLeft()).next(),
+                mesh.vec2(x + c.x0(), y - c.y1()).vec2(c.u0(), c.v1()).color(color.topLeft()).next(),
+                mesh.vec2(x + c.x1(), y - c.y1()).vec2(c.u1(), c.v1()).color(color.topRight()).next(),
+                mesh.vec2(x + c.x1(), y - c.y0()).vec2(c.u1(), c.v0()).color(color.bottomRight()).next()
+        );
     }
 }

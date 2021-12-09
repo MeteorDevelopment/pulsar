@@ -23,7 +23,7 @@ public class Fonts {
         }
     }
 
-    public void render(double x, double y, String text, double size, Color4 color) {
+    private SizedFont getFontForRender(double size) {
         SizedFont font = get(size);
 
         if (!font.building) {
@@ -31,7 +31,17 @@ public class Fonts {
             font.building = true;
         }
 
+        return font;
+    }
+
+    public void render(double x, double y, String text, double size, Color4 color) {
+        SizedFont font = getFontForRender(size);
         font.font.render(font.mesh, text, x, y, color);
+    }
+
+    public void renderChars(double x, double y, char c, int count, double size, Color4 color) {
+        SizedFont font = getFontForRender(size);
+        font.font.renderChars(font.mesh, x, y, c, count, color);
     }
 
     public void end(Matrix4f projection) {
@@ -49,6 +59,10 @@ public class Fonts {
 
     public double textWidth(String text, int length, double size) {
         return get(size).font.getWidth(text, length);
+    }
+
+    public double charWidth(char c, double size) {
+        return get(size).font.getCharWidth(c);
     }
 
     public double textHeight(double size) {

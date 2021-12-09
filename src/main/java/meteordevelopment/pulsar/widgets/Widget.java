@@ -142,7 +142,7 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
 
     @Override
     public void dispatch(Event event) {
-        for (Cell<?> cell : cells) cell.widget().dispatch(event);
+        for (int i = cells.size() - 1; i >= 0; i--) cells.get(i).widget().dispatch(event);
         super.dispatch(event);
 
         if (event.type == EventType.MouseMoved) detectHovered((MouseMovedEvent) event);
@@ -171,7 +171,6 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
 
     public void render(Renderer renderer, double delta) {
         onRender(renderer, delta);
-
         for (Cell<?> cell : cells) cell.widget().render(renderer, delta);
     }
 
@@ -190,11 +189,15 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
         // Shadow
         Color4 color = get(Properties.TEXT_SHADOW);
         Vec2 offset = get(Properties.TEXT_SHADOW_OFFSET);
-        if (color != null) renderer.text(x + offset.x(), y + offset.y(), text, size, color);
+        if (color != null) renderTextComponent(renderer, x + offset.x(), y + offset.y(), text, size, color);
 
         // Text
         color = get(Properties.COLOR);
-        if (color != null) renderer.text(x, y, text, size, color);
+        if (color != null) renderTextComponent(renderer, x, y, text, size, color);
+    }
+
+    protected void renderTextComponent(Renderer renderer, double x, double y, String text, double size, Color4 color) {
+        renderer.text(x, y, text, size, color);
     }
 
     // Style
