@@ -1,0 +1,93 @@
+[
+  {
+    "name": "color",
+    "type": "Color",
+    "description": "The foreground color of widgets."
+  },
+  {
+    "name": "background-color",
+    "type": "Color",
+    "description": "The background color of widgets."
+  },
+
+  {
+    "name": "outline-size",
+    "type": "float",
+    "description": "Size of the background outline."
+  },
+  {
+    "name": "outline-color",
+    "type": "Color",
+    "description": "Color of the background outline."
+  },
+
+  {
+    "name": "spacing",
+    "type": "Vector2",
+    "description": "Size between neighbouring widgets in a container."
+  },
+  {
+    "name": "padding",
+    "type": "Vector4",
+    "description": "How far children widgets should be positioned from the edges."
+  },
+  {
+    "name": "radius",
+    "type": "Vector4",
+    "description": "How rounded the background and outline should be."
+  },
+  {
+    "name": "size",
+    "type": "Vector2",
+    "description": "Size of the widget."
+  },
+  {
+    "name": "minimum-size",
+    "type": "Vector2",
+    "description": "Minimum size of the widget."
+  },
+
+  {
+    "name": "align-x",
+    "type": "Enum",
+    "description": "How this widget should be aligned horizontally inside its cell."
+  },
+  {
+    "name": "align-y",
+    "type": "Enum",
+    "description": "How this widget should be aligned vertically inside its cell."
+  },
+
+  {
+    "name": "font-size",
+    "type": "Number",
+    "description": "How big the font for this text should be."
+  },
+  {
+    "name": "text-shadow",
+    "type": "Color",
+    "description": "Color of the text shadow."
+  },
+  {
+    "name": "text-shadow-offset",
+    "type": "Vector2",
+    "description": "How should be the text shadow positioned relative to the original text."
+  },
+
+  {
+    "name": "list-direction",
+    "type": "Enum",
+    "description": "If this list widget should be reversed or not."
+  },
+
+  {
+    "name": "icon",
+    "type": "Identifier",
+    "description": "The icon tag used for this widget."
+  },
+  {
+    "name": "icon-path",
+    "type": "String",
+    "description": "The .svg file path relative to this file."
+  }
+]
