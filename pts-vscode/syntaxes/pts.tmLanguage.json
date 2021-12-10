@@ -1,0 +1,78 @@
+{
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "scopeName": "source.pts",
+    "name": "PTS",
+
+    "patterns": [
+        { "include": "#line-comment" },
+        { "include": "#block-comment" },
+
+        { "include": "#color" },
+        { "include": "#number" },
+        { "include": "#string" },
+
+        { "include": "#at" },
+        { "include": "#selector" },
+        { "include": "#style" }
+    ],
+
+    "repository": {
+        "line-comment": {
+            "begin": "//",
+            "end": "\n",
+            "name": "comment.line.double-slash.css"
+        },
+        "block-comment": {
+            "begin": "/\\*",
+            "end": "\\*/",
+            "name": "comment.block.css"
+        },
+        "at": {
+            "match": "@[a-zA-Z0-9_-]+",
+            "name": "keyword.control.at-rule.font-face.css"
+        },
+        "selector": {
+            "match": "\\.?[a-zA-Z0-9_-]+\\s*:?[a-zA-Z0-9_-]*",
+            "name": "entity.name.tag.css"
+        },
+        "style": {
+            "begin": "{",
+            "end": "}",
+            "captures": {
+                "0": { "name": "punctuation.section.property-list.begin.bracket.curly.css" }
+            },
+            "patterns": [
+                { "include": "#line-comment" },
+                { "include": "#block-comment" },
+
+                { "include": "#property" },
+                { "include": "#color" },
+                { "include": "#number" },
+                { "include": "#string" }
+            ]
+        },
+        "property": {
+            "match": "([a-zA-Z0-9_-]+)\\s*(:)",
+            "captures": {
+                "1": { "name": "support.type.property-name.css" },
+                "2": { "name": "punctuation.separator.key-value.css" }
+            }
+        },
+        "color": {
+            "match": "#[a-fA-F0-9]+",
+            "name": "constant.other.color.rgb-value.css"
+        },
+        "number": {
+            "match": "[0-9]+\\.?[0-9]*",
+            "name": "keyword.other.unit.css"
+        },
+        "string": {
+            "begin": "\"",
+            "end": "\"",
+            "name": "string.quoted.double.css",
+            "captures": {
+                "0": { "name": "punctuation.definition.string.begin.css" }
+            }
+        }
+    }
+}

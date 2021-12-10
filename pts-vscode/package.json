@@ -1,0 +1,63 @@
+{
+	"name": "pts",
+	"displayName": "Pulsar Theme Styles",
+	"description": "Language for theme definition in Pulsar.",
+	"publisher": "MineGame159",
+	"version": "0.0.2",
+	"engines": {
+		"vscode": "^1.62.0"
+	},
+	"categories": [
+		"Programming Languages"
+	],
+	"activationEvents": [
+		"onLanguage:pts"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"languages": [
+			{
+				"id": "pts",
+				"aliases": [
+					"pts",
+					"PTS"
+				],
+				"extensions": [
+					".pts"
+				],
+				"configuration": "./language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "pts",
+				"scopeName": "source.pts",
+				"path": "./syntaxes/pts.tmLanguage.json"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "yarn run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"pretest": "yarn run compile && yarn run lint",
+		"lint": "eslint src --ext ts",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.4",
+		"@types/mocha": "^9.0.0",
+		"@types/node": "14.x",
+		"@types/vscode": "^1.62.0",
+		"@typescript-eslint/eslint-plugin": "^4.31.1",
+		"@typescript-eslint/parser": "^4.31.1",
+		"@vscode/test-electron": "^1.6.2",
+		"eslint": "^7.32.0",
+		"glob": "^7.1.7",
+		"mocha": "^9.1.1",
+		"typescript": "^4.4.3"
+	},
+	"dependencies": {
+		"cross-fetch": "^3.1.4"
+	}
+}
