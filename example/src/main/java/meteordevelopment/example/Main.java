@@ -31,8 +31,21 @@ public class Main {
         t.add(new WTextBox("Cope?")).expandX();
         t.row();
 
-        t.add(new WText("Number:"));
-        t.add(new WSlider(4, 0, 10)).expandX();
+        t.add(new WText("Integer 1:"));
+        t.add(new WIntEdit(2, -8, 8, -8, 8));
+        t.row();
+
+        t.add(new WText("Integer 2:"));
+        t.add(new WIntEdit(2, null, null));
+        t.row();
+
+        t.add(new WText("Double 1:"));
+        t.add(new WDoubleEdit(2, -8d, 8d, -8, 8));
+        t.row();
+
+        t.add(new WText("Double 2:"));
+        t.add(new WDoubleEdit(2, null, null));
+        t.row();
 
         w.add(new WButton("Click me")).expandX();
 

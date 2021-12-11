@@ -25,8 +25,8 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
 
     protected Widget parent;
 
-    private final List<String> tags = new ArrayList<>();
-    private final List<Cell<?>> cells = new ArrayList<>();
+    protected final List<String> tags = new ArrayList<>();
+    protected final List<Cell<?>> cells = new ArrayList<>();
 
     public Layout layout = BasicLayout.INSTANCE;
 
@@ -47,15 +47,21 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
 
     // Cells
 
+    protected <T extends Widget> Cell<T> create(T widget) {
+        Cell<T> cell = new Cell<>(widget);
+
+        widget.parent = this;
+        invalidateLayout();
+
+        return cell;
+    }
+
     /**
      * Adds the specified widget as a children of this widget.
      * @return cell which contains the newly added widget.
      */
     public <T extends Widget> Cell<T> add(T widget) {
-        Cell<T> cell = new Cell<>(widget);
-
-        widget.parent = this;
-        invalidateLayout();
+        Cell<T> cell = create(widget);
 
         cells.add(cell);
         layout.onAdd(this, cell);

@@ -16,15 +16,26 @@ public class WButton extends WPressable {
     private WIcon iconW;
 
     public WButton(String text) {
-        String icon = get(Properties.ICON);
-        if (icon != null) {
-            iconW = add(new WButtonIcon()).widget();
-            iconW.tag(icon);
+        checkIcon();
 
-            layout = new HorizontalLayout();
+        this.textW = add(new WButtonText(text)).expandCellX().widget();
+    }
+
+    // TODO: Bad
+    public void checkIcon() {
+        if (iconW != null) {
+            remove(iconW);
+            iconW = null;
         }
 
-        this.textW = add(new WText(text)).widget();
+        String icon = get(Properties.ICON);
+        if (icon != null && !icon.equals("none")) {
+            iconW = new WButtonIcon();
+            iconW.tag(icon);
+
+            cells.add(0, create(iconW));
+            layout = new HorizontalLayout();
+        }
     }
 
     @Override
@@ -41,6 +52,13 @@ public class WButton extends WPressable {
     @Override
     protected void doAction() {
         if (action != null) action.run();
+    }
+
+    @Override
+    public Widget tag(String tag) {
+        textW.tag(tag);
+        if (iconW != null) iconW.tag(tag);
+        return super.tag(tag);
     }
 
     public void setText(String text) {
@@ -67,6 +85,19 @@ public class WButton extends WPressable {
         @Override
         public boolean isPressed() {
             return WButton.this.isPressed();
+        }
+    }
+
+    protected static class WButtonText extends WText {
+        protected static final String[] NAMES = combine(WText.NAMES, "button-text");
+
+        public WButtonText(String text) {
+            super(text);
+        }
+
+        @Override
+        public String[] names() {
+            return NAMES;
         }
     }
 }

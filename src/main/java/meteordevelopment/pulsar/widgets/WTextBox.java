@@ -27,7 +27,7 @@ public class WTextBox extends Widget {
     private final char replacementChar;
 
     protected String text;
-    protected ICharFilter filter;
+    protected ICharFilter filter = CharFilters.ALL;
 
     protected final WText textW;
     protected final WSelection selectionW;
@@ -53,7 +53,6 @@ public class WTextBox extends Widget {
         this.text = text;
         this.placeholder = placeholder;
         this.replacementChar = replacementChar;
-        this.filter = (text1, c) -> true;
 
         String icon = get(Properties.ICON);
         if (icon != null) {
@@ -235,7 +234,7 @@ public class WTextBox extends Widget {
 
                 for (int i = 0; i < clipboard.length(); i++) {
                     char c = clipboard.charAt(i);
-                    if (filter.filter(text, c)) {
+                    if (filter.filter(text, c, cursor)) {
                         sb.append(c);
                         addedChars++;
                     }
@@ -421,7 +420,7 @@ public class WTextBox extends Widget {
     protected void onCharTyped(CharTypedEvent event) {
         if (!focused || event.used) return;
 
-        if (filter.filter(text, event.c)) {
+        if (filter.filter(text, event.c, cursor)) {
             clearSelection();
 
             text = text.substring(0, cursor) + event.c + text.substring(cursor);
