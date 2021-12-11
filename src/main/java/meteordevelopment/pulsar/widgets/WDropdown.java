@@ -86,10 +86,10 @@ public class WDropdown<T> extends WPressable {
             maxWidth = Math.max(maxWidth, padding.horizontal() + Renderer.INSTANCE.textWidth(string, size));
         }
 
-        layout.calculateSize(this, Renderer.INSTANCE);
+        layout.calculateSize(this);
         minSize = new Vec2(Math.max(maxWidth, width), 0);
 
-        root.layout.calculateSize(root, Renderer.INSTANCE);
+        root.layout.calculateSize(root);
     }
 
     @Override

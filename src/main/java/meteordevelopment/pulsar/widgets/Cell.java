@@ -14,6 +14,8 @@ public class Cell<T extends Widget> {
 
     public Cell(T widget) {
         this.widget = widget;
+
+        if (widget instanceof WHorizontalSeparator) expandX();
     }
 
     /** @return the widget this cell wraps. */

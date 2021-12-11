@@ -1,6 +1,5 @@
 package meteordevelopment.pulsar.layout;
 
-import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.Properties;
 import meteordevelopment.pulsar.utils.Vec2;
 import meteordevelopment.pulsar.widgets.Cell;
@@ -9,9 +8,8 @@ import meteordevelopment.pulsar.widgets.Widget;
 /** Base class for all layouts */
 public abstract class Layout {
     /** Calculates size for this specified widget and all its children. */
-    public final void calculateSize(Widget widget, Renderer renderer) {
-        for (Cell<?> cell : widget)
-            cell.widget().layout.calculateSize(cell.widget(), renderer);
+    public final void calculateSize(Widget widget) {
+        for (Cell<?> cell : widget) cell.widget().layout.calculateSize(cell.widget());
 
         widget.width = widget.height = 0;
 

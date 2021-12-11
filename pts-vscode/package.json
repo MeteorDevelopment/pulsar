@@ -4,6 +4,10 @@
 	"description": "Language for theme definition in Pulsar.",
 	"publisher": "MineGame159",
 	"version": "0.0.2",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/MeteorDevelopment/pulsar.git"
+	},
 	"engines": {
 		"vscode": "^1.62.0"
 	},

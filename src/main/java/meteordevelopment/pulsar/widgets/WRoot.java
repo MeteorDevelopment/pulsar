@@ -86,7 +86,7 @@ public class WRoot extends Widget {
     @Override
     public void render(Renderer renderer, double delta) {
         if (invalid) {
-            layout.calculateSize(this, renderer);
+            layout.calculateSize(this);
             layout.positionChildren(this);
 
             invalid = false;

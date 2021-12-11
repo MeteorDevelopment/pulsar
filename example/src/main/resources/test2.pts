@@ -273,3 +273,15 @@ button-text .double-edit {
     font-size: 20
     align-x: center
 }
+
+// Separators
+
+horizontal-separator {
+    size: 1
+    background-color: 210 210 210
+}
+
+horizontal-separator-text {
+    color: 180 180 180
+    align-x: center
+}

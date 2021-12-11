@@ -16,6 +16,7 @@ public class Main {
 
         w.add(new WText("Hello"));
         w.add(new WText("COPE?!?!?!!?").tag("right"));
+        w.add(new WHorizontalSeparator("Something"));
 
         WTable t = w.add(new WTable()).expandX().widget();
 
@@ -29,6 +30,9 @@ public class Main {
 
         t.add(new WText("Text:"));
         t.add(new WTextBox("Cope?")).expandX();
+        t.row();
+
+        t.add(new WHorizontalSeparator("Numbers"));
         t.row();
 
         t.add(new WText("Integer 1:"));
@@ -46,6 +50,8 @@ public class Main {
         t.add(new WText("Double 2:"));
         t.add(new WDoubleEdit(2, null, null));
         t.row();
+
+        w.add(new WHorizontalSeparator());
 
         w.add(new WButton("Click me")).expandX();
 
