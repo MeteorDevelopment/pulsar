@@ -1,0 +1,8 @@
+@var text: Color4 = 15 15 15
+
+@var window-header: Color4 = 255 60 60,  255 100 100,  255 100 100,  255 60 60       // Double spaces just so its more readable
+@var window-body: Color4 = #FFFFFF
+
+@var bg: Color4 = 240 240 240
+@var bg-hovered: Color4 = 230 230 230
+@var bg-pressed: Color4 = 220 220 220

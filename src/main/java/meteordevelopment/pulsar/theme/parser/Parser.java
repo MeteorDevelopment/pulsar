@@ -13,13 +13,19 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Parser {
+    private record Variable(PropertyType type, Object value) {}
+
     private final IFileResolver fileResolver;
     private final String path;
     private final Scanner scanner;
+
     private final Theme theme;
+    private final Map<String, Variable> variables;
 
     private Token next, current, previous;
 
@@ -31,16 +37,18 @@ public class Parser {
         this.path = path;
         this.scanner = new Scanner(new InputStreamReader(in));
         this.theme = new Theme();
+        this.variables = new HashMap<>();
 
         advance();
         advance();
     }
 
-    private Parser(IFileResolver fileResolver, String path, InputStream in, Theme theme) {
+    private Parser(IFileResolver fileResolver, String path, InputStream in, Theme theme, Map<String, Variable> variables) {
         this.fileResolver = fileResolver;
         this.path = path;
         this.scanner = new Scanner(new InputStreamReader(in));
         this.theme = theme;
+        this.variables = variables;
 
         advance();
         advance();
@@ -70,6 +78,7 @@ public class Parser {
                 case "authors" -> authors();
                 case "font" -> font();
                 case "include" -> include();
+                case "var" -> variable();
                 default -> throw error(token, "Unknown at declaration.");
             }
 
@@ -153,11 +162,30 @@ public class Parser {
         InputStream in = fileResolver.get(path);
         if (in == null) throw error(file, "Failed to read file '" + fileResolver.resolvePath(path) + "'.");
 
-        Parser parser = new Parser(fileResolver, path, in, theme);
+        Parser parser = new Parser(fileResolver, path, in, theme, variables);
 
         while (!parser.isAtEnd()) {
             parser.declaration();
         }
+    }
+
+    private void variable() {
+        Token name = consume(TokenType.Identifier, "Expected variable name.");
+
+        consume(TokenType.Colon, "Expected ':' after variable name.");
+        Token typeT = consume(TokenType.Identifier, "Expected variable type.");
+        consume(TokenType.Equal, "Expected '=' after variable type.");
+
+        PropertyType type;
+        try {
+            type = PropertyType.valueOf(typeT.lexeme());
+        }
+        catch (IllegalArgumentException ignored) {
+            throw error(typeT, "Unknown variable type '" + typeT.lexeme() + "'.");
+        }
+
+        Object value = value(type, null);
+        variables.put(name.lexeme(), new Variable(type, value));
     }
 
     // Styles
@@ -179,16 +207,33 @@ public class Parser {
 
         consume(TokenType.Colon, "Expected ':' before property value.");
 
-        switch (property.type()) {
-            case Number -> style.set(property, number());
-            case Vec2 -> style.set(property, vec2());
-            case Vec4 -> style.set(property, vec4());
-            case Identifier -> style.set(property, identifier());
-            case File -> style.set(property, file());
-            case Color -> style.set(property, color());
-            case Color4 -> style.set(property, color4());
-            case Enum -> style.set(property, enum_(property.defaultValue().getClass()));
+        if (match(TokenType.Bang)) {
+            Token variableT = consume(TokenType.Identifier, "Expected variable name.");
+
+            Variable variable = variables.get(variableT.lexeme());
+            if (variable == null) throw error(variableT, "Unknown variable '" + variableT.lexeme() + "'.");
+
+            if (property.type() != variable.type) throw error(variableT, "Variable of type '" + variable.type + "' cannot be assigned to a property of type '" + property.type() + "'.");
+
+            if (variable.type == PropertyType.Enum) style.set(property, enum_(property.defaultValue().getClass(), variableT, (String) variable.value));
+            else style.set(property, variable.value);
         }
+        else {
+            style.set(property, value(property.type(), property.type() == PropertyType.Enum ? property.defaultValue().getClass() : null));
+        }
+    }
+
+    private Object value(PropertyType type, Class<?> enumKlass) {
+        return switch (type) {
+            case Number -> number();
+            case Vec2 -> vec2();
+            case Vec4 -> vec4();
+            case Identifier -> identifier();
+            case File -> file();
+            case Color -> color();
+            case Color4 -> color4();
+            case Enum -> enum_(enumKlass);
+        };
     }
 
     private double number() {
@@ -298,18 +343,24 @@ public class Parser {
     }
 
     private Object enum_(Class<?> klass) {
-        try {
-            Token name = consume(TokenType.Identifier, "Expected enum name.");
+        Token name = consume(TokenType.Identifier, "Expected enum name.");
+        if (klass == null) return name.lexeme();
 
+        return enum_(klass, name, name.lexeme());
+    }
+
+    private Object enum_(Class<?> klass, Token token, String name) {
+        try {
             Method valuesMethod = klass.getDeclaredMethod("values");
             Enum<?>[] values = (Enum<?>[]) valuesMethod.invoke(null);
 
             for (Enum<?> value : values) {
-                if (value.name().equalsIgnoreCase(name.lexeme())) return value;
+                if (value.name().equalsIgnoreCase(name)) return value;
             }
 
-            throw error(name, "Unknown value.");
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw error(token, "Unknown value.");
+        }
+        catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             return null;
         }

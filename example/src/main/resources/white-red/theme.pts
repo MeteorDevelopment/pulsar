@@ -3,6 +3,7 @@
 
 @font "Comfortaa.ttf"
 
+@include "variables.pts"
 @include "slider.pts"
 @include "dropdown.pts"
 @include "edits.pts"
@@ -13,7 +14,7 @@ widget {
 }
 
 text {
-    color: 15 15 15
+    color: !text
     font-size: 16
 }
 
@@ -22,7 +23,7 @@ text {
 }
 
 window-header {
-    background-color: 255 60 60,  255 100 100,  255 100 100,  255 60 60       // Double spaces just so its more readable
+    background-color: !window-header
     radius: 2
     outline-size: 2
     outline-color: 0 0 0
@@ -37,7 +38,7 @@ text .window-title {
 }
 
 window-body {
-    background-color: #FFFFFF
+    background-color: !window-body
     radius: 2
     outline-size: 2
     outline-color: 0 0 0
@@ -45,7 +46,7 @@ window-body {
 }
 
 button {
-    background-color: 240 240 240
+    background-color: !bg
     outline-size: 1
     outline-color: 0 0 0
     padding: 4
@@ -54,11 +55,11 @@ button {
 }
 
 button :hovered {
-    background-color: 230 230 230
+    background-color: !bg-hovered
 }
 
 button :pressed {
-    background-color: 220 220 220
+    background-color: !bg-pressed
 }
 
 icon .click {
@@ -80,6 +81,7 @@ button-text {
 }
 
 checkbox {
+    background-color: !bg
     outline-size: 2
     outline-color: 0 0 0
     padding: 4
@@ -87,11 +89,11 @@ checkbox {
 }
 
 checkbox :hovered {
-    background-color: 240 240 240
+    background-color: !bg-hovered
 }
 
 checkbox :pressed {
-    background-color: 230 230 230
+    background-color: !bg-pressed
 }
 
 checkbox-inner {
@@ -114,7 +116,7 @@ horizontal-list {
 
 text-box {
     background-color: 240 240 240
-    color: 15 15 15
+    color: !text
     outline-size: 1
     outline-color: 0 0 0
     padding: 6

@@ -34,7 +34,9 @@ public class Scanner {
             case '.' -> token(TokenType.Dot);
             case ',' -> token(TokenType.Comma);
             case ':' -> token(TokenType.Colon);
+            case '=' -> token(TokenType.Equal);
             case '@' -> token(TokenType.At);
+            case '!' -> token(TokenType.Bang);
 
             case '#' -> hex();
             case '"' -> string();

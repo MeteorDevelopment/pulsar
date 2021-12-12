@@ -1,11 +1,19 @@
 dropdown {
-    background-color: 240 240 240
+    background-color: !bg
     outline-size: 1
     outline-color: 0 0 0
     padding: 4 6 4 6
     spacing: 6 4
     icon: down
     list-direction: reversed
+}
+
+dropdown :hovered {
+    background-color: !bg-hovered
+}
+
+dropdown :pressed {
+    background-color: !bg-pressed
 }
 
 icon .down {
@@ -22,14 +30,6 @@ icon .down :pressed {
     color: 40 40 40
 }
 
-dropdown :hovered {
-    background-color: 230 230 230
-}
-
-dropdown :pressed {
-    background-color: 220 220 220
-}
-
 .dropdown-text {
     align-x: center
 }
@@ -41,16 +41,16 @@ dropdown :pressed {
 }
 
 .dropdown-value {
-    background-color: 240 240 240
+    background-color: !bg
     padding: 4
 }
 
 .dropdown-value :hovered {
-    background-color: 230 230 230
+    background-color: !bg-hovered
 }
 
 .dropdown-value :pressed {
-    background-color: 220 220 220
+    background-color: !bg-pressed
 }
 
 .dropdown-value-text {
