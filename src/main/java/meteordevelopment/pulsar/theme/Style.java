@@ -35,7 +35,7 @@ public class Style {
         return value != null ? value : (T) property.type().value;
     }
 
-    void merge(Style style) {
+    public void merge(Style style) {
         for (Property<?> property : style.properties.keySet()) {
             properties.put(property, style.properties.get(property));
         }

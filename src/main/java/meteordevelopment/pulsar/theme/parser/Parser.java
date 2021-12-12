@@ -26,6 +26,7 @@ public class Parser {
 
     private final Theme theme;
     private final Map<String, Variable> variables;
+    private final Map<String, Style> mixins;
 
     private Token next, current, previous;
 
@@ -36,19 +37,23 @@ public class Parser {
         this.fileResolver = fileResolver;
         this.path = path;
         this.scanner = new Scanner(new InputStreamReader(in));
+
         this.theme = new Theme();
         this.variables = new HashMap<>();
+        this.mixins = new HashMap<>();
 
         advance();
         advance();
     }
 
-    private Parser(IFileResolver fileResolver, String path, InputStream in, Theme theme, Map<String, Variable> variables) {
+    private Parser(IFileResolver fileResolver, String path, InputStream in, Theme theme, Map<String, Variable> variables, Map<String, Style> mixins) {
         this.fileResolver = fileResolver;
         this.path = path;
         this.scanner = new Scanner(new InputStreamReader(in));
+
         this.theme = theme;
         this.variables = variables;
+        this.mixins = mixins;
 
         advance();
         advance();
@@ -79,6 +84,7 @@ public class Parser {
                 case "font" -> font();
                 case "include" -> include();
                 case "var" -> variable();
+                case "mixin" -> mixin();
                 default -> throw error(token, "Unknown at declaration.");
             }
 
@@ -162,7 +168,7 @@ public class Parser {
         InputStream in = fileResolver.get(path);
         if (in == null) throw error(file, "Failed to read file '" + fileResolver.resolvePath(path) + "'.");
 
-        Parser parser = new Parser(fileResolver, path, in, theme, variables);
+        Parser parser = new Parser(fileResolver, path, in, theme, variables, mixins);
 
         while (!parser.isAtEnd()) {
             parser.declaration();
@@ -188,14 +194,42 @@ public class Parser {
         variables.put(name.lexeme(), new Variable(type, value));
     }
 
+    private void mixin() {
+        Token name = consume(TokenType.Identifier, "Expected mixin name.");
+
+        Style style = new Style();
+        style(style);
+
+        mixins.put(name.lexeme(), style);
+    }
+
     // Styles
 
     private void style(Style style) {
         consume(TokenType.LeftBrace, "Expected '{' before style body.");
 
-        while (!check(TokenType.RightBrace)) property(style);
+        while (!check(TokenType.RightBrace)) {
+            if (match(TokenType.At)) {
+                Token token = consume(TokenType.Identifier, "Expected at declaration name.");
+
+                switch (token.lexeme()) {
+                    case "apply" -> apply(style);
+                    default -> throw error(token, "Unknown at declaration.");
+                }
+            }
+            else property(style);
+        }
 
         consume(TokenType.RightBrace, "Expected '' after style body.");
+    }
+
+    private void apply(Style style) {
+        Token name = consume(TokenType.Identifier, "Expected mixin name.");
+
+        Style mixin = mixins.get(name.lexeme());
+        if (mixin == null) throw error(name, "Unknown mixin with name '" + name.lexeme() + "'.");
+
+        style.merge(mixin);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

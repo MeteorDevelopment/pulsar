@@ -45,6 +45,7 @@
                 { "include": "#line-comment" },
                 { "include": "#block-comment" },
 
+                { "include": "#at" },
                 { "include": "#property" },
                 { "include": "#color" },
                 { "include": "#number" },

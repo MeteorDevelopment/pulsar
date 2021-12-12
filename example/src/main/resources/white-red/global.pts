@@ -6,3 +6,13 @@
 @var bg: Color4 = 240 240 240
 @var bg-hovered: Color4 = 230 230 230
 @var bg-pressed: Color4 = 220 220 220
+
+@mixin window-outline {
+    outline-size: 2
+    outline-color: 0 0 0
+}
+
+@mixin outline {
+    outline-size: 2
+    outline-color: 127 127 127
+}

@@ -3,7 +3,7 @@
 
 @font "Comfortaa.ttf"
 
-@include "variables.pts"
+@include "global.pts"
 @include "slider.pts"
 @include "dropdown.pts"
 @include "edits.pts"
@@ -23,10 +23,10 @@ text {
 }
 
 window-header {
+    @apply window-outline
+
     background-color: !window-header
     radius: 2
-    outline-size: 2
-    outline-color: 0 0 0
     padding: 8
 }
 
@@ -38,17 +38,17 @@ text .window-title {
 }
 
 window-body {
+    @apply window-outline
+
     background-color: !window-body
     radius: 2
-    outline-size: 2
-    outline-color: 0 0 0
     padding: 8
 }
 
 button {
+    @apply outline
+    
     background-color: !bg
-    outline-size: 1
-    outline-color: 0 0 0
     padding: 4
     spacing: 4
     icon: click
@@ -81,9 +81,9 @@ button-text {
 }
 
 checkbox {
+    @apply outline
+    
     background-color: !bg
-    outline-size: 2
-    outline-color: 0 0 0
     padding: 4
     radius: 6
 }
@@ -115,10 +115,10 @@ horizontal-list {
 }
 
 text-box {
+    @apply outline
+    
     background-color: 240 240 240
     color: !text
-    outline-size: 1
-    outline-color: 0 0 0
     padding: 6
     icon: write
     spacing: 4

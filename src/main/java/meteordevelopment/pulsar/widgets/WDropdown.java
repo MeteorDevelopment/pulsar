@@ -116,9 +116,8 @@ public class WDropdown<T> extends WPressable {
     public void dispatch(Event event) {
         if (event.type == EventType.MousePressed && expanded && !isHovered() && !root.isHovered()) expanded = false;
 
-        super.dispatch(event);
-
         if (expanded) root.dispatch(event);
+        super.dispatch(event);
     }
 
     @Override

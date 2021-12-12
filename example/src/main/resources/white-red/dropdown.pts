@@ -1,7 +1,7 @@
 dropdown {
+    @apply outline
+
     background-color: !bg
-    outline-size: 1
-    outline-color: 0 0 0
     padding: 4 6 4 6
     spacing: 6 4
     icon: down
@@ -35,9 +35,9 @@ icon .down :pressed {
 }
 
 .dropdown-body {
+    @apply outline
+    
     spacing: 0
-    outline-size: 1
-    outline-color: 0 0 0
 }
 
 .dropdown-value {
