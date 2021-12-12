@@ -1,0 +1,58 @@
+dropdown {
+    background-color: 240 240 240
+    outline-size: 1
+    outline-color: 0 0 0
+    padding: 4 6 4 6
+    spacing: 6 4
+    icon: down
+    list-direction: reversed
+}
+
+icon .down {
+    icon-path: "icons/down.svg"
+    size: 20
+    color: 0 0 0
+}
+
+icon .down :hovered {
+    color: 20 20 20
+}
+
+icon .down :pressed {
+    color: 40 40 40
+}
+
+dropdown :hovered {
+    background-color: 230 230 230
+}
+
+dropdown :pressed {
+    background-color: 220 220 220
+}
+
+.dropdown-text {
+    align-x: center
+}
+
+.dropdown-body {
+    spacing: 0
+    outline-size: 1
+    outline-color: 0 0 0
+}
+
+.dropdown-value {
+    background-color: 240 240 240
+    padding: 4
+}
+
+.dropdown-value :hovered {
+    background-color: 230 230 230
+}
+
+.dropdown-value :pressed {
+    background-color: 220 220 220
+}
+
+.dropdown-value-text {
+    align-x: center
+}

@@ -12,10 +12,12 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Parser {
     private final IFileResolver fileResolver;
+    private final String path;
     private final Scanner scanner;
     private final Theme theme;
 
@@ -26,8 +28,19 @@ public class Parser {
         if (in == null) throw error(null, "Failed to read file '" + fileResolver.resolvePath(path) + "'.");
 
         this.fileResolver = fileResolver;
+        this.path = path;
         this.scanner = new Scanner(new InputStreamReader(in));
-        this.theme = new Theme("test", List.of("hi"));
+        this.theme = new Theme();
+
+        advance();
+        advance();
+    }
+
+    private Parser(IFileResolver fileResolver, String path, InputStream in, Theme theme) {
+        this.fileResolver = fileResolver;
+        this.path = path;
+        this.scanner = new Scanner(new InputStreamReader(in));
+        this.theme = theme;
 
         advance();
         advance();
@@ -53,9 +66,14 @@ public class Parser {
             Token token = consume(TokenType.Identifier, "Expected at declaration name.");
 
             switch (token.lexeme()) {
+                case "title" -> title();
+                case "authors" -> authors();
                 case "font" -> font();
+                case "include" -> include();
                 default -> throw error(token, "Unknown at declaration.");
             }
+
+            return;
         }
 
         // Style
@@ -100,9 +118,23 @@ public class Parser {
         theme.addStyle(style);
     }
 
+    private void title() {
+        Token title = consume(TokenType.String, "Expected title.");
+        theme.title = title.idk();
+    }
+
+    private void authors() {
+        theme.authors = new ArrayList<>();
+
+        do {
+            Token author = consume(TokenType.String, "Expected author name.");
+            theme.authors.add(author.idk());
+        } while(match(TokenType.Comma));
+    }
+
     private void font() {
         Token font = consume(TokenType.String, "Expected font path.");
-        String path = font.lexeme().substring(1, font.lexeme().length() - 1);
+        String path = font.idk();
 
         if (!path.endsWith(".ttf")) throw error(font, "Fonts must be in ttf file format.");
 
@@ -110,6 +142,22 @@ public class Parser {
         if (in == null) throw error(font, "Failed to read file '" + fileResolver.resolvePath(path) + "'.");
 
         theme.setFontInfo(new FontInfo(in));
+    }
+
+    private void include() {
+        Token file = consume(TokenType.String, "Expected pts file.");
+        String path = file.idk();
+
+        if (!path.endsWith(".pts")) throw error(file, "File must end with 'pts' extension.");
+
+        InputStream in = fileResolver.get(path);
+        if (in == null) throw error(file, "Failed to read file '" + fileResolver.resolvePath(path) + "'.");
+
+        Parser parser = new Parser(fileResolver, path, in, theme);
+
+        while (!parser.isAtEnd()) {
+            parser.declaration();
+        }
     }
 
     // Styles
@@ -180,7 +228,7 @@ public class Parser {
 
     private String file() {
         Token string = consume(TokenType.String, "Expected string.");
-        String path = string.lexeme().substring(1, string.lexeme().length() - 1);
+        String path = string.idk();
 
         InputStream in = fileResolver.get(path);
         if (in == null) throw error(string, "Failed to read file '" + fileResolver.resolvePath(path) + "'.");
@@ -318,6 +366,6 @@ public class Parser {
     }
 
     private ParseException error(Token token, String message) {
-        return new ParseException(token, message);
+        return new ParseException(path, token, message);
     }
 }

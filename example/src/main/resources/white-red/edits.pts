@@ -1,0 +1,39 @@
+// Int edit
+
+int-edit {
+    spacing: 4
+}
+
+text-box .int-edit {
+    minimum-size: 100 0
+}
+
+button .int-edit {
+    icon: none
+    minimum-size: 28
+}
+
+button-text .int-edit {
+    font-size: 20
+    align-x: center
+}
+
+// Double edit
+
+double-edit {
+    spacing: 4
+}
+
+text-box .double-edit {
+    minimum-size: 100 0
+}
+
+button .double-edit {
+    icon: none
+    minimum-size: 28
+}
+
+button-text .double-edit {
+    font-size: 20
+    align-x: center
+}

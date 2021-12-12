@@ -14,18 +14,13 @@ public class Theme {
         public Style style;
     }
 
-    public final String title;
-    public final Collection<String> authors;
+    public String title;
+    public Collection<String> authors;
 
     private final Styles styles = new Styles();
 
     private FontInfo fontInfo;
     private final Map<String, ByteBuffer> buffers = new HashMap<>();
-
-    public Theme(String title, Collection<String> authors) {
-        this.title = title;
-        this.authors = authors;
-    }
 
     public void dispose() {
         if (fontInfo != null) fontInfo.dispose();

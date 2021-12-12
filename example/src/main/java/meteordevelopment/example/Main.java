@@ -78,8 +78,7 @@ public class Main {
         Window window = new Window();
         Renderer renderer = new Renderer();
 
-        Theme theme = Parser.parse(new ResourceFileResolver("/"), "test2.pts");
-        //Theme theme = Parser.parse(new NormalFileResolver("/"), "test.pts");
+        Theme theme = Parser.parse(new ResourceFileResolver("/white-red"), "theme.pts");
         renderer.setTheme(theme);
         renderer.window = window.handle;
 

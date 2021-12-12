@@ -1,0 +1,151 @@
+@title "White Red"
+@authors "MineGame159", "Coper"
+
+@font "Comfortaa.ttf"
+
+@include "slider.pts"
+@include "dropdown.pts"
+@include "edits.pts"
+
+widget {
+    spacing: 6
+    radius: 2
+}
+
+text {
+    color: 15 15 15
+    font-size: 16
+}
+
+.right {
+    align-x: right
+}
+
+window-header {
+    background-color: 255 60 60,  255 100 100,  255 100 100,  255 60 60       // Double spaces just so its more readable
+    radius: 2
+    outline-size: 2
+    outline-color: 0 0 0
+    padding: 8
+}
+
+text .window-title {
+    color: #FFFFFF
+    align-x: right
+    font-size: 22
+    text-shadow: 15 15 15
+}
+
+window-body {
+    background-color: #FFFFFF
+    radius: 2
+    outline-size: 2
+    outline-color: 0 0 0
+    padding: 8
+}
+
+button {
+    background-color: 240 240 240
+    outline-size: 1
+    outline-color: 0 0 0
+    padding: 4
+    spacing: 4
+    icon: click
+}
+
+button :hovered {
+    background-color: 230 230 230
+}
+
+button :pressed {
+    background-color: 220 220 220
+}
+
+icon .click {
+    icon-path: "icons/click.svg"
+    color: 0 0 0
+    size: 24
+}
+
+icon .click :hovered {
+    color: 20 20 20
+}
+
+icon .click :pressed {
+    color: 40 40 40
+}
+
+button-text {
+    align-x: left
+}
+
+checkbox {
+    outline-size: 2
+    outline-color: 0 0 0
+    padding: 4
+    radius: 6
+}
+
+checkbox :hovered {
+    background-color: 240 240 240
+}
+
+checkbox :pressed {
+    background-color: 230 230 230
+}
+
+checkbox-inner {
+    color: 0 0 0
+    size: 14
+    icon-path: "icons/check.svg"
+}
+
+checkbox-inner :hovered {
+    color: 20 20 20
+}
+
+checkbox-inner :pressed {
+    color: 40 40 40
+}
+
+horizontal-list {
+    spacing: 8
+}
+
+text-box {
+    background-color: 240 240 240
+    color: 15 15 15
+    outline-size: 1
+    outline-color: 0 0 0
+    padding: 6
+    icon: write
+    spacing: 4
+    minimum-size: 220 0
+}
+
+text-box-placeholder {
+    color: 145 145 145
+}
+
+icon .write {
+    icon-path: "icons/write.svg"
+    color: 0 0 0
+    size: 16
+}
+
+selection {
+    background-color: 45 125 245 100
+    radius: 2
+}
+
+// Separators
+
+horizontal-separator {
+    size: 1
+    background-color: 210 210 210
+}
+
+horizontal-separator-text {
+    color: 180 180 180
+    align-x: center
+}
