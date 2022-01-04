@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11C.*;
+import static org.lwjgl.opengl.GL13C.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13C.glActiveTexture;
 
 public class Renderer {
     private static final Color4 BLANK = new Color4(ColorFactory.create(0, 0, 0, 0));
@@ -28,6 +30,9 @@ public class Renderer {
     private final Icons icons = new Icons();
     private final Shader iconShader = new Shader("/pulsar/shaders/texture.vert", "/pulsar/shaders/icon.frag");
     private final Mesh iconMesh = new Mesh(Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Color);
+
+    private final Shader textureShader = new Shader("/pulsar/shaders/texture.vert", "/pulsar/shaders/texture.frag");
+    private final List<Texture> textures = new ArrayList<>();
 
     private final List<Runnable> afterRunnables = new ArrayList<>();
     private Fonts fonts;
@@ -86,6 +91,30 @@ public class Renderer {
         iconShader.set("u_Proj", projection);
         iconShader.set("u_Texture", icons.bind());
         iconMesh.render();
+
+        // Textures
+        if (textures.size() > 0) {
+            glActiveTexture(GL_TEXTURE0);
+
+            textureShader.bind();
+            textureShader.set("u_Proj", projection);
+            textureShader.set("u_Texture", 0);
+
+            for (Texture texture : textures) {
+                glBindTexture(GL_TEXTURE_2D, texture.glId);
+
+                iconMesh.begin();
+                iconMesh.quad(
+                        iconMesh.vec2(texture.x, texture.y).vec2(0, 0).color(texture.color.bottomLeft()).next(),
+                        iconMesh.vec2(texture.x, texture.y + texture.height).vec2(0, 1).color(texture.color.topLeft()).next(),
+                        iconMesh.vec2(texture.x + texture.width, texture.y + texture.height).vec2(1, 1).color(texture.color.topRight()).next(),
+                        iconMesh.vec2(texture.x + texture.width, texture.y).vec2(1, 0).color(texture.color.bottomRight()).next()
+                );
+                iconMesh.render();
+            }
+
+            textures.clear();
+        }
 
         // Text
         fonts.end(projection);
@@ -152,6 +181,10 @@ public class Renderer {
         );
     }
 
+    public void texture(double x, double y, double width, double height, int glId, Color4 color) {
+        textures.add(new Texture(x, y, width, height, glId, color));
+    }
+
     public double textWidth(String text, double size) {
         return fonts.textWidth(text, text.length(), size);
     }
@@ -170,4 +203,6 @@ public class Renderer {
     public void after(Runnable runnable) {
         afterRunnables.add(runnable);
     }
+
+    private record Texture(double x, double y, double width, double height, int glId, Color4 color) {}
 }
