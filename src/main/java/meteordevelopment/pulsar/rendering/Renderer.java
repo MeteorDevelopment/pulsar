@@ -1,5 +1,6 @@
 package meteordevelopment.pulsar.rendering;
 
+import meteordevelopment.pulsar.Pulsar;
 import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.utils.*;
 import org.lwjgl.system.MemoryUtil;
@@ -9,8 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11C.*;
-import static org.lwjgl.opengl.GL13C.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13C.glActiveTexture;
 
 public class Renderer {
     private static final Color4 BLANK = new Color4(ColorFactory.create(0, 0, 0, 0));
@@ -92,14 +91,12 @@ public class Renderer {
 
         // Textures
         if (textures.size() > 0) {
-            glActiveTexture(GL_TEXTURE0);
-
             textureShader.bind();
             textureShader.set("u_Proj", projection);
             textureShader.set("u_Texture", 0);
 
             for (Texture texture : textures) {
-                glBindTexture(GL_TEXTURE_2D, texture.glId);
+                Pulsar.BIND_TEXTURE.accept(texture.glId);
 
                 iconMesh.begin();
                 iconMesh.quad(

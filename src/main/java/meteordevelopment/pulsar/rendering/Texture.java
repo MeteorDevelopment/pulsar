@@ -1,12 +1,12 @@
 package meteordevelopment.pulsar.rendering;
 
+import meteordevelopment.pulsar.Pulsar;
+
 import java.nio.ByteBuffer;
 
 import static org.lwjgl.opengl.GL11C.*;
 import static org.lwjgl.opengl.GL12C.GL_UNPACK_IMAGE_HEIGHT;
 import static org.lwjgl.opengl.GL12C.GL_UNPACK_SKIP_IMAGES;
-import static org.lwjgl.opengl.GL13C.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13C.glActiveTexture;
 
 public class Texture {
     private final int id;
@@ -19,7 +19,7 @@ public class Texture {
         this.font = font;
 
         id = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, id);
+        Pulsar.BIND_TEXTURE.accept(id);
 
         glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_FALSE);
         glPixelStorei(GL_UNPACK_LSB_FIRST, GL_FALSE);
@@ -41,13 +41,12 @@ public class Texture {
     public void upload(ByteBuffer buffer) {
         if (buffer != null) buffer.rewind();
 
-        glBindTexture(GL_TEXTURE_2D, id);
+        Pulsar.BIND_TEXTURE.accept(id);
         glTexImage2D(GL_TEXTURE_2D, 0, font ? GL_RED : GL_RGBA, width, height, 0, font ? GL_RED : GL_RGBA, GL_UNSIGNED_BYTE, buffer);
     }
 
     public Texture bind() {
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, id);
+        Pulsar.BIND_TEXTURE.accept(id);
 
         return this;
     }
