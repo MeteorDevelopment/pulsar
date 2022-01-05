@@ -1,12 +1,13 @@
 package meteordevelopment.pulsar.rendering;
 
+import meteordevelopment.pulsar.Pulsar;
 import meteordevelopment.pulsar.utils.IColor;
 import meteordevelopment.pulsar.utils.Vec4;
 
 import static org.lwjgl.opengl.GL15C.*;
 import static org.lwjgl.opengl.GL20C.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20C.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL30C.*;
+import static org.lwjgl.opengl.GL30C.glGenVertexArrays;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public class Mesh {
@@ -50,7 +51,7 @@ public class Mesh {
     private int indicesCapacity;
     private long indices;
 
-    private int vao, vbo, ibo;
+    private final int vao, vbo, ibo;
 
     private boolean building;
     private int vertexI, indicesCount;
@@ -70,13 +71,13 @@ public class Mesh {
         indices = nmemAllocChecked(indicesCapacity);
 
         vao = glGenVertexArrays();
-        glBindVertexArray(vao);
+        Pulsar.BIND_VERTEX_ARRAY.accept(vao);
 
         vbo = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        Pulsar.BIND_ARRAY_BUFFER.accept(vbo);
 
         ibo = glGenBuffers();
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        Pulsar.BIND_ELEMENT_ARRAY_BUFFER.accept(ibo);
 
         int offset = 0;
         for (int i = 0; i < attributes.length; i++) {
@@ -219,10 +220,10 @@ public class Mesh {
         if (!building) throw new IllegalStateException("Mesh.end() called while not building.");
 
         if (indicesCount > 0) {
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            Pulsar.BIND_ARRAY_BUFFER.accept(vbo);
             nglBufferData(GL_ARRAY_BUFFER, verticesI - vertices, vertices, GL_DYNAMIC_DRAW);
 
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+            Pulsar.BIND_ELEMENT_ARRAY_BUFFER.accept(ibo);
             nglBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesCount * 4L, indices, GL_DYNAMIC_DRAW);
         }
 
@@ -233,8 +234,8 @@ public class Mesh {
         if (building) end();
 
         if (indicesCount > 0) {
-            glBindVertexArray(vao);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+            Pulsar.BIND_VERTEX_ARRAY.accept(vao);
+            Pulsar.BIND_ELEMENT_ARRAY_BUFFER.accept(ibo);
             glDrawElements(lines ? GL_LINES : GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, 0);
         }
     }
