@@ -2,13 +2,18 @@ package meteordevelopment.pulsar.rendering;
 
 import meteordevelopment.pulsar.utils.ColorFactory;
 import meteordevelopment.pulsar.utils.IColor;
+import meteordevelopment.pulsar.utils.Matrix;
 import meteordevelopment.pulsar.widgets.Cell;
 import meteordevelopment.pulsar.widgets.Widget;
-import org.joml.Matrix4f;
+import org.lwjgl.system.MemoryUtil;
+
+import java.nio.FloatBuffer;
 
 public class DebugRenderer {
     private static final IColor CELL_COLOR = ColorFactory.create(25, 225, 25, 255);
     private static final IColor WIDGET_COLOR = ColorFactory.create(25, 25, 225, 255);
+
+    private static final FloatBuffer PROJECTION = MemoryUtil.memAllocFloat(16);
 
     private static Shader shader;
     private static Mesh mesh;
@@ -27,7 +32,7 @@ public class DebugRenderer {
         render(widget);
 
         shader.bind();
-        shader.set("u_Proj", new Matrix4f().ortho2D(0, windowWidth, 0, windowHeight));
+        shader.set("u_Proj", Matrix.ortho(PROJECTION, 0, windowWidth, 0, windowHeight, -10000, 10000));
         mesh.render(true);
     }
 

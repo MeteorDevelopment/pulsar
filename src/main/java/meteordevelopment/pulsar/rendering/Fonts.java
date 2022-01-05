@@ -1,8 +1,8 @@
 package meteordevelopment.pulsar.rendering;
 
 import meteordevelopment.pulsar.utils.Color4;
-import org.joml.Matrix4f;
 
+import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,7 +44,7 @@ public class Fonts {
         font.font.renderChars(font.mesh, x, y, c, count, color);
     }
 
-    public void end(Matrix4f projection) {
+    public void end(FloatBuffer projection) {
         shader.bind();
         shader.set("u_Proj", projection);
 

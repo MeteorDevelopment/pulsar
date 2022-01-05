@@ -1,12 +1,10 @@
 package meteordevelopment.pulsar.rendering;
 
 import meteordevelopment.pulsar.theme.Theme;
-import meteordevelopment.pulsar.utils.Color4;
-import meteordevelopment.pulsar.utils.ColorFactory;
-import meteordevelopment.pulsar.utils.Utils;
-import meteordevelopment.pulsar.utils.Vec4;
-import org.joml.Matrix4f;
+import meteordevelopment.pulsar.utils.*;
+import org.lwjgl.system.MemoryUtil;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +36,7 @@ public class Renderer {
     private Fonts fonts;
 
     private int windowWidth, windowHeight;
-    private Matrix4f projection;
+    private final FloatBuffer projection = MemoryUtil.memAllocFloat(16);
 
     public Renderer() {
         INSTANCE = this;
@@ -56,7 +54,7 @@ public class Renderer {
     public void setup(int windowWidth, int windowHeight) {
         this.windowWidth = windowWidth;
         this.windowHeight = windowHeight;
-        projection = new Matrix4f().ortho(0, windowWidth, 0, windowHeight, -10000, 10000);
+        Matrix.ortho(projection, 0, windowWidth, 0, windowHeight, -10000, 10000);
 
         begin();
     }

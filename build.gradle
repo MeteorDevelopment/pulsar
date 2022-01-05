@@ -19,7 +19,6 @@ dependencies {
     compileOnly "org.lwjgl:lwjgl-glfw"
     compileOnly "org.lwjgl:lwjgl-opengl"
     compileOnly "org.lwjgl:lwjgl-stb"
-    compileOnly "org.joml:joml:1.10.2"
 }
 
 java {

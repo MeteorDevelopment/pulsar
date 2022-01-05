@@ -1,16 +1,14 @@
 package meteordevelopment.pulsar.rendering;
 
 import meteordevelopment.pulsar.utils.Utils;
-import org.joml.Matrix4f;
 
+import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.lwjgl.opengl.GL20C.*;
 
 public class Shader {
-    private static float[] ARRAY = new float[4 * 4];
-
     private final int id;
     private final Map<String, Integer> uniformLocations = new HashMap<>();
 
@@ -55,8 +53,8 @@ public class Shader {
         glUniform2f(getLocation(name), (float) x, (float) y);
     }
 
-    public void set(String name, Matrix4f m) {
-        glUniformMatrix4fv(getLocation(name), false, m.get(ARRAY));
+    public void set(String name, FloatBuffer m) {
+        glUniformMatrix4fv(getLocation(name), false, m);
     }
 
     public void set(String name, Texture texture) {
