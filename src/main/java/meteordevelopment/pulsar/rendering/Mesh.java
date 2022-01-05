@@ -88,6 +88,10 @@ public class Mesh {
 
             offset += attrib.size();
         }
+
+        Pulsar.BIND_VERTEX_ARRAY.accept(0);
+        Pulsar.BIND_ARRAY_BUFFER.accept(0);
+        Pulsar.BIND_ELEMENT_ARRAY_BUFFER.accept(0);
     }
 
     public void dispose() {
@@ -222,9 +226,11 @@ public class Mesh {
         if (indicesCount > 0) {
             Pulsar.BIND_ARRAY_BUFFER.accept(vbo);
             nglBufferData(GL_ARRAY_BUFFER, verticesI - vertices, vertices, GL_DYNAMIC_DRAW);
+            Pulsar.BIND_ARRAY_BUFFER.accept(0);
 
             Pulsar.BIND_ELEMENT_ARRAY_BUFFER.accept(ibo);
             nglBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesCount * 4L, indices, GL_DYNAMIC_DRAW);
+            Pulsar.BIND_ELEMENT_ARRAY_BUFFER.accept(0);
         }
 
         building = false;
@@ -235,8 +241,8 @@ public class Mesh {
 
         if (indicesCount > 0) {
             Pulsar.BIND_VERTEX_ARRAY.accept(vao);
-            Pulsar.BIND_ELEMENT_ARRAY_BUFFER.accept(ibo);
             glDrawElements(lines ? GL_LINES : GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, 0);
+            Pulsar.BIND_VERTEX_ARRAY.accept(0);
         }
     }
     public void render() {
