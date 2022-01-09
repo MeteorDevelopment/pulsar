@@ -19,6 +19,7 @@ dependencies {
     compileOnly "org.lwjgl:lwjgl-glfw"
     compileOnly "org.lwjgl:lwjgl-opengl"
     compileOnly "org.lwjgl:lwjgl-stb"
+    compileOnly "org.lwjgl:lwjgl-nanovg"
 }
 
 java {
