@@ -22,6 +22,10 @@ text {
     align-x: right
 }
 
+window {
+    align-x: center
+}
+
 window-header {
     @apply window-outline
 

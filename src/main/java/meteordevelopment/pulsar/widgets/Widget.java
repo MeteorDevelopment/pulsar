@@ -149,8 +149,11 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
     @Override
     public void dispatch(Event event) {
         for (Cell<?> cell : cells) cell.widget().dispatch(event);
-        super.dispatch(event);
+        dispatchToSelf(event);
+    }
 
+    protected void dispatchToSelf(Event event) {
+        super.dispatch(event);
         if (event.type == EventType.MouseMoved) detectHovered((MouseMovedEvent) event);
     }
 

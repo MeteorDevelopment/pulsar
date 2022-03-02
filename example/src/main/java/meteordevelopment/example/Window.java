@@ -3,6 +3,7 @@ package meteordevelopment.example;
 import meteordevelopment.pulsar.input.*;
 import org.lwjgl.opengl.GL;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -19,7 +20,7 @@ public class Window {
     private final KeyEvent keyEvent = new KeyEvent();
     private final CharTypedEvent charTypedEvent = new CharTypedEvent();
 
-    public Runnable onResized;
+    public BiConsumer<Integer, Integer> onResized;
     public Consumer<Event> onEvent;
 
     public Window() {
@@ -46,7 +47,7 @@ public class Window {
 
             glViewport(0, 0, width1, height1);
 
-            if (onResized != null) onResized.run();
+            if (onResized != null) onResized.accept(width, height);
         });
 
         glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> {

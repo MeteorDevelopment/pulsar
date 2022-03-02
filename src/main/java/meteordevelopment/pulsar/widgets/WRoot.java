@@ -1,11 +1,15 @@
 package meteordevelopment.pulsar.widgets;
 
+import meteordevelopment.pulsar.input.Event;
 import meteordevelopment.pulsar.input.KeyEvent;
 import meteordevelopment.pulsar.input.MouseMovedEvent;
+import meteordevelopment.pulsar.input.UsableEvent;
 import meteordevelopment.pulsar.layout.Layout;
 import meteordevelopment.pulsar.rendering.DebugRenderer;
 import meteordevelopment.pulsar.rendering.Renderer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -13,16 +17,21 @@ import java.util.function.Consumer;
 import static meteordevelopment.pulsar.utils.Utils.combine;
 import static org.lwjgl.glfw.GLFW.*;
 
-/** Root for all widgets. */
 public class WRoot extends Widget {
     protected static final String[] NAMES = combine(Widget.NAMES, "root");
+
+    private final List<WWindow> windows = new ArrayList<>();
 
     private boolean invalid = true;
     private boolean debug;
 
-    protected int windowWidth, windowHeight;
+    private int windowWidth, windowHeight;
 
-    /** Sets the window size, not the widget size. */
+    @Override
+    public String[] names() {
+        return NAMES;
+    }
+
     public void setWindowSize(int width, int height) {
         windowWidth = width;
         windowHeight = height;
@@ -31,6 +40,58 @@ public class WRoot extends Widget {
     @Override
     public void invalidateLayout() {
         invalid = true;
+    }
+
+    @Override
+    public <T extends Widget> Cell<T> add(T widget) {
+        if (widget instanceof WWindow window) windows.add(window);
+        return super.add(widget);
+    }
+
+    @Override
+    public boolean remove(Widget widget) {
+        if (widget instanceof WWindow window) windows.remove(window);
+        return super.remove(widget);
+    }
+
+    @Override
+    public void clear() {
+        windows.clear();
+        super.clear();
+    }
+
+    @Override
+    public void dispatch(Event event) {
+        // Dispatch to windows and reorder them accordingly
+        UsableEvent usableEvent = event instanceof UsableEvent ? (UsableEvent) event : null;
+        boolean wasUsed = false;
+        int firstWindow = -1;
+
+        for (int i = windows.size() - 1; i >= 0; i--) {
+            WWindow window = windows.get(i);
+            window.dispatch(event);
+
+            if (usableEvent != null && !wasUsed && usableEvent.used) {
+                wasUsed = true;
+                firstWindow = i;
+            }
+        }
+
+        if (firstWindow != -1) {
+            int i = windows.size() - 1;
+            WWindow temp = windows.get(i);
+
+            windows.set(i, windows.get(firstWindow));
+            windows.set(firstWindow, temp);
+        }
+
+        // Dispatch to children which are not windows
+        for (Cell<?> cell : cells) {
+            if (!(cell.widget() instanceof WWindow)) cell.widget().dispatch(event);
+        }
+
+        // Dispatch to self
+        dispatchToSelf(event);
     }
 
     @Override
@@ -86,6 +147,8 @@ public class WRoot extends Widget {
     @Override
     public void render(Renderer renderer, double delta) {
         if (invalid) {
+            if (!(layout instanceof RootLayout)) layout = new RootLayout(layout);
+
             layout.calculateSize(this);
             layout.positionChildren(this);
 
@@ -93,42 +156,59 @@ public class WRoot extends Widget {
         }
 
         renderer.setup(windowWidth, windowHeight);
-        super.render(renderer, delta);
+
+        // Render self
+        onRender(renderer, delta);
+
+        // Render children which are not windows
+        for (Cell<?> cell : cells) {
+            if (!(cell.widget() instanceof WWindow)) cell.widget().render(renderer, delta);
+        }
+
+        // Render windows
+        for (WWindow window : windows) window.render(renderer, delta);
+
         renderer.render();
 
         if (debug) DebugRenderer.render(this, windowWidth, windowHeight);
     }
 
-    /** Root widget that covers the entire screen. */
-    public static class FullScreen extends WRoot {
-        public FullScreen() {
-            layout = new Layout() {
-                @Override
-                protected void calculateSizeImpl(Widget widget) {
-                    widget.width = windowWidth;
-                    widget.height = windowHeight;
-                }
+    private class RootLayout extends Layout {
+        private final Layout layout;
 
-                @Override
-                protected void positionChildrenImpl(Widget widget) {
-                    for (Cell<?> cell : widget) {
-                        cell.x = widget.width / 2 - cell.widget().width / 2;
-                        cell.y = widget.height / 2 - cell.widget().height / 2;
-
-                        cell.width = cell.widget().width;
-                        cell.height = cell.widget().height;
-
-                        cell.align();
-                    }
-                }
-            };
+        public RootLayout(Layout layout) {
+            this.layout = layout;
         }
 
         @Override
-        public void setWindowSize(int width, int height) {
-            super.setWindowSize(width, height);
+        public void calculateSize(Widget widget) {
+            layout.calculateSize(widget);
 
-            invalidateLayout();
+            if (widget == WRoot.this) {
+                widget.width = windowWidth;
+                widget.height = windowHeight;
+            }
         }
+
+        @Override
+        public void positionChildren(Widget widget) {
+            layout.positionChildren(widget);
+        }
+
+        @Override
+        public void onAdd(Widget widget, Cell<?> cell) {
+            layout.onAdd(widget, cell);
+        }
+
+        @Override
+        public void onClear(Widget widget) {
+            super.onClear(widget);
+        }
+
+        @Override
+        protected void calculateSizeImpl(Widget widget) {}
+
+        @Override
+        protected void positionChildrenImpl(Widget widget) {}
     }
 }

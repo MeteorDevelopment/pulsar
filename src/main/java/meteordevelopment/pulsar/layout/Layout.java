@@ -8,7 +8,7 @@ import meteordevelopment.pulsar.widgets.Widget;
 /** Base class for all layouts */
 public abstract class Layout {
     /** Calculates size for this specified widget and all its children. */
-    public final void calculateSize(Widget widget) {
+    public void calculateSize(Widget widget) {
         for (Cell<?> cell : widget) cell.widget().layout.calculateSize(cell.widget());
 
         widget.width = widget.height = 0;
@@ -34,7 +34,7 @@ public abstract class Layout {
     }
 
     /** Position's children widgets and its children according to this layout. */
-    public final void positionChildren(Widget widget) {
+    public void positionChildren(Widget widget) {
         positionChildrenImpl(widget);
 
         for (Cell<?> cell : widget) {

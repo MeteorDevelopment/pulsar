@@ -82,13 +82,13 @@ public class Main {
         renderer.setTheme(theme);
         renderer.window = window.handle;
 
-        WRoot root = new WRoot.FullScreen();
+        WRoot root = new WRoot();
         root.setWindowSize(window.getWidth(), window.getHeight());
 
         root.add(createMainWindow());
         root.add(createLoginWindow());
 
-        window.onResized = () -> root.setWindowSize(window.getWidth(), window.getHeight());
+        window.onResized = root::setWindowSize;
         window.onEvent = root::dispatch;
 
         double lastTime = glfwGetTime();
