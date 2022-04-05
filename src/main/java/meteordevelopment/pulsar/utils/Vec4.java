@@ -6,24 +6,24 @@ public record Vec4(double x, double y, double z, double w) {
         this(v, v, v, v);
     }
 
-    public double top() {
-        return x;
+    public int top() {
+        return (int) Math.ceil(x);
     }
-    public double right() {
-        return y;
+    public int right() {
+        return (int) Math.ceil(y);
     }
-    public double bottom() {
-        return z;
+    public int bottom() {
+        return (int) Math.ceil(z);
     }
-    public double left() {
-        return w;
+    public int left() {
+        return (int) Math.ceil(w);
     }
 
-    public double horizontal() {
-        return left() + right();
+    public int horizontal() {
+        return (int) Math.ceil(left() + right());
     }
-    public double vertical() {
-        return bottom() + top();
+    public int vertical() {
+        return (int) Math.ceil(bottom() + top());
     }
 
     public double topLeft() {

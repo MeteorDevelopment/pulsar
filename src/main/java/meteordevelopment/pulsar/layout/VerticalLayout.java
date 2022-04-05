@@ -22,7 +22,7 @@ public class VerticalLayout extends Layout {
             Cell<?> cell = it.next();
             if (cell.widget().shouldSkipLayout()) continue;
 
-            if (it.isNotFirst()) widget.height += spacing.y();
+            if (it.isNotFirst()) widget.height += spacing.intY();
 
             widget.width = Math.max(widget.width, cell.widget().width + padding.horizontal());
             widget.height += cell.widget().height;
@@ -37,7 +37,7 @@ public class VerticalLayout extends Layout {
         Vec2 spacing = widget.get(Properties.SPACING);
         boolean reversed = widget.get(Properties.LIST_DIRECTION) == ListDirection.Reversed;
 
-        double y = widget.y + padding.y();
+        int y = widget.y + padding.bottom();
 
         for (Widget.CellIterator it = widget.iterator(!reversed); it.hasNext();) {
             Cell<?> cell = it.next();
@@ -51,7 +51,7 @@ public class VerticalLayout extends Layout {
 
             cell.align();
 
-            y += cell.height + spacing.y();
+            y += cell.height + spacing.intY();
         }
     }
 }

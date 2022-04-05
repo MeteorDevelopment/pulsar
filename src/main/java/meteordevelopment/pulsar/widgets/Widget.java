@@ -30,8 +30,8 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
 
     public Layout layout = BasicLayout.INSTANCE;
 
-    public double x, y;
-    public double width, height;
+    public int x, y;
+    public int width, height;
 
     private boolean hovered;
     public Style style;
@@ -98,7 +98,7 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
         return cells.size() > 0;
     }
 
-    public void move(double x, double y) {
+    public void move(int x, int y) {
         this.x += x;
         this.y += y;
 
@@ -131,8 +131,8 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
         Vec2 size = get(Properties.SIZE);
 
         if (size != null) {
-            width = size.x();
-            height = size.y();
+            width = size.intX();
+            height = size.intY();
         }
     }
 
@@ -161,7 +161,7 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
 
     protected void detectHovered(MouseMovedEvent event) {
         boolean lastHovered = hovered;
-        hovered = event.x >= x && event.x <= x + width && event.y >= y + 1 && event.y <= y + height;
+        hovered = event.x >= x && event.x < x + width && event.y >= y + 1 && event.y <= y + height;
 
         if (hovered != lastHovered) invalidStyle();
     }
@@ -192,20 +192,20 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
         if (backgroundColor != null || outlineSize > 0) renderer.quad(x, y, width, height, radius, outlineSize, backgroundColor, outlineColor);
     }
 
-    protected void renderText(Renderer renderer, double x, double y, String text) {
-        double size = get(Properties.FONT_SIZE);
+    protected void renderText(Renderer renderer, int x, int y, String text) {
+        int size = (int) Math.ceil(get(Properties.FONT_SIZE));
 
         // Shadow
         Color4 color = get(Properties.TEXT_SHADOW);
         Vec2 offset = get(Properties.TEXT_SHADOW_OFFSET);
-        if (color != null) renderTextComponent(renderer, x + offset.x(), y + offset.y(), text, size, color);
+        if (color != null) renderTextComponent(renderer, x + offset.intX(), y + offset.intY(), text, size, color);
 
         // Text
         color = get(Properties.COLOR);
         if (color != null) renderTextComponent(renderer, x, y, text, size, color);
     }
 
-    protected void renderTextComponent(Renderer renderer, double x, double y, String text, double size, Color4 color) {
+    protected void renderTextComponent(Renderer renderer, int x, int y, String text, int size, Color4 color) {
         renderer.text(x, y, text, size, color);
     }
 

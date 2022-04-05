@@ -18,8 +18,8 @@ public abstract class Layout {
 
         Vec2 minSize = getMinSize(widget);
         if (minSize != null) {
-            widget.width = Math.max(widget.width, minSize.x());
-            widget.height = Math.max(widget.height, minSize.y());
+            widget.width = Math.max(widget.width, minSize.intX());
+            widget.height = Math.max(widget.height, minSize.intY());
         }
 
         widget.width = Math.round(widget.width);
@@ -39,9 +39,6 @@ public abstract class Layout {
 
         for (Cell<?> cell : widget) {
             cell.widget().layout.positionChildren(cell.widget());
-
-            cell.widget().x = Math.round(cell.widget().x);
-            cell.widget().y = Math.round(cell.widget().y);
 
             cell.widget().afterLayout();
         }

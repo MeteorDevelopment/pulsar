@@ -34,10 +34,10 @@ public class WTextBox extends Widget {
     protected WIcon iconW;
 
     protected boolean focused;
-    protected List<Double> textWidths = new ArrayList<>();
+    protected List<Integer> textWidths = new ArrayList<>();
 
     protected int cursor;
-    protected double textStart;
+    protected int textStart;
 
     protected boolean selecting;
     protected int selectionStart, selectionEnd;
@@ -461,7 +461,7 @@ public class WTextBox extends Widget {
         Vec4 padding = get(Properties.PADDING);
         Color4 color = get(Properties.COLOR);
 
-        double overflowWidth = getOverflowWidthForRender();
+        int overflowWidth = getOverflowWidthForRender();
 
         scissor = textWidths.get(textWidths.size() - 1) > maxTextWidth();
         if (scissor) renderer.beginScissor(textW.x - 1, y + padding.bottom() - 1, maxTextWidth() + 2, height - padding.vertical() + 2);
@@ -479,7 +479,7 @@ public class WTextBox extends Widget {
 
     // Utils
 
-    protected double maxTextWidth() {
+    protected int maxTextWidth() {
         return textW.width;
     }
 
@@ -523,7 +523,7 @@ public class WTextBox extends Widget {
 
     private void calculateTextWidths() {
         textWidths.clear();
-        double size = textW.get(Properties.FONT_SIZE);
+        int size = (int) Math.ceil(textW.get(Properties.FONT_SIZE));
 
         for (int i = 0; i <= text.length(); i++) {
             if (replacementChar != '\0') textWidths.add(Renderer.INSTANCE.charWidth(replacementChar, size) * i);
@@ -538,7 +538,7 @@ public class WTextBox extends Widget {
         if (action != null) action.run();
     }
 
-    private double textWidth() {
+    private int textWidth() {
         return textWidths.isEmpty() ? 0 : textWidths.get(textWidths.size() - 1);
     }
 
@@ -563,7 +563,7 @@ public class WTextBox extends Widget {
         cursorTimer = 0;
     }
 
-    protected double getTextWidth(int pos) {
+    protected int getTextWidth(int pos) {
         if (textWidths.isEmpty()) return 0;
 
         if (pos < 0) pos = 0;
@@ -576,7 +576,7 @@ public class WTextBox extends Widget {
         return getTextWidth(cursor + offset);
     }
 
-    protected double getOverflowWidthForRender() {
+    protected int getOverflowWidthForRender() {
         return textStart;
     }
 
@@ -635,7 +635,7 @@ public class WTextBox extends Widget {
         }
 
         @Override
-        protected void renderText(Renderer renderer, double x, double y, String text) {
+        protected void renderText(Renderer renderer, int x, int y, String text) {
             isPlaceholder = false;
 
             if (text.isEmpty() && placeholder != null && placeholderColor != null) {
@@ -646,13 +646,13 @@ public class WTextBox extends Widget {
         }
 
         @Override
-        protected void renderTextComponent(Renderer renderer, double x, double y, String text, double size, Color4 color) {
+        protected void renderTextComponent(Renderer renderer, int x, int y, String text, int size, Color4 color) {
             if (replacementChar != '\0' && !isPlaceholder) renderer.chars(x, y, replacementChar, text.length(), size, color);
             else super.renderTextComponent(renderer, x, y, text, size, isPlaceholder ? placeholderColor : color);
         }
 
         @Override
-        protected double getOffsetX() {
+        protected int getOffsetX() {
             return -WTextBox.this.getOverflowWidthForRender();
         }
 
@@ -677,13 +677,13 @@ public class WTextBox extends Widget {
 
         @Override
         protected void onRender(Renderer renderer, double delta) {
-            double overflowWidth = getOverflowWidthForRender();
+            int overflowWidth = getOverflowWidthForRender();
 
             if (focused && selectionStart != selectionEnd) {
                 Vec4 padding = WTextBox.this.get(Properties.PADDING);
 
-                double selStart = WTextBox.this.textW.x + getTextWidth(selectionStart) - overflowWidth;
-                double selEnd = WTextBox.this.textW.x + getTextWidth(selectionEnd) - overflowWidth;
+                int selStart = WTextBox.this.textW.x + getTextWidth(selectionStart) - overflowWidth;
+                int selEnd = WTextBox.this.textW.x + getTextWidth(selectionEnd) - overflowWidth;
 
                 x = selStart - 1;
                 y = WTextBox.this.y + padding.bottom() - 1;

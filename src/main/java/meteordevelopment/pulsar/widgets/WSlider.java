@@ -112,14 +112,14 @@ public class WSlider extends Widget {
         return value;
     }
 
-    protected double valueWidth() {
+    protected int valueWidth() {
         double valuePercentage = (value - min) / (max - min);
-        return valuePercentage * (width - handle.width);
+        return (int) Math.ceil(valuePercentage * (width - handle.width));
     }
 
     @Override
     public void render(Renderer renderer, double delta) {
-        double v = valueWidth();
+        int v = valueWidth();
         handle.x = x + v;
         v += handle.width / 2;
         left.width = v;

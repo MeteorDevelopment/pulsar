@@ -23,7 +23,7 @@ public class HorizontalLayout extends Layout {
             Cell<?> cell = it.next();
             if (cell.widget().shouldSkipLayout()) continue;
 
-            if (it.isNotFirst()) widget.width += spacing.x();
+            if (it.isNotFirst()) widget.width += spacing.intX();
 
             widget.width += cell.widget().width;
             widget.height = Math.max(widget.height, cell.widget().height + padding.vertical());
@@ -42,8 +42,11 @@ public class HorizontalLayout extends Layout {
         Vec2 spacing = widget.get(Properties.SPACING);
         boolean reversed = widget.get(Properties.LIST_DIRECTION) == ListDirection.Reversed;
 
-        double x = widget.x + padding.left();
-        double expandWidth = (widget.width - calculatedWidth) / expandCellCount;
+        int x = widget.x + padding.left();
+
+        double expandWidthD = (widget.width - calculatedWidth) / expandCellCount;
+        int expandWidth = (int) expandWidthD;
+        Cell<?> lastExpandWidth = null;
 
         for (Widget.CellIterator it = widget.iterator(reversed); it.hasNext();) {
             Cell<?> cell = it.next();
@@ -55,10 +58,19 @@ public class HorizontalLayout extends Layout {
             cell.width = cell.widget().width;
             cell.height = widget.height - padding.vertical();
 
-            if (cell.expandCellX) cell.width += expandWidth;
+            if (cell.expandCellX) {
+                cell.width += expandWidth;
+                lastExpandWidth = cell;
+            }
+
             cell.align();
 
-            x += cell.width + spacing.x();
+            x += cell.width + spacing.intX();
+        }
+
+        if (lastExpandWidth != null) {
+            lastExpandWidth.width += (int) Math.ceil((expandWidthD - expandWidth) * expandCellCount);
+            lastExpandWidth.align();
         }
     }
 }

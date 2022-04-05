@@ -6,8 +6,8 @@ import meteordevelopment.pulsar.theme.Properties;
 public class Cell<T extends Widget> {
     private final T widget;
 
-    public double x, y;
-    public double width, height;
+    public int x, y;
+    public int width, height;
 
     public boolean expandCellX;
     private boolean expandWidgetX;

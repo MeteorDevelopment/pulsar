@@ -35,7 +35,7 @@ public class WText extends Widget {
         renderText(renderer, x + getOffsetX(), y, getText());
     }
 
-    protected double getOffsetX() {
+    protected int getOffsetX() {
         return 0;
     }
 

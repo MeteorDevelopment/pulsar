@@ -32,18 +32,18 @@ public class WHorizontalSeparator extends Widget {
         Vec2 spacing = get(Properties.SPACING);
 
         if (backgroundColor != null) {
-            double y = Math.round(this.y + height / 2 - size.y() / 2 - 0.1);
+            int y = this.y + height / 2 - size.intY() / 2 - 1;
 
             if (textW == null) {
-                renderer.quad(x, y, width, size.y(), radius, 0, backgroundColor, null);
+                renderer.quad(x, y, width, size.intY(), radius, 0, backgroundColor, null);
             }
             else {
-                double w = textW.x - x - spacing.x();
-                if (w > 0) renderer.quad(x, y, w, size.y(), radius, 0, backgroundColor, null);
+                int w = textW.x - x - spacing.intX();
+                if (w > 0) renderer.quad(x, y, w, size.intY(), radius, 0, backgroundColor, null);
 
-                double x = textW.x + textW.width + spacing.x();
+                int x = textW.x + textW.width + spacing.intX();
                 w = (this.x + width) - x;
-                if (w > 0) renderer.quad(x, y, w, size.y(), radius, 0, backgroundColor, null);
+                if (w > 0) renderer.quad(x, y, w, size.intY(), radius, 0, backgroundColor, null);
             }
         }
     }

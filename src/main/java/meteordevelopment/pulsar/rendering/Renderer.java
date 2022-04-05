@@ -137,13 +137,13 @@ public class Renderer {
         iconMesh.alpha(alpha);
     }
 
-    public void quad(double x, double y, double width, double height, Vec4 radius, double outlineSize, Color4 backgroundColor, Color4 outlineColor) {
+    public void quad(int x, int y, int width, int height, Vec4 radius, double outlineSize, Color4 backgroundColor, Color4 outlineColor) {
         int background = backgroundColor != null ? 1 : 0;
         if (backgroundColor == null) backgroundColor = BLANK;
         if (outlineColor == null) outlineColor = BLANK;
 
-        double hw = width / 2;
-        double hh = height / 2;
+        double hw = width / 2.0;
+        double hh = height / 2.0;
 
         double lx = Utils.clamp((width - hh) / hh, -1, 1);
         double ly = Utils.clamp((height - hw) / hw, -1, 1);
@@ -156,15 +156,15 @@ public class Renderer {
         );
     }
 
-    public void text(double x, double y, String text, double size, Color4 color) {
+    public void text(int x, int y, String text, int size, Color4 color) {
         fonts.render(x, y, text, size, color);
     }
 
-    public void chars(double x, double y, char c, int count, double size, Color4 color) {
+    public void chars(int x, int y, char c, int count, double size, Color4 color) {
         fonts.renderChars(x, y, c, count, size, color);
     }
 
-    public void icon(double x, double y, String path, double size, Color4 color) {
+    public void icon(int x, int y, String path, double size, Color4 color) {
         size = (int) size;
         TextureRegion region = icons.get(path, (int) size);
 
@@ -176,23 +176,23 @@ public class Renderer {
         );
     }
 
-    public void texture(double x, double y, double width, double height, int glId, Color4 color) {
+    public void texture(int x, int y, int width, int height, int glId, Color4 color) {
         textures.add(new Texture(x, y, width, height, glId, color));
     }
 
-    public double textWidth(String text, double size) {
-        return fonts.textWidth(text, text.length(), size);
+    public int textWidth(String text, double size) {
+        return (int) Math.ceil(fonts.textWidth(text, text.length(), size));
     }
-    public double textWidth(String text, int length, double size) {
-        return fonts.textWidth(text, length, size);
-    }
-
-    public double charWidth(char c, double size) {
-        return fonts.charWidth(c, size);
+    public int textWidth(String text, int length, double size) {
+        return (int) Math.ceil(fonts.textWidth(text, length, size));
     }
 
-    public double textHeight(double size) {
-        return fonts.textHeight(size);
+    public int charWidth(char c, double size) {
+        return (int) Math.ceil(fonts.charWidth(c, size));
+    }
+
+    public int textHeight(double size) {
+        return (int) Math.ceil(fonts.textHeight(size));
     }
 
     public void after(Runnable runnable) {

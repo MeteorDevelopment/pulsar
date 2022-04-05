@@ -16,7 +16,7 @@ public class WWindow extends Widget {
     private final Widget header, body;
     private boolean expanded = true;
 
-    private double lastX = -1, lastY;
+    private int lastX = -1, lastY;
 
     public WWindow(String title) {
         header = super.add(new WHeader()).expandX().widget();
@@ -55,7 +55,7 @@ public class WWindow extends Widget {
     }
 
     @Override
-    public void move(double x, double y) {
+    public void move(int x, int y) {
         super.move(x, y);
 
         lastX = this.x;
@@ -109,7 +109,7 @@ public class WWindow extends Widget {
         @Override
         protected void onMouseMoved(MouseMovedEvent event) {
             if (dragging) {
-                WWindow.this.move(event.deltaX, event.deltaY);
+                WWindow.this.move((int) event.deltaX, (int) event.deltaY);
                 moved = true;
             }
         }

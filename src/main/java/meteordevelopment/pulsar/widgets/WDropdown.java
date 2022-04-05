@@ -102,7 +102,7 @@ public class WDropdown<T> extends WPressable {
         Vec2 spacing = get(Properties.SPACING);
 
         root.x = x;
-        root.y = y - root.height - spacing.y();
+        root.y = y - root.height - spacing.intY();
 
         root.layout.positionChildren(root);
     }
@@ -127,7 +127,7 @@ public class WDropdown<T> extends WPressable {
     }
 
     @Override
-    public void move(double x, double y) {
+    public void move(int x, int y) {
         super.move(x, y);
         root.move(x, y);
     }

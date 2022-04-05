@@ -15,10 +15,10 @@ public class TableLayout extends Layout {
     private final List<List<Cell<?>>> rows = new ArrayList<>();
     public int rowI;
 
-    private final List<Double> rowHeights = new ArrayList<>();
-    private final List<Double> columnWidths = new ArrayList<>();
+    private final List<Integer> rowHeights = new ArrayList<>();
+    private final List<Integer> columnWidths = new ArrayList<>();
 
-    private final List<Double> rowWidths = new ArrayList<>();
+    private final List<Integer> rowWidths = new ArrayList<>();
     private final List<Integer> rowExpandCellXCounts = new ArrayList<>();
 
     public void row() {
@@ -68,12 +68,12 @@ public class TableLayout extends Layout {
         for (int rowI = 0; rowI < rows.size(); rowI++) {
             List<Cell<?>> row = rows.get(rowI);
 
-            double rowWidth = 0;
+            int rowWidth = 0;
 
             // Loop over cells in the row
             for (int cellI = 0; cellI < row.size(); cellI++) {
                 // Calculate row width
-                if (cellI > 0) rowWidth += spacing.x();
+                if (cellI > 0) rowWidth += spacing.intX();
                 rowWidth += columnWidths.get(cellI);
             }
 
@@ -82,7 +82,7 @@ public class TableLayout extends Layout {
             widget.width = Math.max(widget.width, rowWidth);
 
             // Calculate height
-            if (rowI > 0) widget.height += spacing.y();
+            if (rowI > 0) widget.height += spacing.intY();
             widget.height += rowHeights.get(rowI);
         }
 
@@ -95,25 +95,27 @@ public class TableLayout extends Layout {
         Vec4 padding = widget.get(Properties.PADDING);
         Vec2 spacing = widget.get(Properties.SPACING);
 
-        double y = widget.y + padding.bottom();
+        int y = widget.y + padding.bottom();
 
         // Loop over rows
         for (int rowI = rows.size() - 1; rowI >= 0; rowI--) {
             List<Cell<?>> row = rows.get(rowI);
 
-            if (rowI < rows.size() - 1) y += spacing.y();
+            if (rowI < rows.size() - 1) y += spacing.intY();
 
-            double x = widget.x + padding.left();
-            double rowHeight = rowHeights.get(rowI);
+            int x = widget.x + padding.left();
+            int rowHeight = rowHeights.get(rowI);
 
-            double expandXAdd = rowExpandCellXCounts.get(rowI) > 0 ? (widget.width - rowWidths.get(rowI)) / rowExpandCellXCounts.get(rowI) : 0;
+            double expandXAddD = rowExpandCellXCounts.get(rowI) > 0 ? ((double) widget.width - rowWidths.get(rowI)) / rowExpandCellXCounts.get(rowI) : 0;
+            int expandXAdd = (int) expandXAddD;
+            Cell<?> lastExpandX = null;
 
             // Loop over cells in the row
             for (int cellI = 0; cellI < row.size(); cellI++) {
                 Cell<?> cell = row.get(cellI);
 
-                if (cellI > 0) x += spacing.x();
-                double columnWidth = columnWidths.get(cellI);
+                if (cellI > 0) x += spacing.intX();
+                int columnWidth = columnWidths.get(cellI);
 
                 cell.x = x;
                 cell.y = y;
@@ -124,6 +126,12 @@ public class TableLayout extends Layout {
                 cell.align();
 
                 x += columnWidth + (cell.expandCellX ? expandXAdd : 0);
+                if (cell.expandCellX) lastExpandX = cell;
+            }
+
+            if (lastExpandX != null) {
+                lastExpandX.width += (int) Math.ceil((expandXAddD - expandXAdd) * rowExpandCellXCounts.get(rowI));
+                lastExpandX.align();
             }
 
             y += rowHeight;
@@ -138,7 +146,7 @@ public class TableLayout extends Layout {
 
         // Loop over rows
         for (List<Cell<?>> row : rows) {
-            double rowHeight = 0;
+            int rowHeight = 0;
             int rowExpandXCount = 0;
 
             // Loop over cells in the row
@@ -149,7 +157,7 @@ public class TableLayout extends Layout {
                 rowHeight = Math.max(rowHeight, cell.widget().height);
 
                 // Calculate column width
-                double cellWidth = cell.widget().width;
+                int cellWidth = cell.widget().width;
                 if (columnWidths.size() <= i) columnWidths.add(cellWidth);
                 else columnWidths.set(i, Math.max(columnWidths.get(i), cellWidth));
 
