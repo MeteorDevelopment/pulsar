@@ -16,6 +16,8 @@ repositories {
 dependencies {
     implementation rootProject
 
+    implementation "com.udojava:EvalEx:2.7"
+
     implementation platform("org.lwjgl:lwjgl-bom:3.3.0")
 
     implementation "org.lwjgl:lwjgl"

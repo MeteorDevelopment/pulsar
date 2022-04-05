@@ -75,7 +75,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        Window window = new Window();
+        Window window = new Window("GUI Example", 1280, 720);
         Renderer renderer = new Renderer();
 
         Theme theme = Parser.parse(new ResourceFileResolver("/white-red"), "theme.pts");

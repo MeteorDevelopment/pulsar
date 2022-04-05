@@ -35,6 +35,8 @@ public class WRoot extends Widget {
     public void setWindowSize(int width, int height) {
         windowWidth = width;
         windowHeight = height;
+
+        invalidateLayout();
     }
 
     @Override

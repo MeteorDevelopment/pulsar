@@ -23,17 +23,17 @@ public class Window {
     public BiConsumer<Integer, Integer> onResized;
     public Consumer<Event> onEvent;
 
-    public Window() {
+    public Window(String title, int width, int height) {
         glfwInit();
 
-        width = 1280;
-        height = 720;
+        this.width = width;
+        this.height = height;
 
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        handle = glfwCreateWindow(width, height, "GUI Example", 0, 0);
+        handle = glfwCreateWindow(width, height, title, 0, 0);
 
         glfwMakeContextCurrent(handle);
         GL.createCapabilities();
@@ -42,12 +42,12 @@ public class Window {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glfwSetWindowSizeCallback(handle, (window, width1, height1) -> {
-            width = width1;
-            height = height1;
+            this.width = width1;
+            this.height = height1;
 
             glViewport(0, 0, width1, height1);
 
-            if (onResized != null) onResized.accept(width, height);
+            if (onResized != null) onResized.accept(this.width, this.height);
         });
 
         glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> {
@@ -55,10 +55,10 @@ public class Window {
         });
 
         glfwSetCursorPosCallback(handle, (window, xpos, ypos) -> {
-            onEvent.accept(mouseMovedEvent.set(xpos, height - ypos, xpos - lastMouseX, height - ypos - lastMouseY));
+            onEvent.accept(mouseMovedEvent.set(xpos, this.height - ypos, xpos - lastMouseX, this.height - ypos - lastMouseY));
 
             lastMouseX = xpos;
-            lastMouseY = height - ypos;
+            lastMouseY = this.height - ypos;
         });
 
         glfwSetScrollCallback(handle, (window, xoffset, yoffset) -> {
