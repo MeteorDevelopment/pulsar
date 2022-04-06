@@ -9,6 +9,7 @@ import meteordevelopment.pulsar.layout.VerticalLayout;
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.Properties;
 import meteordevelopment.pulsar.utils.Color4;
+import meteordevelopment.pulsar.utils.Utils;
 import meteordevelopment.pulsar.utils.Vec2;
 import meteordevelopment.pulsar.utils.Vec4;
 
@@ -26,6 +27,7 @@ public class WDropdown<T> extends WPressable {
 
     private boolean expanded;
     private Vec2 minSize;
+    private double animation;
 
     private WIcon iconW;
     private WText textW;
@@ -110,6 +112,7 @@ public class WDropdown<T> extends WPressable {
     @Override
     protected void doAction() {
         expanded = !expanded;
+        if (expanded) animation = 0;
     }
 
     @Override
@@ -136,8 +139,23 @@ public class WDropdown<T> extends WPressable {
     protected void onRender(Renderer renderer, double delta) {
         super.onRender(renderer, delta);
 
-        if (expanded) {
-            renderer.after(() -> root.render(renderer, delta));
+        if (expanded || animation > 0) {
+            animation = Utils.clamp(animation + (expanded ? delta * 10 : -delta * 10), 0, 1);
+            if (animation == 0) return;
+
+            renderer.after(() -> {
+                if (animation < 1) {
+                    renderer.offsetY = (root.height + get(Properties.SPACING).intY()) * (1 - animation);
+                    renderer.beginScissor(root.x, root.y, root.width, root.height);
+                }
+
+                root.render(renderer, delta);
+
+                if (animation > 0 && animation < 1) {
+                    renderer.endScissor();
+                    renderer.offsetY = 0;
+                }
+            });
         }
     }
 

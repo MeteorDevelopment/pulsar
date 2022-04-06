@@ -20,6 +20,7 @@ public class Renderer {
     public long window;
 
     public double mouseX, mouseY;
+    public double offsetY;
 
     private final Shader rectangleShader = new Shader("/pulsar/shaders/rectangles.vert", "/pulsar/shaders/rectangles.frag");
     private final Mesh rectangleMesh = new Mesh(Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Vec4, Mesh.Attrib.UByte, Mesh.Attrib.Color, Mesh.Attrib.Color, Mesh.Attrib.Float);
@@ -138,6 +139,8 @@ public class Renderer {
     }
 
     public void quad(int x, int y, int width, int height, Vec4 radius, double outlineSize, Color4 backgroundColor, Color4 outlineColor) {
+        y += offsetY;
+
         int background = backgroundColor != null ? 1 : 0;
         if (backgroundColor == null) backgroundColor = BLANK;
         if (outlineColor == null) outlineColor = BLANK;
@@ -157,14 +160,16 @@ public class Renderer {
     }
 
     public void text(int x, int y, String text, int size, Color4 color) {
-        fonts.render(x, y, text, size, color);
+        fonts.render(x, y + offsetY, text, size, color);
     }
 
     public void chars(int x, int y, char c, int count, double size, Color4 color) {
-        fonts.renderChars(x, y, c, count, size, color);
+        fonts.renderChars(x, y + offsetY, c, count, size, color);
     }
 
     public void icon(int x, int y, String path, double size, Color4 color) {
+        y += offsetY;
+
         size = (int) size;
         TextureRegion region = icons.get(path, (int) size);
 
@@ -177,7 +182,7 @@ public class Renderer {
     }
 
     public void texture(int x, int y, int width, int height, int glId, Color4 color) {
-        textures.add(new Texture(x, y, width, height, glId, color));
+        textures.add(new Texture(x, y + offsetY, width, height, glId, color));
     }
 
     public int textWidth(String text, double size) {

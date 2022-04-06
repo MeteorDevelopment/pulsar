@@ -6,6 +6,7 @@ import meteordevelopment.pulsar.input.MouseButtonEvent;
 import meteordevelopment.pulsar.input.MouseMovedEvent;
 import meteordevelopment.pulsar.layout.VerticalLayout;
 import meteordevelopment.pulsar.rendering.Renderer;
+import meteordevelopment.pulsar.utils.Utils;
 
 import static meteordevelopment.pulsar.utils.Utils.combine;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
@@ -15,6 +16,7 @@ public class WWindow extends Widget {
 
     private final Widget header, body;
     private boolean expanded = true;
+    private double animation = 1;
 
     private int lastX = -1, lastY;
 
@@ -76,7 +78,24 @@ public class WWindow extends Widget {
         renderer.begin();
 
         header.render(renderer, delta);
-        if (expanded) body.render(renderer, delta);
+
+        if (expanded || animation > 0) {
+            animation = Utils.clamp(animation + (expanded ? delta * 10 : -delta * 10), 0, 1);
+
+            if (animation > 0) {
+                if (animation < 1) {
+                    renderer.offsetY = body.height * (1 - animation);
+                    renderer.beginScissor(body.x, body.y, body.width, body.height);
+                }
+
+                body.render(renderer, delta);
+
+                if (animation > 0 && animation < 1) {
+                    renderer.endScissor();
+                    renderer.offsetY = 0;
+                }
+            }
+        }
 
         renderer.end();
         renderer.begin();
@@ -116,8 +135,10 @@ public class WWindow extends Widget {
 
         @Override
         protected void onMouseReleased(MouseButtonEvent event) {
-            if (shouldToggle && !moved)
+            if (shouldToggle && !moved) {
                 expanded = !expanded;
+                if (expanded) animation = 0;
+            }
 
             dragging = false;
         }
