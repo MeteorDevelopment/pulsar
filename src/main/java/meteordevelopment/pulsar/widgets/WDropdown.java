@@ -257,7 +257,7 @@ public class WDropdown<T> extends WPressable {
             expanded = false;
 
             if (different) {
-                set(value);
+                WDropdown.this.set(value);
                 if (action != null) action.run();
             }
         }

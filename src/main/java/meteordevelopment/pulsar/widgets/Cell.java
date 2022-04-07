@@ -1,6 +1,8 @@
 package meteordevelopment.pulsar.widgets;
 
 import meteordevelopment.pulsar.theme.Properties;
+import meteordevelopment.pulsar.utils.AlignX;
+import meteordevelopment.pulsar.utils.AlignY;
 
 /** Wrapper for a widget that is placed inside another widget. */
 public class Cell<T extends Widget> {
@@ -56,5 +58,49 @@ public class Cell<T extends Widget> {
             case Center -> widget.y = y + height / 2 - widget.height / 2;
             case Top -> widget.y = y + height - widget.height;
         }
+    }
+
+    // Alignment
+
+    /** Sets {@link Properties#ALIGN_X} to {@link AlignX#Left} for this widget. */
+    public Cell<T> left() {
+        widget.set(Properties.ALIGN_X, AlignX.Left);
+        return this;
+    }
+
+    /** Sets {@link Properties#ALIGN_X} to {@link AlignX#Center} for this widget. */
+    public Cell<T> centerX() {
+        widget.set(Properties.ALIGN_X, AlignX.Center);
+        return this;
+    }
+
+    /** Sets {@link Properties#ALIGN_X} to {@link AlignX#Right} for this widget. */
+    public Cell<T> right() {
+        widget.set(Properties.ALIGN_X, AlignX.Right);
+        return this;
+    }
+
+    /** Sets {@link Properties#ALIGN_Y} to {@link AlignY#Bottom} for this widget. */
+    public Cell<T> bottom() {
+        widget.set(Properties.ALIGN_Y, AlignY.Bottom);
+        return this;
+    }
+
+    /** Sets {@link Properties#ALIGN_Y} to {@link AlignY#Center} for this widget. */
+    public Cell<T> centerY() {
+        widget.set(Properties.ALIGN_Y, AlignY.Center);
+        return this;
+    }
+
+    /** Sets {@link Properties#ALIGN_Y} to {@link AlignY#Top} for this widget. */
+    public Cell<T> top() {
+        widget.set(Properties.ALIGN_Y, AlignY.Top);
+        return this;
+    }
+
+    /** Same as calling {@link #centerX()} and {@link #centerY()}. */
+    public Cell<T> center() {
+        centerX();
+        return centerY();
     }
 }

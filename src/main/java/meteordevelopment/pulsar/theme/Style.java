@@ -29,6 +29,11 @@ public class Style {
     }
 
     @SuppressWarnings("unchecked")
+    public <T> T getRaw(Property<T> property) {
+        return (T) properties.get(property);
+    }
+
+    @SuppressWarnings("unchecked")
     public <T> T get(Property<T> property) {
         T value = (T) properties.get(property);
         if (value == null) value = property.defaultValue();

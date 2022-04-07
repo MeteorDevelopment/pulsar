@@ -15,7 +15,7 @@ public class Main {
         WWindow w = new WWindow("Test Window");
 
         w.add(new WText("Hello"));
-        w.add(new WText("COPE?!?!?!!?").tag("right"));
+        w.add(new WText("COPE?!?!?!!?")).right();
         w.add(new WHorizontalSeparator("Something"));
 
         WTable t = w.add(new WTable()).expandX().widget();

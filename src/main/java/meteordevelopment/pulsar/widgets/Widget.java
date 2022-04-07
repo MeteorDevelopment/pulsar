@@ -15,9 +15,7 @@ import meteordevelopment.pulsar.utils.Color4;
 import meteordevelopment.pulsar.utils.Vec2;
 import meteordevelopment.pulsar.utils.Vec4;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /** Base class for all widgets */
 public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>> {
@@ -35,6 +33,7 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
 
     private boolean hovered;
     public Style style;
+    private Map<Property<?>, Object> properties;
 
     public Widget() {
         style = Renderer.INSTANCE.theme.computeStyle(this);
@@ -213,8 +212,20 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
 
     // Style
 
+    /** Sets a custom property that only applies to this widget. */
+    public <T> void set(Property<T> property, T value) {
+        if (properties == null) properties = new HashMap<>();
+        properties.put(property, value);
+    }
+
     /** @return a value for the specified property. */
+    @SuppressWarnings("unchecked")
     public <T> T get(Property<T> property) {
+        if (properties != null) {
+            T value = (T) properties.get(property);
+            if (value != null) return value;
+        }
+
         return style.get(property);
     }
 

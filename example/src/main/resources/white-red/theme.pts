@@ -18,10 +18,6 @@ text {
     font-size: 16
 }
 
-.right {
-    align-x: right
-}
-
 window {
     align-x: center
 }
