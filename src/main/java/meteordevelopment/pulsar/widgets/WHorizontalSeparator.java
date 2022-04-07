@@ -16,6 +16,7 @@ public class WHorizontalSeparator extends Widget {
     public WHorizontalSeparator() {}
 
     public WHorizontalSeparator(String text) {
+        tag("has-text");
         textW = add(new WHSText(text)).expandCellX().widget();
     }
 

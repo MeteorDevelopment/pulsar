@@ -131,8 +131,10 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
         Vec2 size = get(Properties.SIZE);
 
         if (size != null) {
-            width = size.intX();
-            height = size.intY();
+            Vec4 padding = get(Properties.PADDING);
+
+            width = size.intX() + padding.horizontal();
+            height = size.intY() + padding.vertical();
         }
     }
 
