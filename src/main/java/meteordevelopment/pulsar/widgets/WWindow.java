@@ -77,6 +77,7 @@ public class WWindow extends Widget {
         renderer.render();
         renderer.begin();
 
+        header.tag("expanded", expanded || animation > 0);
         header.render(renderer, delta);
 
         if (expanded || animation > 0) {
