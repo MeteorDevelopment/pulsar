@@ -1,0 +1,22 @@
+- Rewrite icon handling
+- Standardize custom widget child widgets being a custom widget or a tag
+- Font property instead of a global font constant
+- Bold / italic / underlined text
+- Box shadow
+- Blurred shadows
+- Different unit types (px, rem, %, ...)
+- Improve PTS VS Code extension
+- Transition property
+- PTS property overloads (padding, padding.x, padding.xy, padding.left, ...)
+- Maximum width (text wrapping)
+- Text transform property (none, uppercase, lowercase, capitalize)
+- Letter spacing property
+- Word spacing
+- Line height property
+- Transform property
+- Advanced PTS selectors (nesting, nth-child(x), first-child, last-child)
+- Multiple PTS selectors per style
+- Outline size per side
+- Gradients
+- Exported variables changeable at runtime
+- Cascaded properties
