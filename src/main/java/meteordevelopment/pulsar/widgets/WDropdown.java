@@ -62,6 +62,7 @@ public class WDropdown<T> extends WPressable {
         if (icon != null) {
             iconW = add(new WDropdownIcon()).widget();
             iconW.tag(icon);
+            iconW.calculateSize();
 
             layout = new MainHorizontalLayout();
         }
@@ -75,6 +76,7 @@ public class WDropdown<T> extends WPressable {
         root = new WBody();
 
         double maxWidth = 0;
+        Vec2 spacing = get(Properties.SPACING);
 
         for (T value : values) {
             String string = value.toString();
@@ -85,7 +87,7 @@ public class WDropdown<T> extends WPressable {
             Vec4 padding = valueW.get(Properties.PADDING);
             double size = textW.get(Properties.FONT_SIZE);
 
-            maxWidth = Math.max(maxWidth, padding.horizontal() + Renderer.INSTANCE.textWidth(string, size));
+            maxWidth = Math.max(maxWidth, padding.horizontal() + Renderer.INSTANCE.textWidth(string, size) + (iconW != null ? (spacing.x() + iconW.width) : 0));
         }
 
         layout.calculateSize(this);
