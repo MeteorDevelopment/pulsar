@@ -249,6 +249,22 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
         return this;
     }
 
+    /** Adds or removes specified tag based on if this widget already contains the tag. */
+    public Widget tag(String tag, boolean shouldHave) {
+        boolean contains = tags.contains(tag);
+
+        if (contains && !shouldHave) {
+            tags.remove(tag);
+            invalidStyle();
+        }
+        else if (!contains && shouldHave) {
+            tags.add(tag);
+            invalidStyle();
+        }
+
+        return this;
+    }
+
     /** @return true if this widget has the specified tag. */
     public boolean hasTag(String tag) {
         return tags.contains(tag);

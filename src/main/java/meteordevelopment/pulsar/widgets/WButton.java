@@ -18,7 +18,9 @@ public class WButton extends WPressable {
     public WButton(String text) {
         checkIcon();
 
-        this.textW = add(new WButtonText(text)).expandCellX().widget();
+        if (text != null) {
+            this.textW = add(new WButtonText(text)).expandCellX().widget();
+        }
     }
 
     // TODO: Bad
@@ -56,9 +58,18 @@ public class WButton extends WPressable {
 
     @Override
     public Widget tag(String tag) {
-        textW.tag(tag);
-        if (iconW != null) iconW.tag(tag);
+        if (textW != null) textW.tag(tag);
+        if (iconW != null) iconW.tag(tag, textW == null || textW.hasTag(tag));
+
         return super.tag(tag);
+    }
+
+    @Override
+    public Widget tag(String tag, boolean shouldHave) {
+        if (textW != null) textW.tag(tag, shouldHave);
+        if (iconW != null) iconW.tag(tag, shouldHave);
+
+        return super.tag(tag, shouldHave);
     }
 
     public void setText(String text) {

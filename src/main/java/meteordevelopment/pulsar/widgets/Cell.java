@@ -43,6 +43,12 @@ public class Cell<T extends Widget> {
         return this;
     }
 
+    /** Adds or removes specified tag based on if this widget already contains the tag. */
+    public Cell<T> tag(String tag, boolean shouldHave) {
+        widget.tag(tag, shouldHave);
+        return this;
+    }
+
     /** Aligns the widget to the bounds of this cell. */
     public void align() {
         if (expandWidgetX) widget.width = width;
