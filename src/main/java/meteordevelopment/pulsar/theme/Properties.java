@@ -26,6 +26,7 @@ public class Properties {
     public static final Property<Double> FONT_SIZE = add(new Property<>("font-size", PropertyType.Number));
     public static final Property<Color4> TEXT_SHADOW = add(new Property<>("text-shadow", PropertyType.Color4));
     public static final Property<Vec2> TEXT_SHADOW_OFFSET = add(new Property<>("text-shadow-offset", PropertyType.Vec2, new Vec2(1, -1)));
+    public static final Property<Double> MAX_WIDTH = add(new Property<>("max-width", PropertyType.Number));
 
     public static final Property<ListDirection> LIST_DIRECTION = add(new Property<>("list-direction", PropertyType.Enum, ListDirection.Normal));
 

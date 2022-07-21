@@ -73,6 +73,11 @@
     "type": "Vector2",
     "description": "How should be the text shadow positioned relative to the original text."
   },
+  {
+    "name": "max-width",
+    "type": "Number",
+    "description": "Maximum width of text widgets before they start to wrap and span multiple lines."
+  },
 
   {
     "name": "list-direction",

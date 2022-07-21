@@ -657,7 +657,7 @@ public class WTextBox extends Widget {
         }
 
         @Override
-        public String getText() {
+        public String getTextOverride() {
             return WTextBox.this.text;
         }
     }

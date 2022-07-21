@@ -8,7 +8,6 @@
 - Improve PTS VS Code extension
 - Transition property
 - PTS property overloads (padding, padding.x, padding.xy, padding.left, ...)
-- Maximum width (text wrapping)
 - Text transform property (none, uppercase, lowercase, capitalize)
 - Letter spacing property
 - Word spacing
