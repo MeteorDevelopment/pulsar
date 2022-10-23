@@ -1,58 +1,58 @@
 dropdown {
-    @apply outline
+    @apply outline;
 
-    background-color: !bg
-    padding: 4 6 4 6
-    spacing: 6 4
-    icon: down
-    list-direction: reversed
+    background-color: !bg;
+    padding: 4px 6px 4px 6px;
+    spacing: 6px 4px;
+    icon: down;
+    list-direction: reversed;
 }
 
 dropdown :hovered {
-    background-color: !bg-hovered
+    background-color: !bg-hovered;
 }
 
 dropdown :pressed {
-    background-color: !bg-pressed
+    background-color: !bg-pressed;
 }
 
 icon .down {
-    icon-path: "icons/down.svg"
-    size: 20
-    color: 0 0 0
+    icon-path: "icons/down.svg";
+    size: 20px;
+    color: #000000;
 }
 
 icon .down :hovered {
-    color: 20 20 20
+    color: rgb(20, 20, 20);
 }
 
 icon .down :pressed {
-    color: 40 40 40
+    color: rgb(40, 40, 40);
 }
 
 .dropdown-text {
-    align-x: center
+    align-x: center;
 }
 
 .dropdown-body {
-    @apply outline
+    @apply outline;
     
-    spacing: 0
+    spacing: 0px;
 }
 
 .dropdown-value {
-    background-color: !bg
-    padding: 4
+    background-color: !bg;
+    padding: 4px;
 }
 
 .dropdown-value :hovered {
-    background-color: !bg-hovered
+    background-color: !bg-hovered;
 }
 
 .dropdown-value :pressed {
-    background-color: !bg-pressed
+    background-color: !bg-pressed;
 }
 
 .dropdown-value-text {
-    align-x: center
+    align-x: center;
 }

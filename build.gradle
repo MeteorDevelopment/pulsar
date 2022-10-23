@@ -1,6 +1,7 @@
 plugins {
     id "java"
     id "maven-publish"
+    id "antlr"
 }
 
 group "meteordevelopment"
@@ -13,12 +14,37 @@ repositories {
 }
 
 dependencies {
-    compileOnly platform("org.lwjgl:lwjgl-bom:3.3.0")
+    antlr "org.antlr:antlr4:4.11.1"
+
+    compileOnly platform("org.lwjgl:lwjgl-bom:3.3.1")
 
     compileOnly "org.lwjgl:lwjgl"
     compileOnly "org.lwjgl:lwjgl-glfw"
     compileOnly "org.lwjgl:lwjgl-opengl"
     compileOnly "org.lwjgl:lwjgl-stb"
+}
+
+sourceSets {
+    generated {
+        java.srcDir "${projectDir}/src/generated"
+    }
+
+    main {
+        java.srcDirs += "${projectDir}/src/generated/java/"
+    }
+}
+
+generateGrammarSource {
+    maxHeapSize = "64m"
+    arguments += ["-package", "meteordevelopment.pulsar", "-visitor"]
+    outputDirectory = file("${projectDir}/src/generated/java/meteordevelopment/pulsar")
+}
+
+compileJava.dependsOn generateGrammarSource
+//sourcesJar.dependsOn generateGrammarSource
+
+clean {
+    delete file("${projectDir}/src/generated")
 }
 
 java {

@@ -1,25 +1,25 @@
-@title "Calculator"
-@authors "MineGame159"
+@title "Calculator";
+@authors [ "MineGame159" ];
 
-@font "Comfortaa.ttf"
+@font "Comfortaa.ttf";
 
-@include "buttons.pts"
+@include "buttons.pts";
 
 root {
-    padding: 2
+    padding: 2px;
 }
 
 text {
-    font-size: 24
-    align-x: center
-    color: #FFFFFF
+    font-size: 24px;
+    align-x: center;
+    color: #FFFFFF;
 }
 
 table {
-    spacing: 2
+    spacing: 2px;
 }
 
 vertical-list {
-    spacing: 8
-    align-y: bottom
+    spacing: 8px;
+    align-y: bottom;
 }

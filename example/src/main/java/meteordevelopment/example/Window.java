@@ -51,27 +51,29 @@ public class Window {
         });
 
         glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> {
-            onEvent.accept(mouseButtonEvent.set(action == GLFW_RELEASE ? EventType.MouseReleased : EventType.MousePressed, lastMouseX, lastMouseY, button));
+            if (onEvent != null) onEvent.accept(mouseButtonEvent.set(action == GLFW_RELEASE ? EventType.MouseReleased : EventType.MousePressed, lastMouseX, lastMouseY, button));
         });
 
         glfwSetCursorPosCallback(handle, (window, xpos, ypos) -> {
-            onEvent.accept(mouseMovedEvent.set(xpos, this.height - ypos, xpos - lastMouseX, this.height - ypos - lastMouseY));
+            if (onEvent != null) onEvent.accept(mouseMovedEvent.set(xpos, this.height - ypos, xpos - lastMouseX, this.height - ypos - lastMouseY));
 
             lastMouseX = xpos;
             lastMouseY = this.height - ypos;
         });
 
         glfwSetScrollCallback(handle, (window, xoffset, yoffset) -> {
-            onEvent.accept(mouseScrolledEvent.set(yoffset));
+            if (onEvent != null) onEvent.accept(mouseScrolledEvent.set(yoffset));
         });
 
         glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> {
-            if (action == GLFW_PRESS) onEvent.accept(keyEvent.set(EventType.KeyPressed, key, mods));
-            else if (action == GLFW_REPEAT) onEvent.accept(keyEvent.set(EventType.KeyRepeated, key, mods));
+            if (onEvent != null) {
+                if (action == GLFW_PRESS) onEvent.accept(keyEvent.set(EventType.KeyPressed, key, mods));
+                else if (action == GLFW_REPEAT) onEvent.accept(keyEvent.set(EventType.KeyRepeated, key, mods));
+            }
         });
 
         glfwSetCharCallback(handle, (window, codepoint) -> {
-            onEvent.accept(charTypedEvent.set((char) codepoint));
+            if (onEvent != null) onEvent.accept(charTypedEvent.set((char) codepoint));
         });
 
         glfwSwapInterval(1);

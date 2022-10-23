@@ -1,42 +1,42 @@
 // Primary
 
 button {
-    padding: 16
-    background-color: #000000
+    padding: 16px;
+    background-color: #000000;
 }
 
 button :hovered {
-    background-color: #0a0a0a
+    background-color: #0a0a0a;
 }
 
 button :pressed {
-    background-color: #141414
+    background-color: #141414;
 }
 
 // Secondary
 
 button .secondary {
-    background-color: #282828
+    background-color: #282828;
 }
 
 button .secondary :hovered {
-    background-color: #323232
+    background-color: #323232;
 }
 
 button .secondary :pressed {
-    background-color: #3c3c3c
+    background-color: #3c3c3c;
 }
 
 // Equals
 
 button .equals {
-    background-color: #288c8c
+    background-color: #288c8c;
 }
 
 button .equals :hovered {
-    background-color: #329696
+    background-color: #329696;
 }
 
 button .equals :pressed {
-    background-color: #3ca0a0
+    background-color: #3ca0a0;
 }

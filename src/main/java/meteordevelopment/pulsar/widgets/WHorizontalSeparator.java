@@ -13,11 +13,15 @@ public class WHorizontalSeparator extends Widget {
 
     protected WText textW;
 
-    public WHorizontalSeparator() {}
-
     public WHorizontalSeparator(String text) {
-        tag("has-text");
-        textW = add(new WHSText(text)).expandCellX().widget();
+        if (text != null) {
+            tag("has-text");
+            textW = add(new WHSText(text)).expandCellX().widget();
+        }
+    }
+
+    public WHorizontalSeparator() {
+        this(null);
     }
 
     @Override

@@ -69,7 +69,7 @@ public class WWindow extends Widget {
         header.dispatch(event);
         if (expanded) body.dispatch(event);
 
-        if (event.type == EventType.MouseMoved) detectHovered((MouseMovedEvent) event);
+        dispatchToSelf(event);
     }
 
     @Override
