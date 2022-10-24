@@ -7,4 +7,4 @@
 
 *.log
 
-pulsar/src/generated/**
+pts/src/generated/**
