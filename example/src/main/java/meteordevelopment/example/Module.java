@@ -1,16 +1,11 @@
 package meteordevelopment.example;
 
-import meteordevelopment.pulsar.PtsLexer;
-import meteordevelopment.pulsar.PtsParser;
 import meteordevelopment.pulsar.layout.TableLayout;
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.theme.fileresolvers.ResourceFileResolver;
 import meteordevelopment.pulsar.theme.parser.Parser;
 import meteordevelopment.pulsar.widgets.*;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.ParserRuleContext;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.opengl.GL11C.*;

@@ -1,0 +1,48 @@
+plugins {
+    id "java"
+    id "java-library"
+    id "antlr"
+}
+
+group "meteordevelopment"
+version "0.1.0"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    antlr "org.antlr:antlr4:4.11.1"
+    api "org.antlr:antlr4-runtime:4.11.1"
+}
+
+configurations.api {
+    exclude group: "org.antlr", module: "antlr4"
+}
+
+sourceSets {
+    generated {
+        java.srcDir "${projectDir}/src/generated"
+    }
+
+    main {
+        java.srcDirs += "${projectDir}/src/generated/java/"
+    }
+}
+
+generateGrammarSource {
+    maxHeapSize = "64m"
+    arguments += ["-package", "meteordevelopment.pts", "-visitor"]
+    outputDirectory = file("${projectDir}/src/generated/java/meteordevelopment/pts")
+}
+
+compileJava.dependsOn generateGrammarSource
+
+clean {
+    delete file("${projectDir}/src/generated")
+}
+
+tasks.withType(JavaCompile) {
+    sourceCompatibility = "17"
+    targetCompatibility = "17"
+}

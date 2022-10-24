@@ -1,0 +1,31 @@
+<idea-plugin>
+    <id>meteordevelopment.pts</id>
+    <name>PTS</name>
+    <vendor>Meteor Development</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType
+            name="PTS File"
+            implementationClass="meteordevelopment.pts.PtsFileType"
+            fieldName="INSTANCE"
+            language="PTS"
+            extensions="pts" />
+
+        <lang.parserDefinition
+            language="PTS"
+            implementationClass="meteordevelopment.pts.PtsParserDefinition" />
+
+        <lang.syntaxHighlighterFactory
+            language="PTS"
+            implementationClass="meteordevelopment.pts.PtsSyntaxHighlighterFactory" />
+
+        <highlightVisitor
+            implementation="meteordevelopment.pts.PtsHighlighter" />
+
+        <lang.foldingBuilder
+            language="PTS"
+            implementationClass="meteordevelopment.pts.PtsFoldingBuilder" />
+    </extensions>
+</idea-plugin>
