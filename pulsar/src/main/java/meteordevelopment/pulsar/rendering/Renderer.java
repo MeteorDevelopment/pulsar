@@ -101,10 +101,10 @@ public class Renderer {
 
                 iconMesh.begin();
                 iconMesh.quad(
-                        iconMesh.vec2(texture.x, texture.y).vec2(0, 0).color(texture.color.bottomLeft()).next(),
-                        iconMesh.vec2(texture.x, texture.y + texture.height).vec2(0, 1).color(texture.color.topLeft()).next(),
-                        iconMesh.vec2(texture.x + texture.width, texture.y + texture.height).vec2(1, 1).color(texture.color.topRight()).next(),
-                        iconMesh.vec2(texture.x + texture.width, texture.y).vec2(1, 0).color(texture.color.bottomRight()).next()
+                        iconMesh.vec2(texture.x, texture.y).vec2(0, 0).color(texture.color.bottomLeft).next(),
+                        iconMesh.vec2(texture.x, texture.y + texture.height).vec2(0, 1).color(texture.color.topLeft).next(),
+                        iconMesh.vec2(texture.x + texture.width, texture.y + texture.height).vec2(1, 1).color(texture.color.topRight).next(),
+                        iconMesh.vec2(texture.x + texture.width, texture.y).vec2(1, 0).color(texture.color.bottomRight).next()
                 );
                 iconMesh.render();
             }
@@ -152,10 +152,10 @@ public class Renderer {
         double ly = Utils.clamp((height - hw) / hw, -1, 1);
 
         rectangleMesh.quad(
-                rectangleMesh.vec2(x, y).vec2(-1, -1).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.bottomLeft()).color(outlineColor.bottomLeft()).float_(outlineSize).next(),
-                rectangleMesh.vec2(x, y + height).vec2(-1, ly).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.topLeft()).color(outlineColor.topLeft()).float_(outlineSize).next(),
-                rectangleMesh.vec2(x + width, y + height).vec2(lx, ly).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.topRight()).color(outlineColor.topRight()).float_(outlineSize).next(),
-                rectangleMesh.vec2(x + width, y).vec2(lx, -1).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.bottomRight()).color(outlineColor.bottomRight()).float_(outlineSize).next()
+                rectangleMesh.vec2(x, y).vec2(-1, -1).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.bottomLeft).color(outlineColor.bottomLeft).float_(outlineSize).next(),
+                rectangleMesh.vec2(x, y + height).vec2(-1, ly).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.topLeft).color(outlineColor.topLeft).float_(outlineSize).next(),
+                rectangleMesh.vec2(x + width, y + height).vec2(lx, ly).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.topRight).color(outlineColor.topRight).float_(outlineSize).next(),
+                rectangleMesh.vec2(x + width, y).vec2(lx, -1).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.bottomRight).color(outlineColor.bottomRight).float_(outlineSize).next()
         );
     }
 
@@ -174,10 +174,10 @@ public class Renderer {
         TextureRegion region = icons.get(path, (int) size);
 
         iconMesh.quad(
-                iconMesh.vec2(x, y).vec2(region.x1(), region.y1()).color(color.bottomLeft()).next(),
-                iconMesh.vec2(x, y + size).vec2(region.x1(), region.y2()).color(color.topLeft()).next(),
-                iconMesh.vec2(x + size, y + size).vec2(region.x2(), region.y2()).color(color.topRight()).next(),
-                iconMesh.vec2(x + size, y).vec2(region.x2(), region.y1()).color(color.bottomRight()).next()
+                iconMesh.vec2(x, y).vec2(region.x1(), region.y1()).color(color.bottomLeft).next(),
+                iconMesh.vec2(x, y + size).vec2(region.x1(), region.y2()).color(color.topLeft).next(),
+                iconMesh.vec2(x + size, y + size).vec2(region.x2(), region.y2()).color(color.topRight).next(),
+                iconMesh.vec2(x + size, y).vec2(region.x2(), region.y1()).color(color.bottomRight).next()
         );
     }
 

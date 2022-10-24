@@ -6,9 +6,9 @@ import meteordevelopment.pulsar.input.MouseButtonEvent;
 import meteordevelopment.pulsar.input.MouseMovedEvent;
 import meteordevelopment.pulsar.layout.HorizontalLayout;
 import meteordevelopment.pulsar.rendering.Renderer;
-import meteordevelopment.pulsar.theme.Properties;
 import meteordevelopment.pulsar.theme.Selector;
 import meteordevelopment.pulsar.theme.Style;
+import meteordevelopment.pulsar.theme.properties.Properties;
 import meteordevelopment.pulsar.utils.*;
 
 import java.util.ArrayList;

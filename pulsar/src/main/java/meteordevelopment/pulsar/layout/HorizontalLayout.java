@@ -1,6 +1,6 @@
 package meteordevelopment.pulsar.layout;
 
-import meteordevelopment.pulsar.theme.Properties;
+import meteordevelopment.pulsar.theme.properties.Properties;
 import meteordevelopment.pulsar.utils.ListDirection;
 import meteordevelopment.pulsar.utils.Vec2;
 import meteordevelopment.pulsar.utils.Vec4;

@@ -4,33 +4,34 @@ import meteordevelopment.pts.PtsBaseListener;
 import meteordevelopment.pts.PtsLexer;
 import meteordevelopment.pts.PtsParser;
 import meteordevelopment.pulsar.rendering.FontInfo;
-import meteordevelopment.pulsar.theme.*;
+import meteordevelopment.pulsar.theme.Style;
+import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.theme.fileresolvers.IFileResolver;
-import meteordevelopment.pulsar.utils.*;
+import meteordevelopment.pulsar.theme.properties.*;
+import meteordevelopment.pulsar.utils.ColorFactory;
+import meteordevelopment.pulsar.utils.Utils;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.lwjgl.system.MemoryUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Parser {
-    private record Variable(PropertyType type, Object value) {}
+    private record Variable(PropertyType<?> type, Object value) {}
 
     public static Theme parse(IFileResolver fileResolver, String path) {
         ParserRuleContext ast = parseFile(fileResolver, path);
         processIncludes(fileResolver, path, ast);
 
         Theme theme = new Theme();
+        theme.setFileResolver(fileResolver);
+
         processAst(fileResolver, path, ast, theme);
 
         return theme;
@@ -103,11 +104,15 @@ public class Parser {
         private final Map<String, Variable> variables = new HashMap<>();
         private final Map<String, Style> mixins = new HashMap<>();
 
+        private PropertyType<?> variableType;
         private String variableName;
-        private PropertyType variableType;
 
         private Style style;
         private Property<Object> property;
+        private String accessorName;
+
+        private final List<ValueType> valueTypes = new ArrayList<>();
+        private final List<Object> values = new ArrayList<>();
 
         public Processor(IFileResolver fileResolver, String currentPath, Theme theme) {
             this.fileResolver = fileResolver;
@@ -142,22 +147,27 @@ public class Parser {
 
         @Override
         public void enterAtVar(PtsParser.AtVarContext ctx) {
-            PropertyType type;
-            try {
-                type = PropertyType.valueOf(string(ctx.type));
-            }
-            catch (IllegalArgumentException ignored) {
-                throw new ParseException("%s [%d:%d] Unknown variable type '%s'.", fileResolver.resolvePath(currentPath), ctx.type.getLine(), ctx.type.getCharPositionInLine(), string(ctx.type));
-            }
+            PropertyType<?> type = PropertyTypes.get(string(ctx.type));
+            if (type == null) throw new ParseException("%s [%d:%d] Unknown property type with name '%s'.", fileResolver.resolvePath(currentPath), ctx.name.getLine(), ctx.name.getCharPositionInLine(), string(ctx.type));
 
-            variableName = string(ctx.name);
             variableType = type;
+            variableName = string(ctx.name);
         }
 
         @Override
         public void exitAtVar(PtsParser.AtVarContext ctx) {
-            variableName = null;
+            PropertyConstructor<?> constructor = variableType.getConstructor(valueTypes);
+            if (constructor == null) throw new ParseException("%s [%d:%d] Invalid values.", fileResolver.resolvePath(currentPath), ctx.name.getLine(), ctx.name.getCharPositionInLine());
+
+            Object value = constructor.create(values);
+            if (value == null) throw new ParseException("%s [%d:%d] Invalid value.", fileResolver.resolvePath(currentPath), ctx.name.getLine(), ctx.name.getCharPositionInLine());
+
+            variables.put(variableName, new Variable(variableType, value));
+
             variableType = null;
+            variableName = null;
+            valueTypes.clear();
+            values.clear();
         }
 
         @Override
@@ -204,103 +214,50 @@ public class Parser {
 
             //noinspection unchecked
             this.property = (Property<Object>) property;
+            if (ctx.accessor != null) this.accessorName = string(ctx.accessor);
         }
 
         @Override
         public void exitProperty(PtsParser.PropertyContext ctx) {
+            if (accessorName == null) {
+                PropertyConstructor<?> constructor = property.type().getConstructor(valueTypes);
+                if (constructor == null) throw new ParseException("%s [%d:%d] Invalid values.", fileResolver.resolvePath(currentPath), ctx.name.getLine(), ctx.name.getCharPositionInLine());
+
+                Object value = constructor.create(values);
+                if (value == null) throw new ParseException("%s [%d:%d] Invalid value.", fileResolver.resolvePath(currentPath), ctx.name.getLine(), ctx.name.getCharPositionInLine());
+
+                style.set(property, value);
+            }
+            else {
+                PropertyAccessor<Object> accessor = property.type().getAccessor(accessorName, valueTypes);
+                if (accessor == null) throw new ParseException("%s [%d:%d] Invalid values.", fileResolver.resolvePath(currentPath), ctx.name.getLine(), ctx.name.getCharPositionInLine());
+
+                Object target = style.getRaw(property);
+                if (target == null) {
+                    target = property.type().accessorDefaultValue.get();
+                    style.set(property, target);
+                }
+
+                accessor.set(target, values);
+            }
+
             property = null;
+            accessorName = null;
+            valueTypes.clear();
+            values.clear();
         }
 
         @Override
         public void enterUnit(PtsParser.UnitContext ctx) {
-            // TODO: Handle this better
-            if (ctx.parent instanceof PtsParser.Vec2Context || ctx.parent instanceof PtsParser.Vec4Context) return;
-
             String text = string(ctx);
             double number = Double.parseDouble(text.substring(0, text.length() - 2));
 
-            if (variableName != null) {
-                switch (variableType) {
-                    case Number -> variables.put(variableName, new Variable(variableType, number));
-                    case Vec2 ->   variables.put(variableName, new Variable(variableType, new Vec2(number)));
-                    case Vec4 ->   variables.put(variableName, new Variable(variableType, new Vec4(number)));
-                    default ->     throw new ParseException("%s [%d:%d] Cannot assign Unit to a %s variable.", fileResolver.resolvePath(currentPath), ctx.start.getLine(), ctx.start.getCharPositionInLine(), variableType);
-                }
-            }
-            else {
-                switch (property.type()) {
-                    case Number -> style.set(property, number);
-                    case Vec2 ->   style.set(property, new Vec2(number));
-                    case Vec4 ->   style.set(property, new Vec4(number));
-                    default ->     throw new ParseException("%s [%d:%d] Cannot assign Unit to a %s property.", fileResolver.resolvePath(currentPath), ctx.start.getLine(), ctx.start.getCharPositionInLine(), property.type());
-                }
-            }
-        }
-
-        @Override
-        public void enterVec2(PtsParser.Vec2Context ctx) {
-            if (type() != PropertyType.Vec2) typeError("Vec2", ctx.start);
-
-            String textX = string(ctx.x);
-            double x = Double.parseDouble(textX.substring(0, textX.length() - 2));
-
-            String textY = string(ctx.y);
-            double y = Double.parseDouble(textY.substring(0, textY.length() - 2));
-
-            if (variableName != null) variables.put(variableName, new Variable(variableType, new Vec2(x, y)));
-            else style.set(property, new Vec2(x, y));
-        }
-
-        @Override
-        public void enterVec4(PtsParser.Vec4Context ctx) {
-            if (type() != PropertyType.Vec4) typeError("Vec4", ctx.start);
-
-            String textX = string(ctx.x);
-            double x = Double.parseDouble(textX.substring(0, textX.length() - 2));
-
-            String textY = string(ctx.y);
-            double y = Double.parseDouble(textY.substring(0, textY.length() - 2));
-
-            String textZ = string(ctx.z);
-            double z = Double.parseDouble(textZ.substring(0, textZ.length() - 2));
-
-            String textW = string(ctx.w);
-            double w = Double.parseDouble(textW.substring(0, textW.length() - 2));
-
-            if (variableName != null) variables.put(variableName, new Variable(variableType, new Vec4(x, y, z, w)));
-            else style.set(property, new Vec4(x, y, z, w));
+            valueTypes.add(ValueType.Unit);
+            values.add(number);
         }
 
         @Override
         public void enterColor(PtsParser.ColorContext ctx) {
-            // TODO: Handle this better
-            if (ctx.parent instanceof PtsParser.Color4Context) return;
-
-            if (type() != PropertyType.Color && type() != PropertyType.Color4) typeError("Color", ctx.start);
-
-            Object value = parseColor(ctx);
-            if (type() == PropertyType.Color4) value = new Color4((IColor) value);
-
-            if (variableName != null) variables.put(variableName, new Variable(variableType, value));
-            else style.set(property, value);
-        }
-
-        @Override
-        public void enterColor4(PtsParser.Color4Context ctx) {
-            if (type() != PropertyType.Color4) typeError("Color4", ctx.start);
-
-            Color4 value = new Color4(
-                    parseColor(ctx.color(0)),
-                    parseColor(ctx.color(1)),
-                    parseColor(ctx.color(2)),
-                    parseColor(ctx.color(3))
-            );
-
-            if (variableName != null) variables.put(variableName, new Variable(variableType, value));
-            else style.set(property, value);
-        }
-
-        private IColor parseColor(PtsParser.ColorContext ctx) {
             int r;
             int g;
             int b;
@@ -336,88 +293,29 @@ public class Parser {
             b = Utils.clamp(b, 0, 255);
             a = Utils.clamp(a, 0, 255);
 
-            return ColorFactory.create(r, g, b, a);
+            valueTypes.add(ValueType.Color);
+            values.add(ColorFactory.create(r, g, b, a));
+        }
+
+        @Override
+        public void enterIdentifier(PtsParser.IdentifierContext ctx) {
+            valueTypes.add(ValueType.Identifier);
+            values.add(string(ctx));
         }
 
         @Override
         public void enterString(PtsParser.StringContext ctx) {
-            if (type() != PropertyType.File) typeError("String", ctx.start);
-
-            String path = string(ctx);
-            InputStream in = fileResolver.get(path);
-            if (in == null) throw new ParseException("%s [%d:%d] Failed to read file '%s'.", fileResolver.resolvePath(currentPath), ctx.start.getLine(), ctx.start.getCharPositionInLine(), path);
-
-            if (theme.getBuffer(path) == null) {
-                byte[] bytes = Utils.read(in);
-                ByteBuffer buffer = MemoryUtil.memAlloc(bytes.length);
-                buffer.put(bytes);
-
-                theme.putBuffer(path, buffer);
-            }
-            else {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if (variableName != null) variables.put(variableName, new Variable(variableType, path));
-            else style.set(property, path);
+            valueTypes.add(ValueType.String);
+            values.add(string(ctx));
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public void enterVariable(PtsParser.VariableContext ctx) {
             Variable variable = variables.get(string(ctx.name));
             if (variable == null) throw new ParseException("%s [%d:%d] Unknown variable '%s'.", fileResolver.resolvePath(currentPath), ctx.name.getLine(), ctx.name.getCharPositionInLine(), string(ctx.name));
 
-            Object value = variable.value;
-            if (type() == PropertyType.Color4 && variable.type == PropertyType.Color) value = new Color4((IColor) value);
-            else if (type() != variable.type()) typeError(variable.type().toString(), ctx.name);
-
-            if (variableName != null) variables.put(variableName, new Variable(variableType, value));
-            else style.set(property, value);
-        }
-
-        @Override
-        public void enterIdentifier(PtsParser.IdentifierContext ctx) {
-            if (type() != PropertyType.Identifier && type() != PropertyType.Enum) typeError("Identifier", ctx.start);
-
-            String text = string(ctx);
-            Object value = null;
-
-            if (type() == PropertyType.Identifier) value = text;
-            else {
-                Class<?> klass = property.defaultValue().getClass();
-
-                try {
-                    Method valuesMethod = klass.getDeclaredMethod("values");
-                    Enum<?>[] values = (Enum<?>[]) valuesMethod.invoke(null);
-
-                    for (Enum<?> value2 : values) {
-                        if (value2.name().equalsIgnoreCase(text)) {
-                            value = value2;
-                            break;
-                        }
-                    }
-
-                    if (value == null) throw new ParseException("%s [%d:%d] Unknown value.", fileResolver.resolvePath(currentPath), ctx.start.getLine(), ctx.start.getCharPositionInLine());
-                }
-                catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if (variableName != null) variables.put(variableName, new Variable(variableType, value));
-            else style.set(property, value);
-        }
-
-        private PropertyType type() {
-            return variableName != null ? variableType : property.type();
-        }
-
-        private void typeError(String current, Token token) {
-            throw new ParseException("%s [%d:%d] Cannot assign %s to a %s %s.", fileResolver.resolvePath(currentPath), token.getLine(), token.getCharPositionInLine(), current, type(), variableName != null ? "variable" : "property");
+            ((PropertyType<Object>) variable.type).decompose(variable.value, valueTypes, values);
         }
     }
 

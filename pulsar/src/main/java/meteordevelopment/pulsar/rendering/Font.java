@@ -129,10 +129,10 @@ public class Font {
 
     private static void renderChar(Mesh mesh, double x, double y, CharData c, Color4 color) {
         mesh.quad(
-                mesh.vec2(x + c.x0(), y - c.y0()).vec2(c.u0(), c.v0()).color(color.bottomLeft()).next(),
-                mesh.vec2(x + c.x0(), y - c.y1()).vec2(c.u0(), c.v1()).color(color.topLeft()).next(),
-                mesh.vec2(x + c.x1(), y - c.y1()).vec2(c.u1(), c.v1()).color(color.topRight()).next(),
-                mesh.vec2(x + c.x1(), y - c.y0()).vec2(c.u1(), c.v0()).color(color.bottomRight()).next()
+                mesh.vec2(x + c.x0(), y - c.y0()).vec2(c.u0(), c.v0()).color(color.bottomLeft).next(),
+                mesh.vec2(x + c.x0(), y - c.y1()).vec2(c.u0(), c.v1()).color(color.topLeft).next(),
+                mesh.vec2(x + c.x1(), y - c.y1()).vec2(c.u1(), c.v1()).color(color.topRight).next(),
+                mesh.vec2(x + c.x1(), y - c.y0()).vec2(c.u1(), c.v0()).color(color.bottomRight).next()
         );
     }
 }

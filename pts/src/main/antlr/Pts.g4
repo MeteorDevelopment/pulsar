@@ -20,7 +20,7 @@ atTitle : '@title' title=STRING SEMICOLON ;
 atAuthors : '@authors' OPENING_BRACKET authors+=STRING (COMMA authors+=STRING)* CLOSING_BRACKET SEMICOLON ;
 atFont : '@font' font=STRING SEMICOLON ;
 atInclude : '@include' include=STRING SEMICOLON ;
-atVar : '@var' name=IDENTIFIER ':' type=IDENTIFIER '=' expression SEMICOLON ;
+atVar : '@var' name=IDENTIFIER ':' type=IDENTIFIER '=' expression+ SEMICOLON ;
 atMixin : '@mixin' name=IDENTIFIER OPENING_BRACE properties+=declaration* CLOSING_BRACE ;
 
 // Style
@@ -35,30 +35,23 @@ declaration : apply
 
 apply : '@apply' name=IDENTIFIER SEMICOLON ;
 
-property : name=IDENTIFIER ':' expr=expression SEMICOLON
-         | name=IDENTIFIER '.' field=IDENTIFIER ':' expr=expression SEMICOLON
+property : name=IDENTIFIER ':' expression+ SEMICOLON
+         | name=IDENTIFIER '.' accessor=IDENTIFIER ':' expression+ SEMICOLON
          ;
 
 // Expressions
 expression : unit
-           | vec2
-           | vec4
            | color
-           | color4
+           | identifier
            | string
            | variable
-           | identifier
            ;
 
 unit : NUMBER PX ;
-vec2 : x=unit y=unit ;
-vec4 : x=unit y=unit z=unit w=unit ;
 
 color : HEX_COLOR
       | RGB_COLOR
       ;
-
-color4 : color color color color ;
 
 string : STRING ;
 variable : BANG name=IDENTIFIER ;

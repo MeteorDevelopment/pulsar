@@ -7,7 +7,6 @@
 - Different unit types (px, rem, %, ...)
 - Improve PTS VS Code extension
 - Transition property
-- PTS property overloads (padding, padding.x, padding.xy, padding.left, ...)
 - Text transform property (none, uppercase, lowercase, capitalize)
 - Letter spacing property
 - Word spacing

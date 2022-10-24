@@ -7,7 +7,7 @@ import meteordevelopment.pulsar.layout.BasicLayout;
 import meteordevelopment.pulsar.layout.HorizontalLayout;
 import meteordevelopment.pulsar.layout.VerticalLayout;
 import meteordevelopment.pulsar.rendering.Renderer;
-import meteordevelopment.pulsar.theme.Properties;
+import meteordevelopment.pulsar.theme.properties.Properties;
 import meteordevelopment.pulsar.utils.Color4;
 import meteordevelopment.pulsar.utils.Utils;
 import meteordevelopment.pulsar.utils.Vec2;
@@ -87,7 +87,7 @@ public class WDropdown<T> extends WPressable {
             Vec4 padding = valueW.get(Properties.PADDING);
             double size = textW.get(Properties.FONT_SIZE);
 
-            maxWidth = Math.max(maxWidth, padding.horizontal() + Renderer.INSTANCE.textWidth(string, size) + (iconW != null ? (spacing.x() + iconW.width) : 0));
+            maxWidth = Math.max(maxWidth, padding.horizontal() + Renderer.INSTANCE.textWidth(string, size) + (iconW != null ? (spacing.x + iconW.width) : 0));
         }
 
         layout.calculateSize(this);
@@ -172,7 +172,7 @@ public class WDropdown<T> extends WPressable {
         if (minSize == null) return this.minSize;
         else {
             if (this.minSize == null) return minSize;
-            return new Vec2(Math.max(minSize.x(), this.minSize.x()), Math.max(minSize.y(), this.minSize.y()));
+            return new Vec2(Math.max(minSize.x, this.minSize.x), Math.max(minSize.y, this.minSize.y));
         }
     }
 

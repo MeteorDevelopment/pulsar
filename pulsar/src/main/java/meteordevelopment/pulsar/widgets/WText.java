@@ -1,7 +1,7 @@
 package meteordevelopment.pulsar.widgets;
 
 import meteordevelopment.pulsar.rendering.Renderer;
-import meteordevelopment.pulsar.theme.Properties;
+import meteordevelopment.pulsar.theme.properties.Properties;
 
 import java.util.ArrayList;
 import java.util.List;

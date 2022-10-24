@@ -51,7 +51,7 @@ button {
     background-color: !bg;
     padding: 4px;
     spacing: 4px;
-    icon: click;
+    icon: "click";
 }
 
 button :hovered {
@@ -120,7 +120,7 @@ text-box {
     background-color: rgb(240, 240, 240);
     color: !text;
     padding: 6px;
-    icon: write;
+    icon: "write";
     spacing: 4px;
     minimum-size: 220px 0px;
 }

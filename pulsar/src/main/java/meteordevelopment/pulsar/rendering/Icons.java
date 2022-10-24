@@ -14,7 +14,9 @@ public class Icons {
 
     public void setTheme(Theme theme) {
         this.theme = theme;
+
         atlas.clear();
+        icons.clear();
     }
 
     public TextureRegion get(String path, int size) {
@@ -23,7 +25,7 @@ public class Icons {
         TextureRegion region = icons.get(size);
         if (region != null) return region;
 
-        long surface = Svg.loadFromMemory(theme.getBuffer(path).rewind(), MemoryUtil.NULL, size, size, size * 3);
+        long surface = Svg.loadFromMemory(theme.readFile(path), MemoryUtil.NULL, size, size, size * 3);
         region = atlas.add(Svg.getData(surface, size, size), size, size);
         Svg.destroy(surface);
 

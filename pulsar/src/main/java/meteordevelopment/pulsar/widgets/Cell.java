@@ -1,6 +1,6 @@
 package meteordevelopment.pulsar.widgets;
 
-import meteordevelopment.pulsar.theme.Properties;
+import meteordevelopment.pulsar.theme.properties.Properties;
 import meteordevelopment.pulsar.utils.AlignX;
 import meteordevelopment.pulsar.utils.AlignY;
 

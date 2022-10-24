@@ -9,7 +9,7 @@ text-box .int-edit {
 }
 
 button .int-edit {
-    icon: none;
+    icon: "none";
     minimum-size: 28px;
 }
 
@@ -29,7 +29,7 @@ text-box .double-edit {
 }
 
 button .double-edit {
-    icon: none;
+    icon: "none";
     minimum-size: 28px;
 }
 

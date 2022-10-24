@@ -1,5 +1,7 @@
 package meteordevelopment.pulsar.theme;
 
+import meteordevelopment.pulsar.theme.properties.Property;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +39,7 @@ public class Style {
     public <T> T get(Property<T> property) {
         T value = (T) properties.get(property);
         if (value == null) value = property.defaultValue();
-        return value != null ? value : (T) property.type().value;
+        return value != null ? value : property.type().defaultValue;
     }
 
     public void merge(Style style) {

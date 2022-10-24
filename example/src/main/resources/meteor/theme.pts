@@ -80,7 +80,7 @@ dropdown {
     outline-color: !ol;
     padding: 6px;
     spacing: 6px 4px;
-    icon: dropdown;
+    icon: "dropdown";
     list-direction: reversed;
     radius: 2px;
 }
@@ -210,7 +210,7 @@ button {
     outline-size: 4px;
     outline-color: !ol;
     padding: 6px;
-    icon: reset;
+    icon: "reset";
     radius: 2px;
 }
 

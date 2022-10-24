@@ -4,7 +4,7 @@ dropdown {
     background-color: !bg;
     padding: 4px 6px 4px 6px;
     spacing: 6px 4px;
-    icon: down;
+    icon: "down";
     list-direction: reversed;
 }
 
