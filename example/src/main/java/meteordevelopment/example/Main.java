@@ -15,7 +15,7 @@ public class Main {
         WWindow w = new WWindow("Test Window");
 
         w.add(new WText("Hello"));
-        w.add(new WText("COPE?!?!?!!?").tag("right"));
+        w.add(new WText("COPE?!?!?!!?")).right();
         w.add(new WHorizontalSeparator("Something"));
 
         WTable t = w.add(new WTable()).expandX().widget();
@@ -75,20 +75,20 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        Window window = new Window();
+        Window window = new Window("GUI Example", 1280, 720);
         Renderer renderer = new Renderer();
 
         Theme theme = Parser.parse(new ResourceFileResolver("/white-red"), "theme.pts");
         renderer.setTheme(theme);
         renderer.window = window.handle;
 
-        WRoot root = new WRoot.FullScreen();
+        WRoot root = new WRoot();
         root.setWindowSize(window.getWidth(), window.getHeight());
 
         root.add(createMainWindow());
         root.add(createLoginWindow());
 
-        window.onResized = () -> root.setWindowSize(window.getWidth(), window.getHeight());
+        window.onResized = root::setWindowSize;
         window.onEvent = root::dispatch;
 
         double lastTime = glfwGetTime();

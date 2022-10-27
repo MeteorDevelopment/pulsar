@@ -1,39 +1,39 @@
 // Int edit
 
 int-edit {
-    spacing: 4
+    spacing: 4px;
 }
 
 text-box .int-edit {
-    minimum-size: 100 0
+    minimum-size: 100px 0px;
 }
 
 button .int-edit {
-    icon: none
-    minimum-size: 28
+    icon: "none";
+    minimum-size: 28px;
 }
 
 button-text .int-edit {
-    font-size: 20
-    align-x: center
+    font-size: 20px;
+    align-x: center;
 }
 
 // Double edit
 
 double-edit {
-    spacing: 4
+    spacing: 4px;
 }
 
 text-box .double-edit {
-    minimum-size: 100 0
+    minimum-size: 100px 0px;
 }
 
 button .double-edit {
-    icon: none
-    minimum-size: 28
+    icon: "none";
+    minimum-size: 28px;
 }
 
 button-text .double-edit {
-    font-size: 20
-    align-x: center
+    font-size: 20px;
+    align-x: center;
 }

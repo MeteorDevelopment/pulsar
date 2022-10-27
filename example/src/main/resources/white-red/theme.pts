@@ -1,153 +1,153 @@
-@title "White Red"
-@authors "MineGame159", "Coper"
+@title "White Red";
+@authors [ "MineGame159", "Coper" ];
 
-@font "Comfortaa.ttf"
+@font "Comfortaa.ttf";
 
-@include "global.pts"
-@include "slider.pts"
-@include "dropdown.pts"
-@include "edits.pts"
+@include "global.pts";
+@include "slider.pts";
+@include "dropdown.pts";
+@include "edits.pts";
 
 widget {
-    spacing: 6
-    radius: 2
+    spacing: 6px;
+    radius: 2px;
 }
 
 text {
-    color: !text
-    font-size: 16
+    color: !text;
+    font-size: 16px;
 }
 
-.right {
-    align-x: right
+window {
+    align-x: center;
 }
 
 window-header {
-    @apply window-outline
+    @apply window-outline;
 
-    background-color: !window-header
-    radius: 2
-    padding: 8
+    background-color: !window-header;
+    radius: 2px;
+    padding: 8px;
 }
 
 text .window-title {
-    color: #FFFFFF
-    align-x: right
-    font-size: 22
-    text-shadow: 15 15 15
+    color: #FFFFFF;
+    align-x: right;
+    font-size: 22px;
+    text-shadow: rgb(15, 15, 15);
 }
 
 window-body {
-    @apply window-outline
+    @apply window-outline;
 
-    background-color: !window-body
-    radius: 2
-    padding: 8
+    background-color: !window-body;
+    radius: 2px;
+    padding: 8px;
 }
 
 button {
-    @apply outline
+    @apply outline;
     
-    background-color: !bg
-    padding: 4
-    spacing: 4
-    icon: click
+    background-color: !bg;
+    padding: 4px;
+    spacing: 4px;
+    icon: "click";
 }
 
 button :hovered {
-    background-color: !bg-hovered
+    background-color: !bg-hovered;
 }
 
 button :pressed {
-    background-color: !bg-pressed
+    background-color: !bg-pressed;
 }
 
 icon .click {
-    icon-path: "icons/click.svg"
-    color: 0 0 0
-    size: 24
+    icon-path: "icons/click.svg";
+    color: #000000;
+    size: 24px;
 }
 
 icon .click :hovered {
-    color: 20 20 20
+    color: rgb(20, 20, 20);
 }
 
 icon .click :pressed {
-    color: 40 40 40
+    color: rgb(40, 40, 40);
 }
 
 button-text {
-    align-x: left
+    align-x: left;
 }
 
 checkbox {
-    @apply outline
+    @apply outline;
     
-    background-color: !bg
-    padding: 4
-    radius: 6
+    background-color: !bg;
+    padding: 4px;
+    radius: 6px;
 }
 
 checkbox :hovered {
-    background-color: !bg-hovered
+    background-color: !bg-hovered;
 }
 
 checkbox :pressed {
-    background-color: !bg-pressed
+    background-color: !bg-pressed;
 }
 
 checkbox-inner {
-    color: 0 0 0
-    size: 14
-    icon-path: "icons/check.svg"
+    color: rgb(0, 0, 0);
+    size: 14px;
+    icon-path: "icons/check.svg";
 }
 
 checkbox-inner :hovered {
-    color: 20 20 20
+    color: rgb(20, 20, 20);
 }
 
 checkbox-inner :pressed {
-    color: 40 40 40
+    color: rgb(40, 40, 40);
 }
 
 horizontal-list {
-    spacing: 8
+    spacing: 8px;
 }
 
 text-box {
-    @apply outline
+    @apply outline;
     
-    background-color: 240 240 240
-    color: !text
-    padding: 6
-    icon: write
-    spacing: 4
-    minimum-size: 220 0
+    background-color: rgb(240, 240, 240);
+    color: !text;
+    padding: 6px;
+    icon: "write";
+    spacing: 4px;
+    minimum-size: 220px 0px;
 }
 
 text-box-placeholder {
-    color: 145 145 145
+    color: rgb(145, 145, 145);
 }
 
 icon .write {
-    icon-path: "icons/write.svg"
-    color: 0 0 0
-    size: 16
+    icon-path: "icons/write.svg";
+    color: rgb(0, 0, 0);
+    size: 16px;
 }
 
 selection {
-    background-color: 45 125 245 100
-    radius: 2
+    background-color: rgba(45, 125, 245, 100);
+    radius: 2px;
 }
 
 // Separators
 
 horizontal-separator {
-    size: 1
-    background-color: 210 210 210
+    size: 1px;
+    background-color: rgb(210, 210, 210);
 }
 
 horizontal-separator-text {
-    color: 180 180 180
-    align-x: center
+    color: rgb(180, 180, 180);
+    align-x: center;
 }

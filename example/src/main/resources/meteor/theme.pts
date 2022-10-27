@@ -1,0 +1,231 @@
+@title "Meteor";
+@authors [ "MineGame159" ];
+
+@font "Comfortaa.ttf";
+
+@var accent: Color4 = rgb(145, 61, 226);
+@var bg: Color4 = rgba(20, 20, 20, 200);
+@var bgH: Color4 = rgba(30, 30, 30, 200);
+@var bgP: Color4 = rgba(40, 40, 40, 200);
+@var ol: Color4 = rgba(0, 0, 0, 255);
+@var olH: Color4 = rgb(10, 10, 10);
+@var olP: Color4 = rgb(20, 20, 20);
+
+text {
+    font-size: 18px;
+    color: #FFFFFF;
+}
+
+text .description {
+    max-width: 1000px;
+}
+
+vertical-list {
+    spacing: 2px;
+}
+
+horizontal-list {
+    spacing: 6px;
+}
+
+table {
+    spacing: 6px;
+}
+
+// Window
+
+window-header {
+    background-color: !accent;
+    padding: 6px;
+    radius: 6px;
+}
+
+window-header .expanded {
+    radius: 6px 6px 0px 0px;
+}
+
+.window-title {
+    font-size: 22px;
+    align-x: center;
+}
+
+window-body {
+    background-color: !bg;
+    padding: 10px;
+    radius: 0px 0px 6px 6px;
+}
+
+// Horizontal Separator
+
+horizontal-separator {
+    background-color: #FFFFFF;
+    size: 1px;
+    spacing: 4px;
+    padding: 8px 0px 8px 0px;
+}
+
+horizontal-separator .has-text {
+    padding: 0px;
+}
+
+horizontal-separator-text {
+    align-x: center;
+}
+
+// Dropdown
+
+dropdown {
+    background-color: !bg;
+    outline-size: 4px;
+    outline-color: !ol;
+    padding: 6px;
+    spacing: 6px 4px;
+    icon: "dropdown";
+    list-direction: reversed;
+    radius: 2px;
+}
+
+dropdown :hovered {
+    background-color: !bgH;
+    outline-color: !olH;
+}
+
+dropdown :pressed {
+    background-color: !bgP;
+    outline-color: !olP;
+}
+
+.dropdown-text {
+    align-x: center;
+}
+
+icon .dropdown {
+    icon-path: "dropdown.svg";
+    size: 18px;
+    color: #FFFFFF;
+}
+
+.dropdown-body {
+    outline-size: 4px;
+    outline-color: !ol;
+    spacing: 0px;
+    radius: 2px;
+}
+
+.dropdown-value {
+    background-color: !bg;
+    padding: 6px;
+}
+
+.dropdown-value :hovered {
+    background-color: !bgH;
+}
+
+.dropdown-value :pressed {
+    background-color: !bgP;
+}
+
+.dropdown-value-text {
+    align-x: center;
+}
+
+// Checkbox
+
+checkbox {
+    background-color: !bg;
+    outline-size: 4px;
+    outline-color: !ol;
+    padding: 6px;
+    radius: 2px;
+}
+
+checkbox :hovered {
+    background-color: !bgH;
+    outline-color: !olH;
+}
+
+checkbox :pressed {
+    background-color: !bgP;
+    outline-color: !olP;
+}
+
+checkbox-inner {
+    background-color: !accent;
+    size: 18px;
+}
+
+// Text Box
+
+text-box {
+    background-color: !bg;
+    outline-size: 4px;
+    outline-color: !ol;
+    padding: 6px;
+    color: #FFFFFF;
+    radius: 2px;
+}
+
+selection {
+    background-color: rgba(45, 125, 245, 100);
+}
+
+// Slider
+
+.slider-left {
+    background-color: rgb(100, 35, 170);
+    size: 4px;
+    radius: 2px;
+}
+
+.slider-right {
+    background-color: rgb(50, 50, 50);
+    size: 4px;
+    radius: 2px;
+}
+
+slider-handle {
+    background-color: rgb(130, 0, 255);
+    size: 18px;
+    radius: 9px;
+}
+
+slider-handle :hovered {
+    background-color: rgb(140, 30, 255);
+}
+
+slider-handle :pressed {
+    background-color: rgb(150, 60, 255);
+}
+
+// Double Edit
+
+text-box .double-edit {
+    minimum-size: 80px 0px;
+}
+
+// Button
+
+button {
+    background-color: !bg;
+    outline-size: 4px;
+    outline-color: !ol;
+    padding: 6px;
+    icon: "reset";
+    radius: 2px;
+}
+
+button :hovered {
+    background-color: !bgH;
+    outline-color: !olH;
+}
+
+button :pressed {
+    background-color: !bgP;
+    outline-color: !olP;
+}
+
+icon .reset {
+    icon-path: "reset.svg";
+    size: 18px;
+    color: #FFFFFF;
+}

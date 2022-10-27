@@ -7,14 +7,16 @@ group "meteordevelopment"
 version "0.1.0"
 mainClassName = group + ".example.Main"
 
-sourceCompatibility = targetCompatibility = JavaVersion.VERSION_16
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation rootProject
+    implementation project(":pulsar")
+
+    implementation "com.udojava:EvalEx:2.7"
 
     implementation platform("org.lwjgl:lwjgl-bom:3.3.0")
 

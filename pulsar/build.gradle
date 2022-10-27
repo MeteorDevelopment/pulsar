@@ -1,0 +1,61 @@
+plugins {
+    id "java"
+    id "java-library"
+    id "maven-publish"
+}
+
+group "meteordevelopment"
+version "0.1.0"
+
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(":pts")
+
+    compileOnly platform("org.lwjgl:lwjgl-bom:3.3.1")
+
+    compileOnly "org.lwjgl:lwjgl"
+    compileOnly "org.lwjgl:lwjgl-glfw"
+    compileOnly "org.lwjgl:lwjgl-opengl"
+    compileOnly "org.lwjgl:lwjgl-stb"
+    compileOnly "org.lwjgl:lwjgl-nanovg"
+}
+
+java {
+    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
+
+    withSourcesJar()
+    withJavadocJar()
+}
+
+javadoc {
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+publishing {
+    publications {
+        java(MavenPublication) {
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            name = "meteor-maven"
+            url = "https://maven.meteordev.org"
+
+            credentials {
+                username = System.getenv("MAVEN_METEOR_ALIAS")
+                password = System.getenv("MAVEN_METEOR_TOKEN")
+            }
+
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+}

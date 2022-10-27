@@ -1,18 +1,18 @@
-@var text: Color4 = 15 15 15
+@var text: Color = rgb(15, 15, 15);
 
-@var window-header: Color4 = 255 60 60,  255 100 100,  255 100 100,  255 60 60       // Double spaces just so its more readable
-@var window-body: Color4 = #FFFFFF
+@var window-header: Color4 = rgb(255, 60, 60) rgb(255, 100, 100) rgb(255, 100, 100) rgb(255, 60, 60);
+@var window-body: Color = #FFFFFF;
 
-@var bg: Color4 = 240 240 240
-@var bg-hovered: Color4 = 230 230 230
-@var bg-pressed: Color4 = 220 220 220
+@var bg: Color = rgb(240, 240, 240);
+@var bg-hovered: Color = rgb(230, 230, 230);
+@var bg-pressed: Color = rgb(220, 220, 220);
 
 @mixin window-outline {
-    outline-size: 2
-    outline-color: 0 0 0
+    outline-size: 2px;
+    outline-color: #000000;
 }
 
 @mixin outline {
-    outline-size: 2
-    outline-color: 127 127 127
+    outline-size: 2px;
+    outline-color: rgb(127, 127, 127);
 }
