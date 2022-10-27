@@ -4,6 +4,7 @@ import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.theme.fileresolvers.ResourceFileResolver;
 import meteordevelopment.pulsar.theme.parser.Parser;
+import meteordevelopment.pulsar.theme.properties.Properties;
 import meteordevelopment.pulsar.utils.AlignX;
 import meteordevelopment.pulsar.widgets.*;
 
@@ -74,6 +75,17 @@ public class Main {
         return w;
     }
 
+    private static WWindow createLongWindow() {
+        WWindow w = new WWindow("Long");
+        w.bodySet(Properties.MAX_HEIGHT, 200.0);
+
+        for (int i = 0; i < 20; i++) {
+            w.add(new WText("Item: " + i));
+        }
+
+        return w;
+    }
+
     public static void main(String[] args) {
         Window window = new Window("GUI Example", 1280, 720);
         Renderer renderer = new Renderer();
@@ -82,11 +94,14 @@ public class Main {
         renderer.setTheme(theme);
         renderer.window = window.handle;
 
-        WRoot root = new WRoot();
+        WRoot root = new WRoot(false);
         root.setWindowSize(window.getWidth(), window.getHeight());
 
-        root.add(createMainWindow());
-        root.add(createLoginWindow());
+        WWindowManager windows = root.add(new WWindowManager()).expandX().widget();
+
+        windows.add(createMainWindow());
+        windows.add(createLoginWindow());
+        windows.add(createLongWindow());
 
         window.onResized = root::setWindowSize;
         window.onEvent = root::dispatch;

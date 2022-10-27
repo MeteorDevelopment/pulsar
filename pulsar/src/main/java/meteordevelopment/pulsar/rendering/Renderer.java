@@ -35,7 +35,7 @@ public class Renderer {
     private final List<Runnable> afterRunnables = new ArrayList<>();
     private Fonts fonts;
 
-    private int windowWidth, windowHeight;
+    public int windowWidth, windowHeight;
     private final FloatBuffer projection = MemoryUtil.memAllocFloat(16);
 
     public Renderer() {

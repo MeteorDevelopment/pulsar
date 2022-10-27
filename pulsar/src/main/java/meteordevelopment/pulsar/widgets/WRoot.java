@@ -1,15 +1,13 @@
 package meteordevelopment.pulsar.widgets;
 
-import meteordevelopment.pulsar.input.Event;
 import meteordevelopment.pulsar.input.KeyEvent;
 import meteordevelopment.pulsar.input.MouseMovedEvent;
-import meteordevelopment.pulsar.input.UsableEvent;
 import meteordevelopment.pulsar.layout.Layout;
+import meteordevelopment.pulsar.layout.VerticalLayout;
 import meteordevelopment.pulsar.rendering.DebugRenderer;
 import meteordevelopment.pulsar.rendering.Renderer;
+import meteordevelopment.pulsar.theme.properties.Properties;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -18,9 +16,10 @@ import static meteordevelopment.pulsar.utils.Utils.combine;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class WRoot extends Widget {
-    protected static final String[] NAMES = combine(Widget.NAMES, "root");
+    protected static final String[] NAMES = combine(WContainer.NAMES, "root");
 
-    private final List<WWindow> windows = new ArrayList<>();
+    private final boolean setMaxHeight;
+    private final WContainer container;
 
     private boolean invalid = true;
     private boolean debug;
@@ -32,10 +31,18 @@ public class WRoot extends Widget {
         return NAMES;
     }
 
+    public WRoot(boolean setMaxHeight) {
+        this.setMaxHeight = setMaxHeight;
+
+        container = super.add(new WContainer()).expandX().widget();
+        container.layout = VerticalLayout.INSTANCE;
+    }
+
     public void setWindowSize(int width, int height) {
         windowWidth = width;
         windowHeight = height;
 
+        if (setMaxHeight) container.set(Properties.MAX_HEIGHT, (double) height);
         invalidateLayout();
     }
 
@@ -46,54 +53,17 @@ public class WRoot extends Widget {
 
     @Override
     public <T extends Widget> Cell<T> add(T widget) {
-        if (widget instanceof WWindow window) windows.add(window);
-        return super.add(widget);
+        return container.add(widget);
     }
 
     @Override
     public boolean remove(Widget widget) {
-        if (widget instanceof WWindow window) windows.remove(window);
-        return super.remove(widget);
+        return container.remove(widget);
     }
 
     @Override
     public void clear() {
-        windows.clear();
-        super.clear();
-    }
-
-    @Override
-    public void dispatch(Event event) {
-        // Dispatch to windows and reorder them accordingly
-        UsableEvent usableEvent = event instanceof UsableEvent ? (UsableEvent) event : null;
-        boolean wasUsed = false;
-        int firstWindow = -1;
-
-        for (int i = windows.size() - 1; i >= 0; i--) {
-            WWindow window = windows.get(i);
-            window.dispatch(event);
-
-            if (usableEvent != null && !wasUsed && usableEvent.used) {
-                wasUsed = true;
-                firstWindow = i;
-            }
-        }
-
-        if (firstWindow != -1) {
-            int i = windows.size() - 1;
-            WWindow temp = windows.get(i);
-
-            windows.set(i, windows.get(firstWindow));
-            windows.set(firstWindow, temp);
-        }
-
-        // Dispatch to children which are not windows
-        for (Cell<?> cell : cells) {
-            if (!(cell.widget() instanceof WWindow)) cell.widget().dispatch(event);
-        }
-
-        // Dispatch to self
-        dispatchToSelf(event);
+        container.clear();
     }
 
     @Override
@@ -149,27 +119,22 @@ public class WRoot extends Widget {
     @Override
     public void render(Renderer renderer, double delta) {
         if (invalid) {
-            if (!(layout instanceof RootLayout)) layout = new RootLayout(layout);
+            for (int i = 0; i < 2; i++) {
+                invalid = false;
+                if (!(layout instanceof RootLayout)) layout = new RootLayout(layout);
 
-            layout.calculateSize(this);
-            layout.positionChildren(this);
+                layout.calculateSize(this);
+                layout.positionChildren(this);
+                afterLayout();
 
-            invalid = false;
+                if (!invalid) break;
+            }
+
+            if (invalid) System.err.println("[Pulsar] Invalid was set more than once when trying to calculate layout. This should not happen.");
         }
 
         renderer.setup(windowWidth, windowHeight);
-
-        // Render self
-        onRender(renderer, delta);
-
-        // Render children which are not windows
-        for (Cell<?> cell : cells) {
-            if (!(cell.widget() instanceof WWindow)) cell.widget().render(renderer, delta);
-        }
-
-        // Render windows
-        for (WWindow window : windows) window.render(renderer, delta);
-
+        super.render(renderer, delta);
         renderer.render();
 
         if (debug) DebugRenderer.render(this, windowWidth, windowHeight);

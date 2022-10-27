@@ -13,6 +13,10 @@ widget {
     radius: 2px;
 }
 
+container {
+
+}
+
 text {
     color: !text;
     font-size: 16px;
@@ -150,4 +154,19 @@ horizontal-separator {
 horizontal-separator-text {
     color: rgb(180, 180, 180);
     align-x: center;
+}
+
+scrollbar {
+    padding: 2px;
+}
+
+scrollbar-handle {
+    size.x: 6px;
+    outline-size: 2px;
+    outline-color: !window-header;
+    radius: 3px;
+}
+
+scrollbar-handle :hovered {
+    background-color: rgb(240, 240, 240);
 }
