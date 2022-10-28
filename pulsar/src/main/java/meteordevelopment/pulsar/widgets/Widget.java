@@ -276,6 +276,8 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
         private int count;
 
         public CellIterator(boolean reversed) {
+            //reversed = !reversed;
+
             this.reversed = reversed;
             this.i = reversed ? cells.size() : -1;
         }

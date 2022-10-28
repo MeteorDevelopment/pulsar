@@ -85,4 +85,9 @@ public class Vec4 {
     public void bottomLeft(double v) {
         this.w = v;
     }
+
+    @Override
+    public String toString() {
+        return "[" + x + ", " + y + ", " + z + ", " + w + "]";
+    }
 }

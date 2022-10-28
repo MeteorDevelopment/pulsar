@@ -106,7 +106,7 @@ public class WDropdown<T> extends WPressable {
         Vec2 spacing = get(Properties.SPACING);
 
         root.x = x;
-        root.y = y - root.height - spacing.intY();
+        root.y = y + height + spacing.intY();
 
         root.layout.positionChildren(root);
     }
@@ -147,7 +147,7 @@ public class WDropdown<T> extends WPressable {
 
             renderer.after(() -> {
                 if (animation < 1) {
-                    renderer.offsetY = (root.height + get(Properties.SPACING).intY()) * (1 - animation);
+                    renderer.offsetY = -(root.height + get(Properties.SPACING).intY()) * (1 - animation);
                     renderer.beginScissor(root.x, root.y, root.width, root.height);
                 }
 

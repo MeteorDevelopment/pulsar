@@ -53,7 +53,7 @@ public class HorizontalLayout extends Layout {
             if (cell.widget().shouldSkipLayout()) continue;
 
             cell.x = x;
-            cell.y = padding.bottom() + widget.y;
+            cell.y = padding.top() + widget.y;
 
             cell.width = cell.widget().width;
             cell.height = widget.height - padding.vertical();

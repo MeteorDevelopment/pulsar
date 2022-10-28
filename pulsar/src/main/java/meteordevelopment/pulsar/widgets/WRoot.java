@@ -16,7 +16,7 @@ import static meteordevelopment.pulsar.utils.Utils.combine;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class WRoot extends Widget {
-    protected static final String[] NAMES = combine(WContainer.NAMES, "root");
+    protected static final String[] NAMES = {};
 
     private final boolean setMaxHeight;
     private final WContainer container;
@@ -34,7 +34,7 @@ public class WRoot extends Widget {
     public WRoot(boolean setMaxHeight) {
         this.setMaxHeight = setMaxHeight;
 
-        container = super.add(new WContainer()).expandX().widget();
+        container = super.add(new WRootContainer()).expandX().widget();
         container.layout = VerticalLayout.INSTANCE;
     }
 
@@ -124,6 +124,7 @@ public class WRoot extends Widget {
                 if (!(layout instanceof RootLayout)) layout = new RootLayout(layout);
 
                 layout.calculateSize(this);
+                layout.adjustMaxSize(this);
                 layout.positionChildren(this);
                 afterLayout();
 
@@ -177,5 +178,14 @@ public class WRoot extends Widget {
 
         @Override
         protected void positionChildrenImpl(Widget widget) {}
+    }
+
+    private static class WRootContainer extends WContainer {
+        protected static final String[] NAMES = combine(WContainer.NAMES, "root");
+
+        @Override
+        protected String[] getSelfNonScrollModeNames() {
+            return NAMES;
+        }
     }
 }

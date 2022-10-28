@@ -32,7 +32,7 @@ public class DebugRenderer {
         render(widget);
 
         shader.bind();
-        shader.set("u_Proj", Matrix.ortho(PROJECTION, 0, windowWidth, 0, windowHeight, -10000, 10000));
+        shader.set("u_Proj", Matrix.ortho(PROJECTION, 0, windowWidth, windowHeight, 0, -10000, 10000));
         mesh.render(true);
     }
 

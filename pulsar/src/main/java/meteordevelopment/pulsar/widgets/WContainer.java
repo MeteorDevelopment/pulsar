@@ -93,7 +93,7 @@ public class WContainer extends Widget {
 
         if (preScrollMode && scrollMode) {
             clampScroll();
-            contents.move(0, scroll);
+            contents.move(0, -scroll);
         }
     }
 
@@ -155,8 +155,7 @@ public class WContainer extends Widget {
     }
 
     private double getScrollProgress() {
-        // Reversed because the rendering origin is bottom left and not top left
-        return 1 - (double) scroll / getMaxScroll();
+        return (double) scroll / getMaxScroll();
     }
 
     private int getScrollbarHeight() {
@@ -205,7 +204,7 @@ public class WContainer extends Widget {
                 }
 
                 clampScroll();
-                if (scroll - preScroll != 0) contents.move(0, scroll - preScroll);
+                if (scroll - preScroll != 0) contents.move(0, preScroll - scroll);
             }
 
             // Calculate position and size of scrollbar handle
@@ -239,13 +238,18 @@ public class WContainer extends Widget {
             super.calculateSizeImpl(widget);
 
             int maxHeight = get(Properties.MAX_HEIGHT).intValue();
-            if (widget.height > maxHeight) widget.height = maxHeight;
+
+            if (widget.height > maxHeight) {
+                realHeight = widget.height;
+                widget.height = maxHeight;
+            }
         }
     }
 
     private class WContents extends Widget {
         public WContents() {
-            tag("has-scrollbar");
+            tags.add("has-scrollbar");
+            invalidStyle();
         }
 
         @Override
@@ -302,8 +306,7 @@ public class WContainer extends Widget {
         protected void onMouseMoved(MouseMovedEvent event) {
             if (!dragging) return;
 
-            // Reversed because rendering origin is in bottom left and not top left
-            dragged -= event.deltaY * ((double) realHeight / getScrollbarHeight());
+            dragged += event.deltaY * ((double) realHeight / getScrollbarHeight());
             int scrolled = (int) dragged;
 
             if (scrolled != 0) {
@@ -315,7 +318,7 @@ public class WContainer extends Widget {
 
                 if (scroll != preScroll) {
                     dragged -= scroll - preScroll;
-                    contents.move(0, scroll - preScroll);
+                    contents.move(0, preScroll - scroll);
                 }
             }
         }

@@ -95,13 +95,13 @@ public class TableLayout extends Layout {
         Vec4 padding = widget.get(Properties.PADDING);
         Vec2 spacing = widget.get(Properties.SPACING);
 
-        int y = widget.y + padding.bottom();
+        int y = widget.y + padding.top();
 
         // Loop over rows
-        for (int rowI = rows.size() - 1; rowI >= 0; rowI--) {
+        for (int rowI = 0; rowI < rows.size(); rowI++) {
             List<Cell<?>> row = rows.get(rowI);
 
-            if (rowI < rows.size() - 1) y += spacing.intY();
+            if (rowI > 0) y += spacing.intY();
 
             int x = widget.x + padding.left();
             int rowHeight = rowHeights.get(rowI);

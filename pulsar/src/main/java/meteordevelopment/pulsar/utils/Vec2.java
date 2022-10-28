@@ -1,6 +1,6 @@
 package meteordevelopment.pulsar.utils;
 
-public final class Vec2 {
+public class Vec2 {
     public double x, y;
 
     public Vec2(double x, double y) {
@@ -18,5 +18,10 @@ public final class Vec2 {
 
     public int intY() {
         return (int) Math.ceil(y);
+    }
+
+    @Override
+    public String toString() {
+        return "[" + x + ", " + y + "]";
     }
 }

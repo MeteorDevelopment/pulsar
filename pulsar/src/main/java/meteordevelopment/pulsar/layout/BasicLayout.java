@@ -31,7 +31,7 @@ public class BasicLayout extends Layout {
             if (cell.widget().shouldSkipLayout()) continue;
 
             cell.x = padding.left() + widget.x;
-            cell.y = padding.bottom() + widget.y;
+            cell.y = padding.top() + widget.y;
 
             cell.width = widget.width - padding.horizontal();
             cell.height = widget.height - padding.vertical();

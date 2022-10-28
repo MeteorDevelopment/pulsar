@@ -37,9 +37,9 @@ public class VerticalLayout extends Layout {
         Vec2 spacing = widget.get(Properties.SPACING);
         boolean reversed = widget.get(Properties.LIST_DIRECTION) == ListDirection.Reversed;
 
-        int y = widget.y + padding.bottom();
+        int y = widget.y + padding.top();
 
-        for (Widget.CellIterator it = widget.iterator(!reversed); it.hasNext();) {
+        for (Widget.CellIterator it = widget.iterator(reversed); it.hasNext();) {
             Cell<?> cell = it.next();
             if (cell.widget().shouldSkipLayout()) continue;
 

@@ -33,6 +33,10 @@ public abstract class Layout {
         return widget.get(Properties.MINIMUM_SIZE);
     }
 
+    public void adjustMaxSize(Widget widget) {
+
+    }
+
     /** Position's children widgets and its children according to this layout. */
     public void positionChildren(Widget widget) {
         positionChildrenImpl(widget);

@@ -21,5 +21,5 @@ table {
 
 vertical-list {
     spacing: 8px;
-    align-y: bottom;
+    align-y: top;
 }

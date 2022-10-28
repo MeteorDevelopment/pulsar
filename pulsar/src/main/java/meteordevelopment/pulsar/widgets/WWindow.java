@@ -87,7 +87,7 @@ public class WWindow extends Widget {
 
             if (animation > 0) {
                 if (animation < 1) {
-                    renderer.offsetY = body.height * (1 - animation);
+                    renderer.offsetY = -body.height * (1 - animation);
                     renderer.beginScissor(body.x, body.y, body.width, body.height);
                 }
 

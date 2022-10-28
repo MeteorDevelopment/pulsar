@@ -60,9 +60,9 @@ public class Cell<T extends Widget> {
         }
 
         switch (widget.get(Properties.ALIGN_Y)) {
-            case Bottom -> widget.y = y;
+            case Bottom -> widget.y = y + height - widget.height;
             case Center -> widget.y = y + height / 2 - widget.height / 2;
-            case Top -> widget.y = y + height - widget.height;
+            case Top -> widget.y = y;
         }
     }
 
