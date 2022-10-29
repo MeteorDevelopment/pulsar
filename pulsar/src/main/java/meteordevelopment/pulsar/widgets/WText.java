@@ -59,7 +59,7 @@ public class WText extends Widget {
             int toAdd = wordWidth;
             if (iInLine > 0) toAdd += spaceWidth;
 
-            if (lineWidth + toAdd > maxWidth && !sb.isEmpty()) {
+            if (lineWidth + toAdd > maxWidth && sb.length() > 0) {
                 lines.add(sb.toString());
                 sb.setLength(0);
 

@@ -1,7 +1,10 @@
 package meteordevelopment.pulsar.theme.properties;
 
+import com.github.bsideup.jabel.Desugar;
+
 import java.util.List;
 
+@Desugar
 public record PropertyAccessor<T>(String name, ValueType[] types, Setter<T> setter) {
     public boolean matches(String name, List<ValueType> types) {
         if (!this.name.equals(name)) return false;

@@ -1,7 +1,10 @@
 package meteordevelopment.pulsar.theme.properties;
 
+import com.github.bsideup.jabel.Desugar;
+
 import java.util.List;
 
+@Desugar
 public record PropertyConstructor<T>(ValueType[] types, Factory<T> factory) {
     public boolean matches(List<ValueType> types) {
         if (types.size() != this.types.length) return false;

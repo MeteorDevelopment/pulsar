@@ -1,5 +1,6 @@
 package meteordevelopment.pulsar.rendering;
 
+import com.github.bsideup.jabel.Desugar;
 import meteordevelopment.pulsar.Pulsar;
 import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.utils.*;
@@ -208,5 +209,6 @@ public class Renderer {
         afterRunnables.add(runnable);
     }
 
+    @Desugar
     private record Texture(double x, double y, double width, double height, int glId, Color4 color) {}
 }

@@ -9,6 +9,7 @@ import meteordevelopment.pulsar.layout.Layout;
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.properties.Properties;
 import meteordevelopment.pulsar.utils.AlignY;
+import meteordevelopment.pulsar.utils.Lists;
 import meteordevelopment.pulsar.utils.Utils;
 import meteordevelopment.pulsar.utils.Vec4;
 
@@ -57,7 +58,7 @@ public class WContainer extends Widget {
 
     @Override
     public List<String> tags() {
-        return scrollMode ? List.of() : tags;
+        return scrollMode ? Lists.of() : tags;
     }
 
     // region Overwrite children handling methods

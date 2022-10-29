@@ -1,5 +1,6 @@
 package meteordevelopment.pulsar.theme.parser;
 
+import com.github.bsideup.jabel.Desugar;
 import meteordevelopment.pts.PtsBaseListener;
 import meteordevelopment.pts.PtsLexer;
 import meteordevelopment.pts.PtsParser;
@@ -9,6 +10,7 @@ import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.theme.fileresolvers.IFileResolver;
 import meteordevelopment.pulsar.theme.properties.*;
 import meteordevelopment.pulsar.utils.ColorFactory;
+import meteordevelopment.pulsar.utils.Lists;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Parser {
+    @Desugar
     private record Variable(PropertyType<?> type, Object value) {}
 
     public static Theme parse(IFileResolver fileResolver, String path) {
@@ -188,7 +191,7 @@ public class Parser {
             style = new Style();
 
             if (ctx.name != null) style.name = string(ctx.name);
-            if (ctx.tag != null) style.tags = List.of(string(ctx.tag));
+            if (ctx.tag != null) style.tags = Lists.of(string(ctx.tag));
             if (ctx.state != null) style.state = Style.State.of(string(ctx.state));
         }
 
