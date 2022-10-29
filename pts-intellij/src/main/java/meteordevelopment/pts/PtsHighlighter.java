@@ -12,7 +12,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import meteordevelopment.pts.psi.*;
 import org.antlr.intellij.adaptor.lexer.RuleIElementType;
-import org.antlr.intellij.adaptor.lexer.TokenIElementType;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
@@ -66,12 +65,18 @@ public class PtsHighlighter implements HighlightVisitor {
             apply(property.getNameElement(), PROPERTY_NAME);
             visitValueElement(property.getValueElement());
         }
+        // Functions
+        else if (element instanceof PtsFunction function) {
+            apply(function.getNameElement(), FUNCTION);
+        }
     }
 
     private void visitValueElement(PsiElement element) {
         if (element == null) return;
 
         PsiElement el = element.getFirstChild();
+        if (el == null) return;
+
         IElementType type = el.getNode().getElementType();
 
         if (type instanceof RuleIElementType rule) {
@@ -79,33 +84,6 @@ public class PtsHighlighter implements HighlightVisitor {
 
             if (index == PtsParser.RULE_identifier) apply(el, PROPERTY_VALUE);
             else if (index == PtsParser.RULE_variable) apply(el, 1, PROPERTY_VALUE);
-            else if (index == PtsParser.RULE_color) {
-                // TODO: This is horrible
-                if (el.getFirstChild().getNode().getElementType() instanceof TokenIElementType token && token.getANTLRTokenType() == PtsLexer.RGB_COLOR) {
-                    String text = el.getText();
-
-                    // Function
-                    int parenI = text.indexOf('(');
-                    apply(el, 0, parenI, FUNCTION);
-
-                    // Arguments
-                    int start = -1;
-
-                    for (int i = parenI + 1; i < text.length(); i++) {
-                        char c = text.charAt(i);
-
-                        if (start == -1) {
-                            if (Character.isDigit(c)) start = i;
-                        }
-                        else {
-                            if (!Character.isDigit(c)) {
-                                apply(el, start, i, PtsSyntaxHighlighter.NUMBER);
-                                start = -1;
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 

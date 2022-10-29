@@ -45,33 +45,31 @@ expression : unit
            | identifier
            | string
            | variable
+           | function
            ;
 
 unit : NUMBER PX ;
-
-color : HEX_COLOR
-      | RGB_COLOR
-      ;
-
+color : HEX_COLOR ;
+identifier : IDENTIFIER ;
 string : STRING ;
 variable : BANG name=IDENTIFIER ;
-identifier : IDENTIFIER ;
+function : name=IDENTIFIER OPENING_PAREN args+=NUMBER? (COMMA args+=NUMBER*)* CLOSING_PAREN ;
+
 
 // Lexer
-NUMBER : '-'? INT ('.' [0-9]+)? ;
-STRING : '"' ~[\\"]+ '"' ;
+NUMBER : '-'? INT ('.' INT)? ;
+STRING : QUOTE ~[\\"]* QUOTE ;
 
 HEX_COLOR : '#' HEX HEX HEX HEX HEX HEX
           | '#' HEX HEX HEX HEX HEX HEX HEX HEX
           ;
 
-RGB_COLOR : 'rgb(' WS* INT WS* COMMA WS* INT WS* COMMA WS* INT WS* ')'
-          | 'rgba(' WS* INT WS* COMMA WS* INT WS* COMMA WS* INT WS* COMMA WS* INT WS* ')'
-          ;
-
 PX : 'px' ;
 
 IDENTIFIER : [a-zA-Z_\-][a-zA-Z_\-0-9]* ;
+
+OPENING_PAREN : '(' ;
+CLOSING_PAREN : ')' ;
 
 OPENING_BRACE : '{' ;
 CLOSING_BRACE : '}' ;
@@ -82,6 +80,7 @@ CLOSING_BRACKET : ']' ;
 COMMA : ',' ;
 SEMICOLON : ';' ;
 BANG : '!' ;
+QUOTE : '"' ;
 
 COMMENT : '/*' .*? '*/' -> channel(HIDDEN) ;
 LINE_COMMENT : '//' ~[\r\n]* -> channel(HIDDEN) ;
@@ -89,5 +88,5 @@ LINE_COMMENT : '//' ~[\r\n]* -> channel(HIDDEN) ;
 WS : [ \n\t\r]+ -> channel(HIDDEN);
 UNKNOWN : . ;
 
-fragment INT : '0' | [1-9][0-9]* ;
+fragment INT : [0-9]+ ;
 fragment HEX : [0-9a-fA-F] ;

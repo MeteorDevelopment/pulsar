@@ -17,6 +17,10 @@
             language="PTS"
             implementationClass="meteordevelopment.pts.PtsParserDefinition" />
 
+        <lang.ast.factory
+            language="PTS"
+            implementationClass="meteordevelopment.pts.PtsASTFactory" />
+
         <lang.syntaxHighlighterFactory
             language="PTS"
             implementationClass="meteordevelopment.pts.PtsSyntaxHighlighterFactory" />
@@ -27,5 +31,21 @@
         <lang.foldingBuilder
             language="PTS"
             implementationClass="meteordevelopment.pts.PtsFoldingBuilder" />
+
+        <lang.commenter
+            language="PTS"
+            implementationClass="meteordevelopment.pts.PtsCommenter" />
+
+        <lang.quoteHandler
+            language="PTS"
+            implementationClass="meteordevelopment.pts.PtsQuoteHandler" />
+
+        <lang.braceMatcher
+            language="PTS"
+            implementationClass="meteordevelopment.pts.PtsBraceMatcher" />
+
+        <codeInsight.lineMarkerProvider
+            language="PTS"
+            implementationClass="meteordevelopment.pts.PtsColorLineMarkerProvider" />
     </extensions>
 </idea-plugin>

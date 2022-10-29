@@ -83,6 +83,7 @@ public class PtsParserDefinition implements ParserDefinition {
             case PtsParser.RULE_style       -> new PtsStyle(node);
             case PtsParser.RULE_apply       -> new PtsAtStatement(node, true);
             case PtsParser.RULE_property    -> new PtsProperty(node);
+            case PtsParser.RULE_function    -> new PtsFunction(node);
             default                         -> new PtsPsiNode(node);
         };
     }

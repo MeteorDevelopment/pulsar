@@ -9,7 +9,6 @@ import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.theme.fileresolvers.IFileResolver;
 import meteordevelopment.pulsar.theme.properties.*;
 import meteordevelopment.pulsar.utils.ColorFactory;
-import meteordevelopment.pulsar.utils.Utils;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -137,18 +136,20 @@ public class Parser {
         @Override
         public void enterAtFont(PtsParser.AtFontContext ctx) {
             String path = string(ctx.font);
-            if (!path.endsWith(".ttf")) throw new ParseException("%s [%d:%d] File must end with 'pts' extension.", fileResolver.resolvePath(currentPath), ctx.font.getLine(), ctx.font.getCharPositionInLine());
+            if (!path.endsWith(".ttf")) error(ctx.font, "File must end with a 'pts' extension.");
 
             InputStream in = fileResolver.get(path);
-            if (in == null) throw new ParseException("Failed to read file '%s'.", fileResolver.resolvePath(path));
+            if (in == null) error(ctx.font, "Failed to read file '%s'.", fileResolver.resolvePath(path));
 
             theme.setFontInfo(new FontInfo(in));
         }
 
         @Override
         public void enterAtVar(PtsParser.AtVarContext ctx) {
-            PropertyType<?> type = PropertyTypes.get(string(ctx.type));
-            if (type == null) throw new ParseException("%s [%d:%d] Unknown property type with name '%s'.", fileResolver.resolvePath(currentPath), ctx.name.getLine(), ctx.name.getCharPositionInLine(), string(ctx.type));
+            String name = string(ctx.name);
+
+            PropertyType<?> type = PropertyTypes.get(name);
+            if (type == null) error(ctx.name, "Property type '%s' does not exist.", name);
 
             variableType = type;
             variableName = string(ctx.name);
@@ -157,10 +158,10 @@ public class Parser {
         @Override
         public void exitAtVar(PtsParser.AtVarContext ctx) {
             PropertyConstructor<?> constructor = variableType.getConstructor(valueTypes);
-            if (constructor == null) throw new ParseException("%s [%d:%d] Invalid values.", fileResolver.resolvePath(currentPath), ctx.name.getLine(), ctx.name.getCharPositionInLine());
+            if (constructor == null) error(ctx.name, "Invalid values.");
 
             Object value = constructor.create(values);
-            if (value == null) throw new ParseException("%s [%d:%d] Invalid value.", fileResolver.resolvePath(currentPath), ctx.name.getLine(), ctx.name.getCharPositionInLine());
+            if (value == null) error(ctx.name, "Invalid value.");
 
             variables.put(variableName, new Variable(variableType, value));
 
@@ -202,15 +203,17 @@ public class Parser {
             String name = string(ctx.name);
 
             Style mixin = mixins.get(name);
-            if (mixin == null) throw new ParseException("%s [%d:%d] Unknown mixin with name '%s'.", fileResolver.resolvePath(currentPath), ctx.name.getLine(), ctx.name.getCharPositionInLine(), name);
+            if (mixin == null) error(ctx.name, "Mixin '%s' does not exist.", name);
 
             style.merge(mixin);
         }
 
         @Override
         public void enterProperty(PtsParser.PropertyContext ctx) {
-            Property<?> property = Properties.get(string(ctx.name));
-            if (property == null) throw new ParseException("%s [%d:%d] Unknown property with name '%s'.", fileResolver.resolvePath(currentPath), ctx.name.getLine(), ctx.name.getCharPositionInLine(), string(ctx.name));
+            String name = string(ctx.name);
+
+            Property<?> property = Properties.get(name);
+            if (property == null) error(ctx.name, "Property '%s' does not exist.", name);
 
             //noinspection unchecked
             this.property = (Property<Object>) property;
@@ -221,16 +224,16 @@ public class Parser {
         public void exitProperty(PtsParser.PropertyContext ctx) {
             if (accessorName == null) {
                 PropertyConstructor<?> constructor = property.type().getConstructor(valueTypes);
-                if (constructor == null) throw new ParseException("%s [%d:%d] Invalid values.", fileResolver.resolvePath(currentPath), ctx.name.getLine(), ctx.name.getCharPositionInLine());
+                if (constructor == null) error(ctx.name, "Invalid values.");
 
                 Object value = constructor.create(values);
-                if (value == null) throw new ParseException("%s [%d:%d] Invalid value.", fileResolver.resolvePath(currentPath), ctx.name.getLine(), ctx.name.getCharPositionInLine());
+                if (value == null) error(ctx.name, "Invalid value.");
 
                 style.set(property, value);
             }
             else {
                 PropertyAccessor<Object> accessor = property.type().getAccessor(accessorName, valueTypes);
-                if (accessor == null) throw new ParseException("%s [%d:%d] Invalid values.", fileResolver.resolvePath(currentPath), ctx.name.getLine(), ctx.name.getCharPositionInLine());
+                if (accessor == null) error(ctx.name, "Invalid values.");
 
                 Object target = style.getRaw(property);
                 if (target == null) {
@@ -249,8 +252,7 @@ public class Parser {
 
         @Override
         public void enterUnit(PtsParser.UnitContext ctx) {
-            String text = string(ctx);
-            double number = Double.parseDouble(text.substring(0, text.length() - 2));
+            double number = Double.parseDouble(string(ctx.getChild(0)));
 
             valueTypes.add(ValueType.Unit);
             values.add(number);
@@ -258,40 +260,15 @@ public class Parser {
 
         @Override
         public void enterColor(PtsParser.ColorContext ctx) {
-            int r;
-            int g;
-            int b;
+            String text = string(ctx.HEX_COLOR()).substring(1);
+            if (text.length() != 6 && text.length() != 8) error(ctx.start, "Invalid hex color.");
+
+            int r = Integer.parseInt(text.substring(0, 2), 16);
+            int g = Integer.parseInt(text.substring(2, 4), 16);
+            int b = Integer.parseInt(text.substring(4, 6), 16);
+
             int a = 255;
-
-            if (ctx.HEX_COLOR() != null) {
-                String text = string(ctx.HEX_COLOR()).substring(1);
-                if (text.length() != 6 && text.length() != 8) throw new ParseException("%s [%d:%d] Invalid hex color.", fileResolver.resolvePath(currentPath), ctx.start.getLine(), ctx.start.getCharPositionInLine());
-
-                r = Integer.parseInt(text.substring(0, 2), 16);
-                g = Integer.parseInt(text.substring(2, 4), 16);
-                b = Integer.parseInt(text.substring(4, 6), 16);
-
-                if (text.length() == 8) a = Integer.parseInt(text.substring(6, 8), 16);
-            }
-            else {
-                String text = string(ctx.RGB_COLOR());
-
-                text = text.substring(text.indexOf('(') + 1);
-                text = text.substring(0, text.indexOf(')'));
-
-                String[] values = text.split(",");
-
-                r = Integer.parseInt(values[0].trim());
-                g = Integer.parseInt(values[1].trim());
-                b = Integer.parseInt(values[2].trim());
-
-                if (values.length > 3) a = Integer.parseInt(values[3].trim());
-            }
-
-            r = Utils.clamp(r, 0, 255);
-            g = Utils.clamp(g, 0, 255);
-            b = Utils.clamp(b, 0, 255);
-            a = Utils.clamp(a, 0, 255);
+            if (text.length() == 8) a = Integer.parseInt(text.substring(6, 8), 16);
 
             valueTypes.add(ValueType.Color);
             values.add(ColorFactory.create(r, g, b, a));
@@ -312,10 +289,47 @@ public class Parser {
         @SuppressWarnings("unchecked")
         @Override
         public void enterVariable(PtsParser.VariableContext ctx) {
-            Variable variable = variables.get(string(ctx.name));
-            if (variable == null) throw new ParseException("%s [%d:%d] Unknown variable '%s'.", fileResolver.resolvePath(currentPath), ctx.name.getLine(), ctx.name.getCharPositionInLine(), string(ctx.name));
+            String name = string(ctx.name);
+
+            Variable variable = variables.get(name);
+            if (variable == null) error(ctx.name, "Variable '%s' does not exist.", name);
 
             ((PropertyType<Object>) variable.type).decompose(variable.value, valueTypes, values);
+        }
+
+        @Override
+        public void enterFunction(PtsParser.FunctionContext ctx) {
+            String name = string(ctx.name);
+
+            switch (name) {
+                case "rgb" -> {
+                    if (ctx.args.size() != 3) error(ctx.name, "Function 'rgb' needs 3 numbers.");
+
+                    valueTypes.add(ValueType.Color);
+                    values.add(ColorFactory.create(
+                            (int) Double.parseDouble(string(ctx.args.get(0))),
+                            (int) Double.parseDouble(string(ctx.args.get(1))),
+                            (int) Double.parseDouble(string(ctx.args.get(2))),
+                            255
+                    ));
+                }
+                case "rgba" -> {
+                    if (ctx.args.size() != 4) error(ctx.name, "Function 'rgba' needs 4 numbers.");
+
+                    valueTypes.add(ValueType.Color);
+                    values.add(ColorFactory.create(
+                            (int) Double.parseDouble(string(ctx.args.get(0))),
+                            (int) Double.parseDouble(string(ctx.args.get(1))),
+                            (int) Double.parseDouble(string(ctx.args.get(2))),
+                            (int) Double.parseDouble(string(ctx.args.get(3)))
+                    ));
+                }
+                default -> error(ctx.name, "Function '%s' does not exist.", name);
+            }
+        }
+
+        private void error(Token token, String format, Object... args) {
+            throw new ParseException("%s [%d:%d] %s", fileResolver.resolvePath(currentPath), token.getLine(), token.getCharPositionInLine(), String.format(format, args));
         }
     }
 
