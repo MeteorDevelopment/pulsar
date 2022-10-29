@@ -24,6 +24,9 @@ public class Renderer {
     public double mouseX, mouseY;
     public double offsetY;
 
+    private final Scissor[] scissors = new Scissor[8];
+    private int scissorI = -1;
+
     private final Shader rectangleShader = new Shader("/pulsar/shaders/rectangles.vert", "/pulsar/shaders/rectangles.frag");
     private final Mesh rectangleMesh = new Mesh(Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Vec4, Mesh.Attrib.UByte, Mesh.Attrib.Color, Mesh.Attrib.Color, Mesh.Attrib.Float);
 
@@ -42,6 +45,8 @@ public class Renderer {
 
     public Renderer() {
         INSTANCE = this;
+
+        for (int i = 0; i < scissors.length; i++) scissors[i] = new Scissor();
     }
 
     public void setTheme(Theme theme) {
@@ -122,10 +127,15 @@ public class Renderer {
     }
 
     public void beginScissor(double x, double y, double width, double height) {
+        y += offsetY;
+
         end();
 
-        glEnable(GL_SCISSOR_TEST);
-        glScissor((int) x, windowHeight - (int) (y + height), (int) width, (int) height);
+        scissorI++;
+        if (scissorI >= scissors.length - 1) throw new RuntimeException("Maximum number of nested scissors " + scissors.length + " reached.");
+
+        if (scissorI == 0) glEnable(GL_SCISSOR_TEST);
+        scissors[scissorI].set(scissorI > 0 ? scissors[scissorI - 1] : null, (int) x, windowHeight - (int) (y + height), (int) width, (int) height);
 
         begin();
     }
@@ -133,7 +143,10 @@ public class Renderer {
     public void endScissor() {
         end();
 
-        glDisable(GL_SCISSOR_TEST);
+        scissorI--;
+
+        if (scissorI == -1) glDisable(GL_SCISSOR_TEST);
+        else scissors[scissorI].apply();
 
         begin();
     }
@@ -211,4 +224,29 @@ public class Renderer {
 
     @Desugar
     private record Texture(double x, double y, double width, double height, int glId, Color4 color) {}
+
+    private static class Scissor {
+        public int x, y, width, height;
+
+        public void set(Scissor parent, int x, int y, int width, int height) {
+            if (parent != null) {
+                if (x < parent.x) x = parent.x;
+                if (x + width > parent.x + parent.width) width -= (x + width) - (parent.x + parent.width);
+
+                if (y < parent.y) y = parent.y;
+                if (y + height > parent.y + parent.height) height -= (y + height) - (parent.y + parent.height);
+            }
+
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+
+            apply();
+        }
+
+        public void apply() {
+            glScissor(x, y, width, height);
+        }
+    }
 }

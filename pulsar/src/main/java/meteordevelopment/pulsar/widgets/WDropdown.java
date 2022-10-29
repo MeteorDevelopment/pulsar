@@ -146,6 +146,8 @@ public class WDropdown<T> extends WPressable {
             if (animation == 0) return;
 
             renderer.after(() -> {
+                double preOffsetY = renderer.offsetY;
+
                 if (animation < 1) {
                     renderer.offsetY = -(root.height + get(Properties.SPACING).intY()) * (1 - animation);
                     renderer.beginScissor(root.x, root.y, root.width, root.height);
@@ -155,7 +157,7 @@ public class WDropdown<T> extends WPressable {
 
                 if (animation > 0 && animation < 1) {
                     renderer.endScissor();
-                    renderer.offsetY = 0;
+                    renderer.offsetY = preOffsetY;
                 }
             });
         }

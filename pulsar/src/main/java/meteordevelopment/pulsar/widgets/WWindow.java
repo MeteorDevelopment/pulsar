@@ -86,16 +86,20 @@ public class WWindow extends Widget {
             animation = Utils.clamp(animation + (expanded ? delta * 10 : -delta * 10), 0, 1);
 
             if (animation > 0) {
+                double preOffsetY = renderer.offsetY;
+
                 if (animation < 1) {
-                    renderer.offsetY = -body.height * (1 - animation);
-                    renderer.beginScissor(body.x, body.y, body.width, body.height);
+                    double height = body.height * (1 - animation);
+
+                    renderer.beginScissor(body.x, body.y, body.width, body.height - height);
+                    renderer.offsetY = -height;
                 }
 
                 body.render(renderer, delta);
 
                 if (animation > 0 && animation < 1) {
                     renderer.endScissor();
-                    renderer.offsetY = 0;
+                    renderer.offsetY = preOffsetY;
                 }
             }
         }
