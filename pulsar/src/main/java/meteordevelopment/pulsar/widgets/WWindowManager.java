@@ -1,7 +1,8 @@
 package meteordevelopment.pulsar.widgets;
 
 import meteordevelopment.pulsar.input.Event;
-import meteordevelopment.pulsar.input.UsableEvent;
+import meteordevelopment.pulsar.input.MouseButtonEvent;
+import meteordevelopment.pulsar.input.MouseMovedEvent;
 import meteordevelopment.pulsar.layout.HorizontalLayout;
 import meteordevelopment.pulsar.rendering.Renderer;
 
@@ -45,26 +46,34 @@ public class WWindowManager extends Widget {
     @Override
     public void dispatch(Event event) {
         // Dispatch to windows and reorder them accordingly
-        UsableEvent usableEvent = event instanceof UsableEvent ? (UsableEvent) event : null;
-        boolean wasUsed = false;
-        int firstWindow = -1;
-
-        for (int i = windows.size() - 1; i >= 0; i--) {
-            WWindow window = windows.get(i);
-            window.dispatch(event);
-
-            if (usableEvent != null && !wasUsed && usableEvent.used) {
-                wasUsed = true;
-                firstWindow = i;
+        if (event instanceof MouseMovedEvent) {
+            for (WWindow window : windows) {
+                window.dispatch(event);
             }
-        }
+        } else {
 
-        if (firstWindow != -1) {
-            int i = windows.size() - 1;
-            WWindow temp = windows.get(i);
+            // Find hovered with lowest z index
+            WWindow lastHoveredWindow = null;
+            for (int i = windows.size() - 1; i >= 0; i--) {
+                WWindow window = windows.get(i);
+                if (window.isHovered()) {
+                    lastHoveredWindow = window;
+                    break;
+                }
+            }
 
-            windows.set(i, windows.get(firstWindow));
-            windows.set(firstWindow, temp);
+            if (lastHoveredWindow != null) {
+                // Dispatch single window
+                lastHoveredWindow.dispatch(event);
+
+                // If window with lowest z index isn't the highest, make it the highest
+                if (event instanceof MouseButtonEvent) {
+                    if (windows.indexOf(lastHoveredWindow) != windows.size() - 1) {
+                        windows.remove(lastHoveredWindow);
+                        windows.add(lastHoveredWindow);
+                    }
+                }
+            }
         }
 
         // Dispatch to children which are not windows
