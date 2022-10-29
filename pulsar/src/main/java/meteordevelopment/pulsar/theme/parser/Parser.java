@@ -146,10 +146,10 @@ public class Parser {
 
         @Override
         public void enterAtVar(PtsParser.AtVarContext ctx) {
-            String name = string(ctx.name);
+            String name = string(ctx.type);
 
             PropertyType<?> type = PropertyTypes.get(name);
-            if (type == null) error(ctx.name, "Property type '%s' does not exist.", name);
+            if (type == null) error(ctx.type, "Property type '%s' does not exist.", name);
 
             variableType = type;
             variableName = string(ctx.name);
