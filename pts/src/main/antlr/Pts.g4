@@ -10,7 +10,6 @@ statement : atStatement
 // At Statements
 atStatement : atTitle
             | atAuthors
-            | atFont
             | atInclude
             | atVar
             | atMixin
@@ -18,7 +17,6 @@ atStatement : atTitle
 
 atTitle : '@title' title=STRING SEMICOLON ;
 atAuthors : '@authors' OPENING_BRACKET authors+=STRING (COMMA authors+=STRING)* CLOSING_BRACKET SEMICOLON ;
-atFont : '@font' font=STRING SEMICOLON ;
 atInclude : '@include' include=STRING SEMICOLON ;
 atVar : '@var' name=IDENTIFIER ':' type=IDENTIFIER '=' expression+ SEMICOLON ;
 atMixin : '@mixin' name=IDENTIFIER OPENING_BRACE properties+=declaration* CLOSING_BRACE ;
