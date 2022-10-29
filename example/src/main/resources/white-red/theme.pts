@@ -1,8 +1,6 @@
 @title "White Red";
 @authors [ "MineGame159", "Coper" ];
 
-@font "Comfortaa.ttf";
-
 @include "global.pts";
 @include "slider.pts";
 @include "dropdown.pts";
@@ -13,13 +11,10 @@ widget {
     radius: 2px;
 }
 
-container {
-
-}
-
 text {
-    color: !text;
+    font: "Comfortaa.ttf";
     font-size: 16px;
+    color: !text;
 }
 
 window {
@@ -35,9 +30,10 @@ window-header {
 }
 
 text .window-title {
+    font: "Roboto.ttf";
+    font-size: 26px;
     color: #FFFFFF;
     align-x: right;
-    font-size: 22px;
     text-shadow: rgb(15, 15, 15);
 }
 

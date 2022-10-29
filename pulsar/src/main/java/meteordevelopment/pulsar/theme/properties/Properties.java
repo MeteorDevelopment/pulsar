@@ -25,6 +25,7 @@ public class Properties {
     public static final Property<AlignX> ALIGN_X = add(new Property<>("align-x", ALIGN_X_TYPE));
     public static final Property<AlignY> ALIGN_Y = add(new Property<>("align-y", ALIGN_Y_TYPE));
 
+    public static final Property<String> FONT = add(new Property<>("font", STRING_TYPE));
     public static final Property<Double> FONT_SIZE = add(new Property<>("font-size", UNIT_TYPE));
     public static final Property<Color4> TEXT_SHADOW = add(new Property<>("text-shadow", COLOR4_TYPE));
     public static final Property<Vec2> TEXT_SHADOW_OFFSET = add(new Property<>("text-shadow-offset", VEC2_TYPE, new Vec2(1, -1)));

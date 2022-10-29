@@ -50,7 +50,7 @@ public class Renderer {
         icons.setTheme(theme);
 
         if (fonts != null) fonts.dispose();
-        fonts = new Fonts(theme.getFontInfo());
+        fonts = new Fonts(theme);
     }
 
     public void setup(int windowWidth, int windowHeight) {
@@ -164,12 +164,12 @@ public class Renderer {
         );
     }
 
-    public void text(int x, int y, String text, int size, Color4 color) {
-        fonts.render(x, y + offsetY, text, size, color);
+    public void text(String font, int x, int y, String text, int size, Color4 color) {
+        fonts.render(font, x, y + offsetY, text, size, color);
     }
 
-    public void chars(int x, int y, char c, int count, double size, Color4 color) {
-        fonts.renderChars(x, y + offsetY, c, count, size, color);
+    public void chars(String font, int x, int y, char c, int count, double size, Color4 color) {
+        fonts.renderChars(font, x, y + offsetY, c, count, size, color);
     }
 
     public void icon(int x, int y, String path, double size, Color4 color) {
@@ -190,19 +190,19 @@ public class Renderer {
         textures.add(new Texture(x, y + offsetY, width, height, glId, color));
     }
 
-    public int textWidth(String text, double size) {
-        return (int) Math.ceil(fonts.textWidth(text, text.length(), size));
+    public int textWidth(String font, String text, double size) {
+        return (int) Math.ceil(fonts.textWidth(font, text, text.length(), size));
     }
-    public int textWidth(String text, int length, double size) {
-        return (int) Math.ceil(fonts.textWidth(text, length, size));
-    }
-
-    public int charWidth(char c, double size) {
-        return (int) Math.ceil(fonts.charWidth(c, size));
+    public int textWidth(String font, String text, int length, double size) {
+        return (int) Math.ceil(fonts.textWidth(font, text, length, size));
     }
 
-    public int textHeight(double size) {
-        return (int) Math.ceil(fonts.textHeight(size));
+    public int charWidth(String font, char c, double size) {
+        return (int) Math.ceil(fonts.charWidth(font, c, size));
+    }
+
+    public int textHeight(String font, double size) {
+        return (int) Math.ceil(fonts.textHeight(font, size));
     }
 
     public void after(Runnable runnable) {

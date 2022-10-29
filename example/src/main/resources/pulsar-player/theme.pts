@@ -1,13 +1,12 @@
 @title "Pulsar Player";
 @authors [ "MineGame159" ];
 
-@font "Comfortaa.ttf";
-
 root {
     align-y: top;
 }
 
 text {
+    font: "Comfortaa.ttf";
     font-size: 16px;
     color: #FFFFFF;
 }

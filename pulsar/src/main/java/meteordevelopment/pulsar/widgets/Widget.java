@@ -207,7 +207,7 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
     }
 
     protected void renderTextComponent(Renderer renderer, int x, int y, String text, int size, Color4 color) {
-        renderer.text(x, y, text, size, color);
+        renderer.text(get(Properties.FONT), x, y, text, size, color);
     }
 
     // Style

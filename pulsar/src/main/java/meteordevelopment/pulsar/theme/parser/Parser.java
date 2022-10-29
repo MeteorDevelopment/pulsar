@@ -4,7 +4,6 @@ import com.github.bsideup.jabel.Desugar;
 import meteordevelopment.pts.PtsBaseListener;
 import meteordevelopment.pts.PtsLexer;
 import meteordevelopment.pts.PtsParser;
-import meteordevelopment.pulsar.rendering.FontInfo;
 import meteordevelopment.pulsar.theme.Style;
 import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.theme.fileresolvers.IFileResolver;
@@ -134,17 +133,6 @@ public class Parser {
             for (Token author : ctx.authors) {
                 theme.authors.add(string(author));
             }
-        }
-
-        @Override
-        public void enterAtFont(PtsParser.AtFontContext ctx) {
-            String path = string(ctx.font);
-            if (!path.endsWith(".ttf")) error(ctx.font, "File must end with a 'pts' extension.");
-
-            InputStream in = fileResolver.get(path);
-            if (in == null) error(ctx.font, "Failed to read file '%s'.", fileResolver.resolvePath(path));
-
-            theme.setFontInfo(new FontInfo(in));
         }
 
         @Override

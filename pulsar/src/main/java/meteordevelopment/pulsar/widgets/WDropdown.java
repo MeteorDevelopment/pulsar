@@ -87,7 +87,7 @@ public class WDropdown<T> extends WPressable {
             Vec4 padding = valueW.get(Properties.PADDING);
             double size = textW.get(Properties.FONT_SIZE);
 
-            maxWidth = Math.max(maxWidth, padding.horizontal() + Renderer.INSTANCE.textWidth(string, size) + (iconW != null ? (spacing.x + iconW.width) : 0));
+            maxWidth = Math.max(maxWidth, padding.horizontal() + Renderer.INSTANCE.textWidth(get(Properties.FONT), string, size) + (iconW != null ? (spacing.x + iconW.width) : 0));
         }
 
         layout.calculateSize(this);

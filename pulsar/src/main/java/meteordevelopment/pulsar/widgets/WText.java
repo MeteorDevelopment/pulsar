@@ -30,8 +30,9 @@ public class WText extends Widget {
         double maxWidth = get(Properties.MAX_WIDTH);
 
         String override = getTextOverride();
-        width = Renderer.INSTANCE.textWidth(override != null ? override : text, size);
-        height = Renderer.INSTANCE.textHeight(size);
+        String font = get(Properties.FONT);
+        width = Renderer.INSTANCE.textWidth(font, override != null ? override : text, size);
+        height = Renderer.INSTANCE.textHeight(font, size);
 
         // Only check max width of override is not set
         if (override == null) {
@@ -46,7 +47,8 @@ public class WText extends Widget {
         String[] words = text.split(" ");
         StringBuilder sb = new StringBuilder();
 
-        int spaceWidth = Renderer.INSTANCE.textWidth(" ", size);
+        String font = get(Properties.FONT);
+        int spaceWidth = Renderer.INSTANCE.textWidth(font, " ", size);
 
         int lineWidth = 0;
         int maxLineWidth = 0;
@@ -54,7 +56,7 @@ public class WText extends Widget {
         int iInLine = 0;
 
         for (int i = 0; i < words.length; i++) {
-            int wordWidth = Renderer.INSTANCE.textWidth(words[i], words[i].length(), size);
+            int wordWidth = Renderer.INSTANCE.textWidth(font, words[i], words[i].length(), size);
 
             int toAdd = wordWidth;
             if (iInLine > 0) toAdd += spaceWidth;
@@ -101,7 +103,7 @@ public class WText extends Widget {
 
         // Multi line
         int y = this.y;
-        int h = renderer.textHeight(get(Properties.FONT_SIZE));
+        int h = renderer.textHeight(get(Properties.FONT), get(Properties.FONT_SIZE));
 
         for (int i = lines.size() - 1; i >= 0; i--) {
             renderText(renderer, x + getOffsetX(), y, lines.get(i));

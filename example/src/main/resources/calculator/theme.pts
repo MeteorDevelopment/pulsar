@@ -1,8 +1,6 @@
 @title "Calculator";
 @authors [ "MineGame159" ];
 
-@font "Comfortaa.ttf";
-
 @include "buttons.pts";
 
 root {
@@ -10,6 +8,7 @@ root {
 }
 
 text {
+    font: "Comfortaa.ttf";
     font-size: 24px;
     align-x: center;
     color: #FFFFFF;
