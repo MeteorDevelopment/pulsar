@@ -58,7 +58,7 @@ public class PtsHighlighter implements HighlightVisitor {
                 if (first == '.') apply(child, 1, TAG_NAME);
                 else if (first == ':') apply(child, 1, STATE_NAME);
                 else apply(child, WIDGET_NAME);
-            });
+            }, false);
         }
         // Properties
         else if (element instanceof PtsProperty property) {

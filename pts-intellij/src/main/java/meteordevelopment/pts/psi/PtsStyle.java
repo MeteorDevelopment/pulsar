@@ -16,14 +16,14 @@ public class PtsStyle extends PtsPsiNode {
         super(node);
     }
 
-    public void forEachChildInSelector(Consumer<PsiElement> callback) {
+    public void forEachChildInSelector(Consumer<PsiElement> callback, boolean includeWhiteSpace) {
         PsiElement child = getFirstChild();
 
         while (child != null) {
             IElementType type = child.getNode().getElementType();
             if (type instanceof TokenIElementType tokenType && tokenType.getANTLRTokenType() == PtsLexer.OPENING_BRACE) break;
 
-            if (!(child instanceof PsiWhiteSpace) && !(child instanceof PsiComment)) callback.accept(child);
+            if ((includeWhiteSpace || !(child instanceof PsiWhiteSpace)) && !(child instanceof PsiComment)) callback.accept(child);
 
             child = child.getNextSibling();
         }
@@ -32,8 +32,13 @@ public class PtsStyle extends PtsPsiNode {
     public String getSelector() {
         StringBuilder sb = new StringBuilder();
 
-        forEachChildInSelector(child -> sb.append(child.getText()));
+        forEachChildInSelector(child -> sb.append(child.getText()), true);
 
         return sb.toString().trim();
+    }
+
+    @Override
+    public String getName() {
+        return getSelector();
     }
 }

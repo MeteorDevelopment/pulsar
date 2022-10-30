@@ -47,5 +47,11 @@
         <codeInsight.lineMarkerProvider
             language="PTS"
             implementationClass="meteordevelopment.pts.PtsColorLineMarkerProvider" />
+
+        <lang.psiStructureViewFactory
+            language="PTS"
+            implementationClass="meteordevelopment.pts.structure.PtsStructureViewFactory" />
+
+        <navbar implementation="meteordevelopment.pts.structure.PtsStructureAwareNavBar" />
     </extensions>
 </idea-plugin>

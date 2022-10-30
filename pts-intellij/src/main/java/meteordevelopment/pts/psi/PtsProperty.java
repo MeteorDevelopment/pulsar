@@ -16,4 +16,9 @@ public class PtsProperty extends PtsPsiNode {
     public PsiElement getValueElement() {
         return getChildFromEnd(1);
     }
+
+    @Override
+    public String getName() {
+        return getNameElement().getText();
+    }
 }
