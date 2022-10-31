@@ -6,7 +6,7 @@ import meteordevelopment.pulsar.layout.Layout;
 import meteordevelopment.pulsar.layout.VerticalLayout;
 import meteordevelopment.pulsar.rendering.DebugRenderer;
 import meteordevelopment.pulsar.rendering.Renderer;
-import meteordevelopment.pulsar.theme.properties.Properties;
+import meteordevelopment.pts.properties.Properties;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;

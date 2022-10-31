@@ -14,6 +14,9 @@ repositories {
 dependencies {
     antlr "org.antlr:antlr4:4.11.1"
     api "org.antlr:antlr4-runtime:4.11.1"
+
+    annotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:0.4.2"
+    compileOnly "com.github.bsideup.jabel:jabel-javac-plugin:0.4.2"
 }
 
 configurations.api {
@@ -42,7 +45,11 @@ clean {
     delete file("${projectDir}/src/generated")
 }
 
-tasks.withType(JavaCompile) {
-    sourceCompatibility = "8"
-    targetCompatibility = "8"
+configure([tasks.compileJava]) {
+    sourceCompatibility = 16
+    options.release = 8
+
+    javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(16)
+    }
 }

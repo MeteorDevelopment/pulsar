@@ -1,8 +1,8 @@
 package meteordevelopment.pulsar.widgets;
 
-import meteordevelopment.pulsar.theme.properties.Properties;
-import meteordevelopment.pulsar.utils.AlignX;
-import meteordevelopment.pulsar.utils.AlignY;
+import meteordevelopment.pts.properties.Properties;
+import meteordevelopment.pts.utils.AlignX;
+import meteordevelopment.pts.utils.AlignY;
 
 /** Wrapper for a widget that is placed inside another widget. */
 public class Cell<T extends Widget> {

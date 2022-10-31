@@ -1,4 +1,4 @@
-package meteordevelopment.pulsar.theme.properties;
+package meteordevelopment.pts.properties;
 
 public enum ValueType {
     Unit,

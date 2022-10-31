@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    implementation project(":pts")
+    api project(":pts")
 
     compileOnly platform("org.lwjgl:lwjgl-bom:3.3.1")
 

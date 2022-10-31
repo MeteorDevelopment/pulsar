@@ -1,7 +1,7 @@
 package meteordevelopment.pulsar.rendering;
 
 import meteordevelopment.pulsar.theme.Theme;
-import meteordevelopment.pulsar.utils.Color4;
+import meteordevelopment.pts.utils.Color4;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;

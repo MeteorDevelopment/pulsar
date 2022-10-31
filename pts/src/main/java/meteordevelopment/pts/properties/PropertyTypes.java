@@ -1,6 +1,6 @@
-package meteordevelopment.pulsar.theme.properties;
+package meteordevelopment.pts.properties;
 
-import meteordevelopment.pulsar.utils.*;
+import meteordevelopment.pts.utils.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

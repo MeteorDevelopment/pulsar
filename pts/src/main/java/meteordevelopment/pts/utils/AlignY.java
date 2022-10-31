@@ -1,4 +1,4 @@
-package meteordevelopment.pulsar.utils;
+package meteordevelopment.pts.utils;
 
 public enum AlignY {
     Bottom,

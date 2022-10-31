@@ -7,11 +7,11 @@ import meteordevelopment.pulsar.layout.BasicLayout;
 import meteordevelopment.pulsar.layout.HorizontalLayout;
 import meteordevelopment.pulsar.layout.VerticalLayout;
 import meteordevelopment.pulsar.rendering.Renderer;
-import meteordevelopment.pulsar.theme.properties.Properties;
-import meteordevelopment.pulsar.utils.Color4;
+import meteordevelopment.pts.properties.Properties;
+import meteordevelopment.pts.utils.Color4;
 import meteordevelopment.pulsar.utils.Utils;
-import meteordevelopment.pulsar.utils.Vec2;
-import meteordevelopment.pulsar.utils.Vec4;
+import meteordevelopment.pts.utils.Vec2;
+import meteordevelopment.pts.utils.Vec4;
 
 import java.lang.reflect.InvocationTargetException;
 

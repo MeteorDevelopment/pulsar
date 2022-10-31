@@ -1,4 +1,4 @@
-package meteordevelopment.pts;
+package meteordevelopment.pts.highlight;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
+import meteordevelopment.pts.PtsParser;
 import meteordevelopment.pts.psi.*;
 import org.antlr.intellij.adaptor.lexer.RuleIElementType;
 import org.jetbrains.annotations.NotNull;

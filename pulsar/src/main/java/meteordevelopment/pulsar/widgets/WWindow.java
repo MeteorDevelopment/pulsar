@@ -5,7 +5,7 @@ import meteordevelopment.pulsar.input.MouseButtonEvent;
 import meteordevelopment.pulsar.input.MouseMovedEvent;
 import meteordevelopment.pulsar.layout.VerticalLayout;
 import meteordevelopment.pulsar.rendering.Renderer;
-import meteordevelopment.pulsar.theme.properties.Property;
+import meteordevelopment.pts.properties.Property;
 import meteordevelopment.pulsar.utils.Utils;
 
 import static meteordevelopment.pulsar.utils.Utils.combine;

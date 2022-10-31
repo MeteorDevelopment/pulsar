@@ -1,4 +1,4 @@
-package meteordevelopment.pulsar.utils;
+package meteordevelopment.pts.utils;
 
 public interface IColor {
     int getR();

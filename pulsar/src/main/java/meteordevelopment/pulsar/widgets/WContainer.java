@@ -7,11 +7,11 @@ import meteordevelopment.pulsar.layout.BasicLayout;
 import meteordevelopment.pulsar.layout.HorizontalLayout;
 import meteordevelopment.pulsar.layout.Layout;
 import meteordevelopment.pulsar.rendering.Renderer;
-import meteordevelopment.pulsar.theme.properties.Properties;
-import meteordevelopment.pulsar.utils.AlignY;
+import meteordevelopment.pts.properties.Properties;
+import meteordevelopment.pts.utils.AlignY;
 import meteordevelopment.pulsar.utils.Lists;
 import meteordevelopment.pulsar.utils.Utils;
-import meteordevelopment.pulsar.utils.Vec4;
+import meteordevelopment.pts.utils.Vec4;
 
 import java.util.List;
 

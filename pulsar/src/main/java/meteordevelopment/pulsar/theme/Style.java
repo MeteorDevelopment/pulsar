@@ -1,6 +1,6 @@
 package meteordevelopment.pulsar.theme;
 
-import meteordevelopment.pulsar.theme.properties.Property;
+import meteordevelopment.pts.properties.Property;
 
 import java.util.HashMap;
 import java.util.List;

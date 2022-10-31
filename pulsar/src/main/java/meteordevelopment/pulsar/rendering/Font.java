@@ -1,6 +1,6 @@
 package meteordevelopment.pulsar.rendering;
 
-import meteordevelopment.pulsar.utils.Color4;
+import meteordevelopment.pts.utils.Color4;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBTTPackContext;
 import org.lwjgl.stb.STBTTPackedchar;

@@ -1,11 +1,12 @@
-package meteordevelopment.pulsar.theme.properties;
+package meteordevelopment.pts.properties;
 
-import meteordevelopment.pulsar.utils.*;
+import meteordevelopment.pts.utils.*;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static meteordevelopment.pulsar.theme.properties.PropertyTypes.*;
+import static meteordevelopment.pts.properties.PropertyTypes.*;
 
 public class Properties {
     private static final Map<String, Property<?>> PROPERTIES = new HashMap<>();
@@ -45,5 +46,10 @@ public class Properties {
 
     public static Property<?> get(String name) {
         return PROPERTIES.get(name);
+    }
+
+
+    public static Collection<Property<?>> getAll() {
+        return PROPERTIES.values();
     }
 }

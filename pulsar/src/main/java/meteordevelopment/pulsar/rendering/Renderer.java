@@ -1,6 +1,9 @@
 package meteordevelopment.pulsar.rendering;
 
 import com.github.bsideup.jabel.Desugar;
+import meteordevelopment.pts.utils.Color4;
+import meteordevelopment.pts.utils.ColorFactory;
+import meteordevelopment.pts.utils.Vec4;
 import meteordevelopment.pulsar.Pulsar;
 import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.utils.*;

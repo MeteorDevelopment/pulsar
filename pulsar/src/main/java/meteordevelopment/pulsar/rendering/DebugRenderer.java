@@ -1,7 +1,7 @@
 package meteordevelopment.pulsar.rendering;
 
-import meteordevelopment.pulsar.utils.ColorFactory;
-import meteordevelopment.pulsar.utils.IColor;
+import meteordevelopment.pts.utils.ColorFactory;
+import meteordevelopment.pts.utils.IColor;
 import meteordevelopment.pulsar.utils.Matrix;
 import meteordevelopment.pulsar.widgets.Cell;
 import meteordevelopment.pulsar.widgets.Widget;

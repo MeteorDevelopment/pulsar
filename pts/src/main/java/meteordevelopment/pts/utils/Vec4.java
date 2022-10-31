@@ -1,4 +1,4 @@
-package meteordevelopment.pulsar.utils;
+package meteordevelopment.pts.utils;
 
 public class Vec4 {
     public double x, y, z, w;

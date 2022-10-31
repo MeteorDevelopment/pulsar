@@ -1,4 +1,4 @@
-package meteordevelopment.pulsar.utils;
+package meteordevelopment.pts.utils;
 
 public class ColorFactory {
     public interface IColorFactory {
@@ -9,10 +9,15 @@ public class ColorFactory {
 
     public static IColor create(int r, int g, int b, int a) {
         return factory.create(
-                Utils.clamp(r, 0, 255),
-                Utils.clamp(g, 0, 255),
-                Utils.clamp(b, 0, 255),
-                Utils.clamp(a, 0, 255)
+                clamp(r),
+                clamp(g),
+                clamp(b),
+                clamp(a)
         );
+    }
+
+    private static int clamp(int value) {
+        if (value < 0) return 0;
+        return Math.min(value, 255);
     }
 }

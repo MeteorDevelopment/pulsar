@@ -23,10 +23,10 @@
 
         <lang.syntaxHighlighterFactory
             language="PTS"
-            implementationClass="meteordevelopment.pts.PtsSyntaxHighlighterFactory" />
+            implementationClass="meteordevelopment.pts.highlight.PtsSyntaxHighlighterFactory" />
 
         <highlightVisitor
-            implementation="meteordevelopment.pts.PtsHighlighter" />
+            implementation="meteordevelopment.pts.highlight.PtsHighlighter" />
 
         <lang.foldingBuilder
             language="PTS"
@@ -53,5 +53,11 @@
             implementationClass="meteordevelopment.pts.structure.PtsStructureViewFactory" />
 
         <navbar implementation="meteordevelopment.pts.structure.PtsStructureAwareNavBar" />
+
+        <lookup.charFilter implementation="meteordevelopment.pts.completion.PtsCharFilter" />
+
+        <completion.contributor
+            language="PTS"
+            implementationClass="meteordevelopment.pts.completion.PtsCompletionContributor" />
     </extensions>
 </idea-plugin>

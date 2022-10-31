@@ -1,4 +1,4 @@
-package meteordevelopment.pulsar.theme.properties;
+package meteordevelopment.pts.properties;
 
 import com.github.bsideup.jabel.Desugar;
 

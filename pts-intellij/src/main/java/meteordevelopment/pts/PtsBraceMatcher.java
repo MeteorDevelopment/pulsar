@@ -22,7 +22,7 @@ public class PtsBraceMatcher extends PairedBraceMatcherAdapter {
 
                         return new BracePair[] {
                                 new BracePair(types.get(PtsLexer.OPENING_PAREN), types.get(PtsLexer.CLOSING_PAREN), false),
-                                new BracePair(types.get(PtsLexer.OPENING_BRACE), types.get(PtsLexer.CLOSING_BRACE), false),
+                                new BracePair(types.get(PtsLexer.OPENING_BRACE), types.get(PtsLexer.CLOSING_BRACE), true),
                                 new BracePair(types.get(PtsLexer.OPENING_BRACKET), types.get(PtsLexer.CLOSING_BRACKET), false)
                         };
                     }

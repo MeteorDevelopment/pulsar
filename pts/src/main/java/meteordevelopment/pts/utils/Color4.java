@@ -1,4 +1,4 @@
-package meteordevelopment.pulsar.utils;
+package meteordevelopment.pts.utils;
 
 public final class Color4 {
     public IColor topLeft, topRight, bottomRight, bottomLeft;

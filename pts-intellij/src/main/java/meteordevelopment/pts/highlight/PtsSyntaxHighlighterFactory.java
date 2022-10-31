@@ -1,4 +1,4 @@
-package meteordevelopment.pts;
+package meteordevelopment.pts.highlight;
 
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;

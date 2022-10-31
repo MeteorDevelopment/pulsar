@@ -1,5 +1,7 @@
 package meteordevelopment.pulsar.widgets;
 
+import meteordevelopment.pts.utils.Color4;
+import meteordevelopment.pts.utils.Vec4;
 import meteordevelopment.pulsar.input.CharTypedEvent;
 import meteordevelopment.pulsar.input.KeyEvent;
 import meteordevelopment.pulsar.input.MouseButtonEvent;
@@ -8,7 +10,7 @@ import meteordevelopment.pulsar.layout.HorizontalLayout;
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.Selector;
 import meteordevelopment.pulsar.theme.Style;
-import meteordevelopment.pulsar.theme.properties.Properties;
+import meteordevelopment.pts.properties.Properties;
 import meteordevelopment.pulsar.utils.*;
 
 import java.util.ArrayList;

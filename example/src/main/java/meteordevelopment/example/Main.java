@@ -1,11 +1,11 @@
 package meteordevelopment.example;
 
+import meteordevelopment.pts.properties.Properties;
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.theme.fileresolvers.ResourceFileResolver;
 import meteordevelopment.pulsar.theme.parser.Parser;
-import meteordevelopment.pulsar.theme.properties.Properties;
-import meteordevelopment.pulsar.utils.AlignX;
+import meteordevelopment.pts.utils.AlignX;
 import meteordevelopment.pulsar.widgets.*;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;

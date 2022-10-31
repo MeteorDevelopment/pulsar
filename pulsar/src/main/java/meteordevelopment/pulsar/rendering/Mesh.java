@@ -1,8 +1,8 @@
 package meteordevelopment.pulsar.rendering;
 
 import meteordevelopment.pulsar.Pulsar;
-import meteordevelopment.pulsar.utils.IColor;
-import meteordevelopment.pulsar.utils.Vec4;
+import meteordevelopment.pts.utils.IColor;
+import meteordevelopment.pts.utils.Vec4;
 
 import static org.lwjgl.opengl.GL15C.*;
 import static org.lwjgl.opengl.GL20C.glEnableVertexAttribArray;
