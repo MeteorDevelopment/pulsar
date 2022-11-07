@@ -22,6 +22,7 @@ public class PropertyTypes {
     public static final PropertyType<AlignX> ALIGN_X_TYPE = enumType("AlignX", AlignX.Left);
     public static final PropertyType<AlignY> ALIGN_Y_TYPE = enumType("AlignY", AlignY.Center);
     public static final PropertyType<ListDirection> LIST_DIRECTION_TYPE = enumType("ListDirection", ListDirection.Normal);
+    public static final PropertyType<Overflow> OVERFLOW_TYPE = enumType("Overflow", Overflow.Visible);
 
     public static final PropertyType<IColor> COLOR_TYPE = add(new PropertyType.Builder<>("Color", () -> ColorFactory.create(255, 255, 255, 255))
             .constructor(values -> (IColor) values[0], ValueType.Color)

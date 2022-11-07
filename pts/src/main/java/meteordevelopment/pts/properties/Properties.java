@@ -31,8 +31,9 @@ public class Properties {
     public static final Property<Color4> TEXT_SHADOW = add(new Property<>("text-shadow", COLOR4_TYPE));
     public static final Property<Vec2> TEXT_SHADOW_OFFSET = add(new Property<>("text-shadow-offset", VEC2_TYPE, new Vec2(1, -1)));
 
-    public static final Property<Double> MAX_WIDTH = add(new Property<>("max-width", UNIT_TYPE));
-    public static final Property<Double> MAX_HEIGHT = add(new Property<>("max-height", UNIT_TYPE));
+    public static final Property<Double> MAX_WIDTH = add(new Property<>("max-width", UNIT_TYPE, Double.MAX_VALUE));
+    public static final Property<Double> MAX_HEIGHT = add(new Property<>("max-height", UNIT_TYPE, Double.MAX_VALUE));
+    public static final Property<Overflow> OVERFLOW_Y = add(new Property<>("overflow-y", OVERFLOW_TYPE));
 
     public static final Property<ListDirection> LIST_DIRECTION = add(new Property<>("list-direction", LIST_DIRECTION_TYPE));
 

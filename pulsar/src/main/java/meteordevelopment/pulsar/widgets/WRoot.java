@@ -1,12 +1,13 @@
 package meteordevelopment.pulsar.widgets;
 
+import meteordevelopment.pts.properties.Properties;
 import meteordevelopment.pulsar.input.KeyEvent;
 import meteordevelopment.pulsar.input.MouseMovedEvent;
 import meteordevelopment.pulsar.layout.Layout;
+import meteordevelopment.pulsar.layout.MaxSizeCalculationContext;
 import meteordevelopment.pulsar.layout.VerticalLayout;
 import meteordevelopment.pulsar.rendering.DebugRenderer;
 import meteordevelopment.pulsar.rendering.Renderer;
-import meteordevelopment.pts.properties.Properties;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -119,19 +120,25 @@ public class WRoot extends Widget {
     @Override
     public void render(Renderer renderer, double delta) {
         if (invalid) {
-            for (int i = 0; i < 2; i++) {
-                invalid = false;
-                if (!(layout instanceof RootLayout)) layout = new RootLayout(layout);
+            invalid = false;
+            if (!(layout instanceof RootLayout)) layout = new RootLayout(layout);
 
+            layout.calculateSize(this);
+            layout.positionChildren(this);
+
+            MaxSizeCalculationContext ctx = new MaxSizeCalculationContext();
+            layout.adjustToMaxSize(ctx, this);
+
+            if (ctx.wasAdjusted()) {
                 layout.calculateSize(this);
-                layout.adjustMaxSize(this);
                 layout.positionChildren(this);
-                afterLayout();
 
-                if (!invalid) break;
+                invalid = false;
             }
 
-            if (invalid) System.err.println("[Pulsar] Invalid was set more than once when trying to calculate layout. This should not happen.");
+            layout.afterLayout(this);
+
+            if (invalid) System.err.println("[Pulsar] Invalid was set again when calculating layout. This should not happen.");
         }
 
         renderer.setup(windowWidth, windowHeight);

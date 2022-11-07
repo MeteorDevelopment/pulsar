@@ -1,17 +1,19 @@
 package meteordevelopment.pulsar.widgets;
 
+import meteordevelopment.pts.properties.Properties;
+import meteordevelopment.pts.utils.AlignY;
+import meteordevelopment.pts.utils.Overflow;
+import meteordevelopment.pts.utils.Vec4;
 import meteordevelopment.pulsar.input.MouseButtonEvent;
 import meteordevelopment.pulsar.input.MouseMovedEvent;
 import meteordevelopment.pulsar.input.MouseScrolledEvent;
 import meteordevelopment.pulsar.layout.BasicLayout;
 import meteordevelopment.pulsar.layout.HorizontalLayout;
 import meteordevelopment.pulsar.layout.Layout;
+import meteordevelopment.pulsar.layout.MaxSizeCalculationContext;
 import meteordevelopment.pulsar.rendering.Renderer;
-import meteordevelopment.pts.properties.Properties;
-import meteordevelopment.pts.utils.AlignY;
 import meteordevelopment.pulsar.utils.Lists;
 import meteordevelopment.pulsar.utils.Utils;
-import meteordevelopment.pts.utils.Vec4;
 
 import java.util.List;
 
@@ -25,8 +27,8 @@ public class WContainer extends Widget {
 
     public boolean scrollOnlyWhenHovered;
 
-    public boolean scrollMode;
-    private int realHeight, scroll, targetScroll;
+    public boolean scrollMode, afterLayoutAfterAdjustedSize;
+    private int realHeight, scroll, targetScroll, currentHeight;
 
     private WContents contents;
     private WScrollbar scrollbar;
@@ -83,22 +85,36 @@ public class WContainer extends Widget {
     // region Entering and exiting scroll mode
 
     @Override
-    public void afterLayout() {
-        int maxHeight = get(Properties.MAX_HEIGHT).intValue();
-        if (maxHeight <= 0) return;
+    public boolean adjustToMaxSize(MaxSizeCalculationContext ctx) {
+        Overflow overflowY = scrollMode ? contents.get(Properties.OVERFLOW_Y) : get(Properties.OVERFLOW_Y);
+        if (overflowY == Overflow.Visible) return false;
 
-        boolean preScrollMode = scrollMode;
+        int maxHeight = ctx.peekMaxHeight();
+        if (maxHeight <= 0) return false;
 
-        if (height > maxHeight && !scrollMode) enterScrollMode();
+        if (height > maxHeight) {
+            if (scrollMode) {
+                realHeight = height;
+                height = ctx.peekMaxHeight();
+                currentHeight = height;
+            }
+            else enterScrollMode(ctx);
+        }
         else if (height < maxHeight && scrollMode) exitScrollMode();
 
-        if (preScrollMode && scrollMode) {
-            clampScroll();
-            contents.move(0, -scroll);
-        }
+        afterLayoutAfterAdjustedSize = true;
+        return true;
     }
 
-    private void enterScrollMode() {
+    @Override
+    public void afterLayout() {
+        if (!scrollMode) return;
+
+        clampScroll();
+        if (scroll != 0) contents.move(0, -scroll);
+    }
+
+    private void enterScrollMode(MaxSizeCalculationContext ctx) {
         scrollMode = true;
         realHeight = height;
         scroll = 0;
@@ -110,14 +126,15 @@ public class WContainer extends Widget {
 
         scrollbar = super.add(new WScrollbar()).widget();
 
-        height = get(Properties.MAX_HEIGHT).intValue();
+        height = ctx.peekMaxHeight();
+        currentHeight = height;
 
-        invalidateLayout();
         invalidStyle();
     }
 
     private void exitScrollMode() {
         scrollMode = false;
+        realHeight = 0;
         scroll = 0;
 
         transferCellsAndLayout(contents, this, BasicLayout.INSTANCE);
@@ -125,7 +142,6 @@ public class WContainer extends Widget {
 
         scrollbar = null;
 
-        invalidateLayout();
         invalidStyle();
     }
 
@@ -238,11 +254,9 @@ public class WContainer extends Widget {
         protected void calculateSizeImpl(Widget widget) {
             super.calculateSizeImpl(widget);
 
-            int maxHeight = get(Properties.MAX_HEIGHT).intValue();
-
-            if (widget.height > maxHeight) {
-                realHeight = widget.height;
-                widget.height = maxHeight;
+            if (afterLayoutAfterAdjustedSize) {
+                widget.height = currentHeight;
+                afterLayoutAfterAdjustedSize = false;
             }
         }
     }

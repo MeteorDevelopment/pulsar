@@ -1,9 +1,9 @@
 package meteordevelopment.pulsar.widgets;
 
-import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pts.properties.Properties;
 import meteordevelopment.pts.utils.Color4;
 import meteordevelopment.pts.utils.ColorFactory;
+import meteordevelopment.pulsar.rendering.Renderer;
 
 import static meteordevelopment.pulsar.utils.Utils.combine;
 

@@ -6,6 +6,7 @@ import meteordevelopment.pulsar.input.EventType;
 import meteordevelopment.pulsar.input.MouseMovedEvent;
 import meteordevelopment.pulsar.layout.BasicLayout;
 import meteordevelopment.pulsar.layout.Layout;
+import meteordevelopment.pulsar.layout.MaxSizeCalculationContext;
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.IStylable;
 import meteordevelopment.pulsar.theme.Style;
@@ -14,6 +15,7 @@ import meteordevelopment.pts.properties.Property;
 import meteordevelopment.pts.utils.Color4;
 import meteordevelopment.pts.utils.Vec2;
 import meteordevelopment.pts.utils.Vec4;
+import meteordevelopment.pulsar.utils.PropertyMap;
 
 import java.util.*;
 
@@ -137,6 +139,10 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
         }
     }
 
+    public boolean adjustToMaxSize(MaxSizeCalculationContext ctx) {
+        return false;
+    }
+
     /** Invalidates all widgets in this root causing a recalculation of layouts on the next frame. */
     public void invalidateLayout() {
         if (parent != null) parent.invalidateLayout();
@@ -214,7 +220,7 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
 
     /** Sets a custom property that only applies to this widget. */
     public <T> void set(Property<T> property, T value) {
-        if (properties == null) properties = new HashMap<>();
+        if (properties == null) properties = new PropertyMap();
         properties.put(property, value);
     }
 

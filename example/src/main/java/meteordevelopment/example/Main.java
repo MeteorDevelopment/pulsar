@@ -1,6 +1,7 @@
 package meteordevelopment.example;
 
 import meteordevelopment.pts.properties.Properties;
+import meteordevelopment.pts.utils.Overflow;
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.theme.fileresolvers.ResourceFileResolver;
@@ -78,6 +79,7 @@ public class Main {
     private static WWindow createLongWindow() {
         WWindow w = new WWindow("Long");
         w.bodySet(Properties.MAX_HEIGHT, 200.0);
+        w.bodySet(Properties.OVERFLOW_Y, Overflow.Scroll);
 
         for (int i = 0; i < 20; i++) {
             w.add(new WText("Item: " + i));

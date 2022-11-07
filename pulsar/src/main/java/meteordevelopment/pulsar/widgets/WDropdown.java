@@ -1,5 +1,9 @@
 package meteordevelopment.pulsar.widgets;
 
+import meteordevelopment.pts.properties.Properties;
+import meteordevelopment.pts.utils.Color4;
+import meteordevelopment.pts.utils.Vec2;
+import meteordevelopment.pts.utils.Vec4;
 import meteordevelopment.pulsar.input.Event;
 import meteordevelopment.pulsar.input.EventType;
 import meteordevelopment.pulsar.input.MouseMovedEvent;
@@ -7,11 +11,7 @@ import meteordevelopment.pulsar.layout.BasicLayout;
 import meteordevelopment.pulsar.layout.HorizontalLayout;
 import meteordevelopment.pulsar.layout.VerticalLayout;
 import meteordevelopment.pulsar.rendering.Renderer;
-import meteordevelopment.pts.properties.Properties;
-import meteordevelopment.pts.utils.Color4;
 import meteordevelopment.pulsar.utils.Utils;
-import meteordevelopment.pts.utils.Vec2;
-import meteordevelopment.pts.utils.Vec4;
 
 import java.lang.reflect.InvocationTargetException;
 

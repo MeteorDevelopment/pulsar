@@ -1,7 +1,6 @@
 package meteordevelopment.example.musicplayer;
 
 import meteordevelopment.example.Window;
-import meteordevelopment.pts.properties.Properties;
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.theme.fileresolvers.ResourceFileResolver;
@@ -78,16 +77,12 @@ public class MusicPlayer {
         renderer.setTheme(theme);
         renderer.window = window.handle;
 
-        WRoot root = new WRoot(false);
+        WRoot root = new WRoot(true);
         root.setWindowSize(window.getWidth(), window.getHeight());
 
         root.add(create()).expandX();
-        songs.set(Properties.MAX_HEIGHT, (double) window.getHeight());
 
-        window.onResized = (width, height) -> {
-            root.setWindowSize(width, height);
-            songs.set(Properties.MAX_HEIGHT, (double) height);
-        };
+        window.onResized = root::setWindowSize;
         window.onEvent = root::dispatch;
 
         double lastTime = glfwGetTime();
