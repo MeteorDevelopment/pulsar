@@ -19,7 +19,7 @@ import static org.lwjgl.glfw.GLFW.*;
 public class WRoot extends Widget {
     protected static final String[] NAMES = {};
 
-    private final boolean setMaxHeight;
+    private final boolean setMaxSize;
     private final WContainer container;
 
     private boolean invalid = true;
@@ -32,8 +32,8 @@ public class WRoot extends Widget {
         return NAMES;
     }
 
-    public WRoot(boolean setMaxHeight) {
-        this.setMaxHeight = setMaxHeight;
+    public WRoot(boolean setMaxSize) {
+        this.setMaxSize = setMaxSize;
 
         container = super.add(new WRootContainer()).expandX().widget();
         container.layout = VerticalLayout.INSTANCE;
@@ -43,7 +43,11 @@ public class WRoot extends Widget {
         windowWidth = width;
         windowHeight = height;
 
-        if (setMaxHeight) container.set(Properties.MAX_HEIGHT, (double) height);
+        if (setMaxSize) {
+            container.set(Properties.MAX_WIDTH, (double) width);
+            container.set(Properties.MAX_HEIGHT, (double) height);
+        }
+
         invalidateLayout();
     }
 

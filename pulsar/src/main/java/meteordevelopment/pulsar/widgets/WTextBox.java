@@ -526,7 +526,7 @@ public class WTextBox extends Widget {
     private void calculateTextWidths() {
         textWidths.clear();
 
-        String font = get(Properties.FONT);
+        String font = textW.get(Properties.FONT);
         int size = (int) Math.ceil(textW.get(Properties.FONT_SIZE));
 
         for (int i = 0; i <= text.length(); i++) {
