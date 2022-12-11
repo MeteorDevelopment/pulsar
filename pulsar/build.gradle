@@ -20,7 +20,8 @@ dependencies {
     compileOnly "org.lwjgl:lwjgl-glfw"
     compileOnly "org.lwjgl:lwjgl-opengl"
     compileOnly "org.lwjgl:lwjgl-stb"
-
+    compileOnly "org.lwjgl:lwjgl-nanovg"
+    
     annotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:0.4.2"
     compileOnly "com.github.bsideup.jabel:jabel-javac-plugin:0.4.2"
 }

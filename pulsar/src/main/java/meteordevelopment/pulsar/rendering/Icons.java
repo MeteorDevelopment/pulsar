@@ -1,8 +1,12 @@
 package meteordevelopment.pulsar.rendering;
 
 import meteordevelopment.pulsar.theme.Theme;
+import org.lwjgl.nanovg.NSVGImage;
+import org.lwjgl.nanovg.NanoSVG;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,9 +29,18 @@ public class Icons {
         TextureRegion region = icons.get(size);
         if (region != null) return region;
 
-        long surface = Svg.loadFromMemory(theme.readFile(path), MemoryUtil.NULL, size, size, size * 3);
-        region = atlas.add(Svg.getData(surface, size, size), size, size);
-        Svg.destroy(surface);
+        long rast = NanoSVG.nsvgCreateRasterizer();
+        if (rast == MemoryUtil.NULL)
+            throw new IllegalStateException("Failed to create SVG rasterizer");
+        ByteBuffer terminated = terminate(theme.readFile(path));
+        NSVGImage svg = NanoSVG.nsvgParse(terminated, MemoryStack.stackASCII("px"), 96f);
+        ByteBuffer image = MemoryUtil.memAlloc(size * size * 4);
+        NanoSVG.nsvgRasterize(rast, svg, 0, 0, size / Math.max(svg.height(), svg.width()), image, size, size, size * 4);
+        NanoSVG.nsvgDeleteRasterizer(rast);
+        region = atlas.add(image, size, size);
+        MemoryUtil.memFree(image);
+        NanoSVG.nsvgDelete(svg);
+        MemoryUtil.memFree(terminated);
 
         icons.put(size, region);
         return region;
@@ -35,5 +48,14 @@ public class Icons {
 
     public Texture bind() {
         return atlas.bind();
+    }
+
+    private ByteBuffer terminate(ByteBuffer string) {
+        ByteBuffer result = MemoryUtil.memAlloc(string.capacity() + 1);
+        result.clear();
+        result.put(string);
+        result.put((byte) 0);
+        result.rewind();
+        return result;
     }
 }

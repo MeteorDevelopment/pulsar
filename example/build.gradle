@@ -26,6 +26,7 @@ dependencies {
     implementation "org.lwjgl:lwjgl-glfw"
     implementation "org.lwjgl:lwjgl-opengl"
     implementation "org.lwjgl:lwjgl-stb"
+    implementation "org.lwjgl:lwjgl-nanovg"
     implementation "org.lwjgl:lwjgl-openal"
     implementation "org.joml:joml:1.10.2"
 
@@ -34,6 +35,7 @@ dependencies {
         runtimeOnly "org.lwjgl:lwjgl-glfw::$it"
         runtimeOnly "org.lwjgl:lwjgl-opengl::$it"
         runtimeOnly "org.lwjgl:lwjgl-stb::$it"
+        runtimeOnly "org.lwjgl:lwjgl-nanovg::$it"
         runtimeOnly "org.lwjgl:lwjgl-openal::$it"
     }
 }
