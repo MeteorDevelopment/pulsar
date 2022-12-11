@@ -1,3 +1,5 @@
+import org.gradle.internal.os.OperatingSystem
+
 plugins {
     id "java"
     id "application"
@@ -8,6 +10,24 @@ version "0.1.0"
 mainClassName = group + ".example.musicplayer.MusicPlayer"
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
+
+switch (OperatingSystem.current()) {
+    case OperatingSystem.LINUX:
+        def osArch = System.getProperty("os.arch")
+        project.ext.lwjglNatives = osArch.startsWith("arm") || osArch.startsWith("aarch64")
+                ? "natives-linux-${osArch.contains("64") || osArch.startsWith("armv8") ? "arm64" : "arm32"}"
+                : "natives-linux"
+        break
+    case OperatingSystem.MAC_OS:
+        project.ext.lwjglNatives = System.getProperty("os.arch").startsWith("aarch64") ? "natives-macos-arm64" : "natives-macos"
+        break
+    case OperatingSystem.WINDOWS:
+        def osArch = System.getProperty("os.arch")
+        project.ext.lwjglNatives = osArch.contains("64")
+                ? "natives-windows${osArch.startsWith("aarch64") ? "-arm64" : ""}"
+                : "natives-windows-x86"
+        break
+}
 
 repositories {
     mavenCentral()
@@ -30,14 +50,12 @@ dependencies {
     implementation "org.lwjgl:lwjgl-openal"
     implementation "org.joml:joml:1.10.2"
 
-    [ "natives-windows", "natives-linux", "natives-macos" ].forEach {
-        runtimeOnly "org.lwjgl:lwjgl::$it"
-        runtimeOnly "org.lwjgl:lwjgl-glfw::$it"
-        runtimeOnly "org.lwjgl:lwjgl-opengl::$it"
-        runtimeOnly "org.lwjgl:lwjgl-stb::$it"
-        runtimeOnly "org.lwjgl:lwjgl-nanovg::$it"
-        runtimeOnly "org.lwjgl:lwjgl-openal::$it"
-    }
+    runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-nanovg::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
 }
 
 jar {
