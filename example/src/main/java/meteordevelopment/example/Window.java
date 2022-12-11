@@ -55,10 +55,10 @@ public class Window {
         });
 
         glfwSetCursorPosCallback(handle, (window, xpos, ypos) -> {
-            if (onEvent != null) onEvent.accept(mouseMovedEvent.set(xpos, this.height - ypos, xpos - lastMouseX, this.height - ypos - lastMouseY));
+            if (onEvent != null) onEvent.accept(mouseMovedEvent.set(xpos, ypos, xpos - lastMouseX, ypos - lastMouseY));
 
             lastMouseX = xpos;
-            lastMouseY = this.height - ypos;
+            lastMouseY = ypos;
         });
 
         glfwSetScrollCallback(handle, (window, xoffset, yoffset) -> {

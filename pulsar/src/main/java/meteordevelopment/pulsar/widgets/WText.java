@@ -1,7 +1,8 @@
 package meteordevelopment.pulsar.widgets;
 
+import meteordevelopment.pts.properties.Properties;
+import meteordevelopment.pulsar.layout.MaxSizeCalculationContext;
 import meteordevelopment.pulsar.rendering.Renderer;
-import meteordevelopment.pulsar.theme.properties.Properties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,9 @@ public class WText extends Widget {
     private String text;
     private final List<String> lines = new ArrayList<>(1);
 
+    private boolean afterAdjustToMaxSize;
+    private int realWidth, realHeight;
+
     public WText(String text) {
         this.text = text;
     }
@@ -24,29 +28,52 @@ public class WText extends Widget {
         return NAMES;
     }
 
+
     @Override
     public void calculateSize() {
+        if (afterAdjustToMaxSize) {
+            afterAdjustToMaxSize = false;
+            width = realWidth;
+            height = realHeight;
+
+            return;
+        }
+
+        String font = get(Properties.FONT);
         double size = get(Properties.FONT_SIZE);
-        double maxWidth = get(Properties.MAX_WIDTH);
 
         String override = getTextOverride();
-        width = Renderer.INSTANCE.textWidth(override != null ? override : text, size);
-        height = Renderer.INSTANCE.textHeight(size);
+        width = Renderer.INSTANCE.textWidth(font, override != null ? override : text, size);
+        height = Renderer.INSTANCE.textHeight(font, size);
 
-        // Only check max width of override is not set
-        if (override == null) {
-            lines.clear();
+        lines.clear();
+        lines.add(text);
+    }
 
-            if (maxWidth > 0 && width > maxWidth) split(size, maxWidth);
-            else lines.add(text);
-        }
+    @Override
+    public boolean adjustToMaxSize(MaxSizeCalculationContext ctx) {
+        String override = getTextOverride();
+        if (override != null) return false;
+
+        int maxWidth = ctx.peekMaxWidth();
+        if (width <= maxWidth) return false;
+
+        lines.clear();
+        split(get(Properties.FONT_SIZE), maxWidth);
+
+        afterAdjustToMaxSize = true;
+        realWidth = width;
+        realHeight = height;
+
+        return true;
     }
 
     private void split(double size, double maxWidth) {
         String[] words = text.split(" ");
         StringBuilder sb = new StringBuilder();
 
-        int spaceWidth = Renderer.INSTANCE.textWidth(" ", size);
+        String font = get(Properties.FONT);
+        int spaceWidth = Renderer.INSTANCE.textWidth(font, " ", size);
 
         int lineWidth = 0;
         int maxLineWidth = 0;
@@ -54,12 +81,12 @@ public class WText extends Widget {
         int iInLine = 0;
 
         for (int i = 0; i < words.length; i++) {
-            int wordWidth = Renderer.INSTANCE.textWidth(words[i], words[i].length(), size);
+            int wordWidth = Renderer.INSTANCE.textWidth(font, words[i], words[i].length(), size);
 
             int toAdd = wordWidth;
             if (iInLine > 0) toAdd += spaceWidth;
 
-            if (lineWidth + toAdd > maxWidth && !sb.isEmpty()) {
+            if (lineWidth + toAdd > maxWidth && sb.length() > 0) {
                 lines.add(sb.toString());
                 sb.setLength(0);
 
@@ -101,10 +128,10 @@ public class WText extends Widget {
 
         // Multi line
         int y = this.y;
-        int h = renderer.textHeight(get(Properties.FONT_SIZE));
+        int h = renderer.textHeight(get(Properties.FONT), get(Properties.FONT_SIZE));
 
-        for (int i = lines.size() - 1; i >= 0; i--) {
-            renderText(renderer, x + getOffsetX(), y, lines.get(i));
+        for (String line : lines) {
+            renderText(renderer, x + getOffsetX(), y, line);
             y += h;
         }
     }

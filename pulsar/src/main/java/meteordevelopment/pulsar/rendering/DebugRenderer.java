@@ -1,7 +1,7 @@
 package meteordevelopment.pulsar.rendering;
 
-import meteordevelopment.pulsar.utils.ColorFactory;
-import meteordevelopment.pulsar.utils.IColor;
+import meteordevelopment.pts.utils.ColorFactory;
+import meteordevelopment.pts.utils.IColor;
 import meteordevelopment.pulsar.utils.Matrix;
 import meteordevelopment.pulsar.widgets.Cell;
 import meteordevelopment.pulsar.widgets.Widget;
@@ -32,7 +32,7 @@ public class DebugRenderer {
         render(widget);
 
         shader.bind();
-        shader.set("u_Proj", Matrix.ortho(PROJECTION, 0, windowWidth, 0, windowHeight, -10000, 10000));
+        shader.set("u_Proj", Matrix.ortho(PROJECTION, 0, windowWidth, windowHeight, 0, -10000, 10000));
         mesh.render(true);
     }
 

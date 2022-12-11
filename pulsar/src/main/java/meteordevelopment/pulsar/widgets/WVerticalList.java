@@ -4,16 +4,22 @@ import meteordevelopment.pulsar.layout.VerticalLayout;
 
 import static meteordevelopment.pulsar.utils.Utils.combine;
 
-/** Vertical list widget which uses {@link VerticalLayout}. */
-public class WVerticalList extends Widget {
-    protected static final String[] NAMES = combine(Widget.NAMES, "container", "vertical-list");
+/** Vertical list container widget which uses {@link VerticalLayout}. */
+public class WVerticalList extends WContainer {
+    protected static final String[] SELF_NON_SCROLL_MODE_NAMES = combine(WContainer.SELF_NON_SCROLL_MODE_NAMES, "vertical-list");
+    protected static final String[] CONTENTS_NON_SCROLL_MODE_NAMES = combine(WContainer.CONTENTS_NON_SCROLL_MODE_NAMES, "vertical-list");
 
     public WVerticalList() {
         layout = VerticalLayout.INSTANCE;
     }
 
     @Override
-    public String[] names() {
-        return NAMES;
+    protected String[] getSelfNonScrollModeNames() {
+        return SELF_NON_SCROLL_MODE_NAMES;
+    }
+
+    @Override
+    protected String[] getContentsScrollModeNames() {
+        return CONTENTS_NON_SCROLL_MODE_NAMES;
     }
 }

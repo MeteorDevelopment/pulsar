@@ -1,7 +1,7 @@
 package meteordevelopment.pulsar.layout;
 
-import meteordevelopment.pulsar.theme.properties.Properties;
-import meteordevelopment.pulsar.utils.Vec4;
+import meteordevelopment.pts.properties.Properties;
+import meteordevelopment.pts.utils.Vec4;
 import meteordevelopment.pulsar.widgets.Cell;
 import meteordevelopment.pulsar.widgets.Widget;
 
@@ -31,7 +31,7 @@ public class BasicLayout extends Layout {
             if (cell.widget().shouldSkipLayout()) continue;
 
             cell.x = padding.left() + widget.x;
-            cell.y = padding.bottom() + widget.y;
+            cell.y = padding.top() + widget.y;
 
             cell.width = widget.width - padding.horizontal();
             cell.height = widget.height - padding.vertical();

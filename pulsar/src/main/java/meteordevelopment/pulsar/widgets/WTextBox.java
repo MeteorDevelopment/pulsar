@@ -1,5 +1,7 @@
 package meteordevelopment.pulsar.widgets;
 
+import meteordevelopment.pts.utils.Color4;
+import meteordevelopment.pts.utils.Vec4;
 import meteordevelopment.pulsar.input.CharTypedEvent;
 import meteordevelopment.pulsar.input.KeyEvent;
 import meteordevelopment.pulsar.input.MouseButtonEvent;
@@ -8,7 +10,7 @@ import meteordevelopment.pulsar.layout.HorizontalLayout;
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.Selector;
 import meteordevelopment.pulsar.theme.Style;
-import meteordevelopment.pulsar.theme.properties.Properties;
+import meteordevelopment.pts.properties.Properties;
 import meteordevelopment.pulsar.utils.*;
 
 import java.util.ArrayList;
@@ -523,11 +525,13 @@ public class WTextBox extends Widget {
 
     private void calculateTextWidths() {
         textWidths.clear();
+
+        String font = textW.get(Properties.FONT);
         int size = (int) Math.ceil(textW.get(Properties.FONT_SIZE));
 
         for (int i = 0; i <= text.length(); i++) {
-            if (replacementChar != '\0') textWidths.add(Renderer.INSTANCE.charWidth(replacementChar, size) * i);
-            else textWidths.add(Renderer.INSTANCE.textWidth(text, i, size));
+            if (replacementChar != '\0') textWidths.add(Renderer.INSTANCE.charWidth(font, replacementChar, size) * i);
+            else textWidths.add(Renderer.INSTANCE.textWidth(font, text, i, size));
         }
     }
 
@@ -647,7 +651,7 @@ public class WTextBox extends Widget {
 
         @Override
         protected void renderTextComponent(Renderer renderer, int x, int y, String text, int size, Color4 color) {
-            if (replacementChar != '\0' && !isPlaceholder) renderer.chars(x, y, replacementChar, text.length(), size, color);
+            if (replacementChar != '\0' && !isPlaceholder) renderer.chars(get(Properties.FONT), x, y, replacementChar, text.length(), size, color);
             else super.renderTextComponent(renderer, x, y, text, size, isPlaceholder ? placeholderColor : color);
         }
 

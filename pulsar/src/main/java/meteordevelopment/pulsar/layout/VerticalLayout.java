@@ -1,9 +1,9 @@
 package meteordevelopment.pulsar.layout;
 
-import meteordevelopment.pulsar.theme.properties.Properties;
-import meteordevelopment.pulsar.utils.ListDirection;
-import meteordevelopment.pulsar.utils.Vec2;
-import meteordevelopment.pulsar.utils.Vec4;
+import meteordevelopment.pts.properties.Properties;
+import meteordevelopment.pts.utils.ListDirection;
+import meteordevelopment.pts.utils.Vec2;
+import meteordevelopment.pts.utils.Vec4;
 import meteordevelopment.pulsar.widgets.Cell;
 import meteordevelopment.pulsar.widgets.Widget;
 
@@ -37,9 +37,9 @@ public class VerticalLayout extends Layout {
         Vec2 spacing = widget.get(Properties.SPACING);
         boolean reversed = widget.get(Properties.LIST_DIRECTION) == ListDirection.Reversed;
 
-        int y = widget.y + padding.bottom();
+        int y = widget.y + padding.top();
 
-        for (Widget.CellIterator it = widget.iterator(!reversed); it.hasNext();) {
+        for (Widget.CellIterator it = widget.iterator(reversed); it.hasNext();) {
             Cell<?> cell = it.next();
             if (cell.widget().shouldSkipLayout()) continue;
 

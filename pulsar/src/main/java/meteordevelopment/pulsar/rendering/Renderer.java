@@ -1,5 +1,9 @@
 package meteordevelopment.pulsar.rendering;
 
+import com.github.bsideup.jabel.Desugar;
+import meteordevelopment.pts.utils.Color4;
+import meteordevelopment.pts.utils.ColorFactory;
+import meteordevelopment.pts.utils.Vec4;
 import meteordevelopment.pulsar.Pulsar;
 import meteordevelopment.pulsar.theme.Theme;
 import meteordevelopment.pulsar.utils.*;
@@ -13,6 +17,7 @@ import static org.lwjgl.opengl.GL11C.*;
 
 public class Renderer {
     private static final Color4 BLANK = new Color4(ColorFactory.create(0, 0, 0, 0));
+    private static final Color4 WHITE = new Color4(ColorFactory.create(255, 255, 255, 255));
 
     public static Renderer INSTANCE;
 
@@ -21,6 +26,9 @@ public class Renderer {
 
     public double mouseX, mouseY;
     public double offsetY;
+
+    private final Scissor[] scissors = new Scissor[8];
+    private int scissorI = -1;
 
     private final Shader rectangleShader = new Shader("/pulsar/shaders/rectangles.vert", "/pulsar/shaders/rectangles.frag");
     private final Mesh rectangleMesh = new Mesh(Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Vec4, Mesh.Attrib.UByte, Mesh.Attrib.Color, Mesh.Attrib.Color, Mesh.Attrib.Float);
@@ -40,6 +48,8 @@ public class Renderer {
 
     public Renderer() {
         INSTANCE = this;
+
+        for (int i = 0; i < scissors.length; i++) scissors[i] = new Scissor();
     }
 
     public void setTheme(Theme theme) {
@@ -48,13 +58,13 @@ public class Renderer {
         icons.setTheme(theme);
 
         if (fonts != null) fonts.dispose();
-        fonts = new Fonts(theme.getFontInfo());
+        fonts = new Fonts(theme);
     }
 
     public void setup(int windowWidth, int windowHeight) {
         this.windowWidth = windowWidth;
         this.windowHeight = windowHeight;
-        Matrix.ortho(projection, 0, windowWidth, 0, windowHeight, -10000, 10000);
+        Matrix.ortho(projection, 0, windowWidth, windowHeight, 0, -10000, 10000);
 
         begin();
     }
@@ -99,12 +109,15 @@ public class Renderer {
             for (Texture texture : textures) {
                 Pulsar.BIND_TEXTURE.accept(texture.glId);
 
+                Color4 color = texture.color;
+                if (color == null) color = WHITE;
+
                 iconMesh.begin();
                 iconMesh.quad(
-                        iconMesh.vec2(texture.x, texture.y).vec2(0, 0).color(texture.color.bottomLeft).next(),
-                        iconMesh.vec2(texture.x, texture.y + texture.height).vec2(0, 1).color(texture.color.topLeft).next(),
-                        iconMesh.vec2(texture.x + texture.width, texture.y + texture.height).vec2(1, 1).color(texture.color.topRight).next(),
-                        iconMesh.vec2(texture.x + texture.width, texture.y).vec2(1, 0).color(texture.color.bottomRight).next()
+                        iconMesh.vec2(texture.x, texture.y).vec2(0, 0).color(color.topLeft).next(),
+                        iconMesh.vec2(texture.x, texture.y + texture.height).vec2(0, 1).color(color.bottomLeft).next(),
+                        iconMesh.vec2(texture.x + texture.width, texture.y + texture.height).vec2(1, 1).color(color.bottomRight).next(),
+                        iconMesh.vec2(texture.x + texture.width, texture.y).vec2(1, 0).color(color.topRight).next()
                 );
                 iconMesh.render();
             }
@@ -117,10 +130,15 @@ public class Renderer {
     }
 
     public void beginScissor(double x, double y, double width, double height) {
+        y += offsetY;
+
         end();
 
-        glEnable(GL_SCISSOR_TEST);
-        glScissor((int) x, (int) y, (int) width, (int) height);
+        scissorI++;
+        if (scissorI >= scissors.length - 1) throw new RuntimeException("Maximum number of nested scissors " + scissors.length + " reached.");
+
+        if (scissorI == 0) glEnable(GL_SCISSOR_TEST);
+        scissors[scissorI].set(scissorI > 0 ? scissors[scissorI - 1] : null, (int) x, windowHeight - (int) (y + height), (int) width, (int) height);
 
         begin();
     }
@@ -128,7 +146,10 @@ public class Renderer {
     public void endScissor() {
         end();
 
-        glDisable(GL_SCISSOR_TEST);
+        scissorI--;
+
+        if (scissorI == -1) glDisable(GL_SCISSOR_TEST);
+        else scissors[scissorI].apply();
 
         begin();
     }
@@ -152,19 +173,19 @@ public class Renderer {
         double ly = Utils.clamp((height - hw) / hw, -1, 1);
 
         rectangleMesh.quad(
-                rectangleMesh.vec2(x, y).vec2(-1, -1).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.bottomLeft).color(outlineColor.bottomLeft).float_(outlineSize).next(),
-                rectangleMesh.vec2(x, y + height).vec2(-1, ly).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.topLeft).color(outlineColor.topLeft).float_(outlineSize).next(),
-                rectangleMesh.vec2(x + width, y + height).vec2(lx, ly).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.topRight).color(outlineColor.topRight).float_(outlineSize).next(),
-                rectangleMesh.vec2(x + width, y).vec2(lx, -1).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.bottomRight).color(outlineColor.bottomRight).float_(outlineSize).next()
+                rectangleMesh.vec2(x, y).vec2(-1, -1).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.topLeft).color(outlineColor.topLeft).float_(outlineSize).next(),
+                rectangleMesh.vec2(x, y + height).vec2(-1, ly).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.bottomLeft).color(outlineColor.bottomLeft).float_(outlineSize).next(),
+                rectangleMesh.vec2(x + width, y + height).vec2(lx, ly).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.bottomRight).color(outlineColor.bottomRight).float_(outlineSize).next(),
+                rectangleMesh.vec2(x + width, y).vec2(lx, -1).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.topRight).color(outlineColor.topRight).float_(outlineSize).next()
         );
     }
 
-    public void text(int x, int y, String text, int size, Color4 color) {
-        fonts.render(x, y + offsetY, text, size, color);
+    public void text(String font, int x, int y, String text, int size, Color4 color) {
+        fonts.render(font, x, y + offsetY, text, size, color);
     }
 
-    public void chars(int x, int y, char c, int count, double size, Color4 color) {
-        fonts.renderChars(x, y + offsetY, c, count, size, color);
+    public void chars(String font, int x, int y, char c, int count, double size, Color4 color) {
+        fonts.renderChars(font, x, y + offsetY, c, count, size, color);
     }
 
     public void icon(int x, int y, String path, double size, Color4 color) {
@@ -174,10 +195,10 @@ public class Renderer {
         TextureRegion region = icons.get(path, (int) size);
 
         iconMesh.quad(
-                iconMesh.vec2(x, y).vec2(region.x1(), region.y1()).color(color.bottomLeft).next(),
-                iconMesh.vec2(x, y + size).vec2(region.x1(), region.y2()).color(color.topLeft).next(),
-                iconMesh.vec2(x + size, y + size).vec2(region.x2(), region.y2()).color(color.topRight).next(),
-                iconMesh.vec2(x + size, y).vec2(region.x2(), region.y1()).color(color.bottomRight).next()
+                iconMesh.vec2(x, y).vec2(region.x1(), region.y2()).color(color.topLeft).next(),
+                iconMesh.vec2(x, y + size).vec2(region.x1(), region.y1()).color(color.bottomLeft).next(),
+                iconMesh.vec2(x + size, y + size).vec2(region.x2(), region.y1()).color(color.bottomRight).next(),
+                iconMesh.vec2(x + size, y).vec2(region.x2(), region.y2()).color(color.topRight).next()
         );
     }
 
@@ -185,24 +206,50 @@ public class Renderer {
         textures.add(new Texture(x, y + offsetY, width, height, glId, color));
     }
 
-    public int textWidth(String text, double size) {
-        return (int) Math.ceil(fonts.textWidth(text, text.length(), size));
+    public int textWidth(String font, String text, double size) {
+        return (int) Math.ceil(fonts.textWidth(font, text, text.length(), size));
     }
-    public int textWidth(String text, int length, double size) {
-        return (int) Math.ceil(fonts.textWidth(text, length, size));
-    }
-
-    public int charWidth(char c, double size) {
-        return (int) Math.ceil(fonts.charWidth(c, size));
+    public int textWidth(String font, String text, int length, double size) {
+        return (int) Math.ceil(fonts.textWidth(font, text, length, size));
     }
 
-    public int textHeight(double size) {
-        return (int) Math.ceil(fonts.textHeight(size));
+    public int charWidth(String font, char c, double size) {
+        return (int) Math.ceil(fonts.charWidth(font, c, size));
+    }
+
+    public int textHeight(String font, double size) {
+        return (int) Math.ceil(fonts.textHeight(font, size));
     }
 
     public void after(Runnable runnable) {
         afterRunnables.add(runnable);
     }
 
+    @Desugar
     private record Texture(double x, double y, double width, double height, int glId, Color4 color) {}
+
+    private static class Scissor {
+        public int x, y, width, height;
+
+        public void set(Scissor parent, int x, int y, int width, int height) {
+            if (parent != null) {
+                if (x < parent.x) x = parent.x;
+                if (x + width > parent.x + parent.width) width -= (x + width) - (parent.x + parent.width);
+
+                if (y < parent.y) y = parent.y;
+                if (y + height > parent.y + parent.height) height -= (y + height) - (parent.y + parent.height);
+            }
+
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+
+            apply();
+        }
+
+        public void apply() {
+            glScissor(x, y, width, height);
+        }
+    }
 }

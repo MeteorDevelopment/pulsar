@@ -4,17 +4,23 @@ import meteordevelopment.pulsar.layout.TableLayout;
 
 import static meteordevelopment.pulsar.utils.Utils.combine;
 
-/** Table widget which uses {@link TableLayout}. */
-public class WTable extends Widget {
-    protected static final String[] NAMES = combine(Widget.NAMES, "container", "table");
+/** Table container widget which uses {@link TableLayout}. */
+public class WTable extends WContainer {
+    protected static final String[] SELF_NON_SCROLL_MODE_NAMES = combine(WContainer.SELF_NON_SCROLL_MODE_NAMES, "table");
+    protected static final String[] CONTENTS_NON_SCROLL_MODE_NAMES = combine(WContainer.CONTENTS_NON_SCROLL_MODE_NAMES, "table");
 
     public WTable() {
         layout = new TableLayout();
     }
 
     @Override
-    public String[] names() {
-        return NAMES;
+    protected String[] getSelfNonScrollModeNames() {
+        return SELF_NON_SCROLL_MODE_NAMES;
+    }
+
+    @Override
+    protected String[] getContentsScrollModeNames() {
+        return CONTENTS_NON_SCROLL_MODE_NAMES;
     }
 
     public void row() {

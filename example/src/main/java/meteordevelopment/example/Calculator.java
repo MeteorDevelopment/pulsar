@@ -83,7 +83,7 @@ public class Calculator {
         renderer.setTheme(theme);
         renderer.window = window.handle;
 
-        WRoot root = new WRoot();
+        WRoot root = new WRoot(false);
         root.setWindowSize(window.getWidth(), window.getHeight());
 
         root.add(create()).expandX();

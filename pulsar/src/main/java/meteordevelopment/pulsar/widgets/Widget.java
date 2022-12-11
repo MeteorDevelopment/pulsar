@@ -6,14 +6,16 @@ import meteordevelopment.pulsar.input.EventType;
 import meteordevelopment.pulsar.input.MouseMovedEvent;
 import meteordevelopment.pulsar.layout.BasicLayout;
 import meteordevelopment.pulsar.layout.Layout;
+import meteordevelopment.pulsar.layout.MaxSizeCalculationContext;
 import meteordevelopment.pulsar.rendering.Renderer;
 import meteordevelopment.pulsar.theme.IStylable;
 import meteordevelopment.pulsar.theme.Style;
-import meteordevelopment.pulsar.theme.properties.Properties;
-import meteordevelopment.pulsar.theme.properties.Property;
-import meteordevelopment.pulsar.utils.Color4;
-import meteordevelopment.pulsar.utils.Vec2;
-import meteordevelopment.pulsar.utils.Vec4;
+import meteordevelopment.pts.properties.Properties;
+import meteordevelopment.pts.properties.Property;
+import meteordevelopment.pts.utils.Color4;
+import meteordevelopment.pts.utils.Vec2;
+import meteordevelopment.pts.utils.Vec4;
+import meteordevelopment.pulsar.utils.PropertyMap;
 
 import java.util.*;
 
@@ -137,6 +139,10 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
         }
     }
 
+    public boolean adjustToMaxSize(MaxSizeCalculationContext ctx) {
+        return false;
+    }
+
     /** Invalidates all widgets in this root causing a recalculation of layouts on the next frame. */
     public void invalidateLayout() {
         if (parent != null) parent.invalidateLayout();
@@ -207,14 +213,14 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
     }
 
     protected void renderTextComponent(Renderer renderer, int x, int y, String text, int size, Color4 color) {
-        renderer.text(x, y, text, size, color);
+        renderer.text(get(Properties.FONT), x, y, text, size, color);
     }
 
     // Style
 
     /** Sets a custom property that only applies to this widget. */
     public <T> void set(Property<T> property, T value) {
-        if (properties == null) properties = new HashMap<>();
+        if (properties == null) properties = new PropertyMap();
         properties.put(property, value);
     }
 
@@ -242,8 +248,8 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
 
     /** Adds or removes specified tag based on if this widget already contains the tag. */
     public Widget tag(String tag) {
-        if (tags.contains(tag)) tags.remove(tag);
-        else tags.add(tag);
+        if (tags().contains(tag)) tags().remove(tag);
+        else tags().add(tag);
 
         invalidStyle();
         return this;
@@ -251,14 +257,14 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
 
     /** Adds or removes specified tag based on if this widget already contains the tag. */
     public Widget tag(String tag, boolean shouldHave) {
-        boolean contains = tags.contains(tag);
+        boolean contains = tags().contains(tag);
 
         if (contains && !shouldHave) {
-            tags.remove(tag);
+            tags().remove(tag);
             invalidStyle();
         }
         else if (!contains && shouldHave) {
-            tags.add(tag);
+            tags().add(tag);
             invalidStyle();
         }
 
@@ -267,7 +273,7 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
 
     /** @return true if this widget has the specified tag. */
     public boolean hasTag(String tag) {
-        return tags.contains(tag);
+        return tags().contains(tag);
     }
 
     public class CellIterator implements Iterator<Cell<?>> {
@@ -276,6 +282,8 @@ public class Widget extends EventHandler implements IStylable, Iterable<Cell<?>>
         private int count;
 
         public CellIterator(boolean reversed) {
+            //reversed = !reversed;
+
             this.reversed = reversed;
             this.i = reversed ? cells.size() : -1;
         }

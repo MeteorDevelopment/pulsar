@@ -1,10 +1,10 @@
 package meteordevelopment.pulsar.widgets;
 
 import meteordevelopment.pulsar.rendering.Renderer;
-import meteordevelopment.pulsar.theme.properties.Properties;
-import meteordevelopment.pulsar.utils.Color4;
-import meteordevelopment.pulsar.utils.Vec2;
-import meteordevelopment.pulsar.utils.Vec4;
+import meteordevelopment.pts.properties.Properties;
+import meteordevelopment.pts.utils.Color4;
+import meteordevelopment.pts.utils.Vec2;
+import meteordevelopment.pts.utils.Vec4;
 
 import static meteordevelopment.pulsar.utils.Utils.combine;
 

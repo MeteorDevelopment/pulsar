@@ -7,6 +7,8 @@ import com.intellij.psi.PsiWhiteSpace;
 import org.antlr.intellij.adaptor.psi.ANTLRPsiNode;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
+
 public class PtsPsiNode extends ANTLRPsiNode {
     public PtsPsiNode(@NotNull ASTNode node) {
         super(node);
@@ -36,7 +38,11 @@ public class PtsPsiNode extends ANTLRPsiNode {
         return child;
     }
 
-    private PsiElement getFirstValid(PsiElement element, boolean next) {
+    public Iterable<PsiElement> childIterator() {
+        return () -> new ChildIterator(getFirstChild());
+    }
+
+    private static PsiElement getFirstValid(PsiElement element, boolean next) {
         if (element == null) return null;
 
         while (element instanceof PsiWhiteSpace || element instanceof PsiComment) {
@@ -47,5 +53,25 @@ public class PtsPsiNode extends ANTLRPsiNode {
         }
 
         return element;
+    }
+
+    private static class ChildIterator implements Iterator<PsiElement> {
+        private PsiElement next;
+
+        private ChildIterator(PsiElement first) {
+            this.next = getFirstValid(first, true);
+        }
+
+        @Override
+        public boolean hasNext() {
+            return next != null;
+        }
+
+        @Override
+        public PsiElement next() {
+            PsiElement child = next;
+            next = getFirstValid(next.getNextSibling(), true);
+            return child;
+        }
     }
 }

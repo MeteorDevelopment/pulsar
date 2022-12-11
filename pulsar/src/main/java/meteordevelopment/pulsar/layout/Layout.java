@@ -1,7 +1,7 @@
 package meteordevelopment.pulsar.layout;
 
-import meteordevelopment.pulsar.theme.properties.Properties;
-import meteordevelopment.pulsar.utils.Vec2;
+import meteordevelopment.pts.properties.Properties;
+import meteordevelopment.pts.utils.Vec2;
 import meteordevelopment.pulsar.widgets.Cell;
 import meteordevelopment.pulsar.widgets.Widget;
 
@@ -21,9 +21,6 @@ public abstract class Layout {
             widget.width = Math.max(widget.width, minSize.intX());
             widget.height = Math.max(widget.height, minSize.intY());
         }
-
-        widget.width = Math.round(widget.width);
-        widget.height = Math.round(widget.height);
     }
 
     /** The actual implementation for size calculation. */
@@ -37,15 +34,29 @@ public abstract class Layout {
     public void positionChildren(Widget widget) {
         positionChildrenImpl(widget);
 
-        for (Cell<?> cell : widget) {
-            cell.widget().layout.positionChildren(cell.widget());
-
-            cell.widget().afterLayout();
-        }
+        for (Cell<?> cell : widget) cell.widget().layout.positionChildren(cell.widget());
     }
 
     /** The actual implementation for positioning children. */
     protected abstract void positionChildrenImpl(Widget widget);
+
+    /** Tries to satisfy max-width and max-height properties. */
+    public void adjustToMaxSize(MaxSizeCalculationContext ctx, Widget widget) {
+        ctx.pushMaxSize(widget);
+
+        for (Cell<?> cell : widget) cell.widget().layout.adjustToMaxSize(ctx, cell.widget());
+
+        if (widget.adjustToMaxSize(ctx)) ctx.setAdjusted();
+
+        ctx.popMaxSize();
+    }
+
+    /** Last step in the layout calculation process. */
+    public void afterLayout(Widget widget) {
+        widget.afterLayout();
+
+        for (Cell<?> cell : widget) cell.widget().layout.afterLayout(cell.widget());
+    }
 
     /** Called when a cell is added to widget. */
     public void onAdd(Widget widget, Cell<?> cell) {}

@@ -2,7 +2,7 @@ package meteordevelopment.pulsar.widgets;
 
 import meteordevelopment.pulsar.input.MouseMovedEvent;
 import meteordevelopment.pulsar.layout.HorizontalLayout;
-import meteordevelopment.pulsar.theme.properties.Properties;
+import meteordevelopment.pts.properties.Properties;
 
 import static meteordevelopment.pulsar.utils.Utils.combine;
 

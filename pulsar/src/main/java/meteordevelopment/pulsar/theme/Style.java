@@ -1,8 +1,8 @@
 package meteordevelopment.pulsar.theme;
 
-import meteordevelopment.pulsar.theme.properties.Property;
+import meteordevelopment.pts.properties.Property;
+import meteordevelopment.pulsar.utils.PropertyMap;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +24,7 @@ public class Style {
     public List<String> tags;
     public State state = State.Normal;
 
-    private final Map<Property<?>, Object> properties = new HashMap<>();
+    private final Map<Property<?>, Object> properties = new PropertyMap();
 
     public <T> void set(Property<T> property, T value) {
         properties.put(property, value);
@@ -43,9 +43,7 @@ public class Style {
     }
 
     public void merge(Style style) {
-        for (Property<?> property : style.properties.keySet()) {
-            properties.put(property, style.properties.get(property));
-        }
+        properties.putAll(style.properties);
     }
 
     @Override

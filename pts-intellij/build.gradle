@@ -18,7 +18,6 @@ dependencies {
 
 intellij {
     version.set("2022.2.3")
-    type.set("IC")
 }
 
 buildSearchableOptions {

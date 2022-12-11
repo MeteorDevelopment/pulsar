@@ -1,0 +1,91 @@
+@title "Pulsar Player";
+@authors [ "MineGame159" ];
+
+root {
+    align-y: top;
+}
+
+text {
+    font: "Comfortaa.ttf";
+    font-size: 16px;
+    color: #FFFFFF;
+}
+
+vertical-list {
+    spacing: 3px;
+}
+
+vertical-list .main {
+    padding: 6px;
+    padding.right: 0px;
+}
+
+vertical-list .songs {
+    padding.right: 6px;
+    overflow-y: scroll;
+}
+
+horizontal-separator {
+    size: 1px;
+    padding.vertical: 6px;
+    background-color: #FFFFFF;
+}
+
+text-box {
+    color: #FFFFFF;
+}
+
+text-box-placeholder {
+    color: rgb(200, 200, 200);
+}
+
+selection {
+    background-color: rgba(45, 125, 245, 100);
+    radius: 2px;
+}
+
+scrollbar {
+    padding: 2px;
+    padding.left: 0px;
+}
+
+scrollbar-handle {
+    size.x: 6px;
+    background-color: #FFFFFF;
+    radius: 2px;
+}
+
+scrollbar-handle :hovered {
+    background-color: rgb(200, 200, 200);
+}
+
+.song {
+    spacing: 4px;
+}
+
+image {
+    size: 50px 50px;
+}
+
+.author {
+    font-size: 14px;
+    color: rgb(200, 200, 200);
+}
+
+button .play {
+    icon: "play";
+}
+
+icon .play {
+    icon-path: "play.svg";
+    size: 20px;
+    color: #FFFFFF;
+}
+
+icon .play :hovered {
+    color: rgb(225, 225, 225);
+}
+
+icon .play :pressed {
+    color: rgb(200, 200, 200);
+}

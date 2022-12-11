@@ -1,9 +1,9 @@
 package meteordevelopment.pulsar.layout;
 
-import meteordevelopment.pulsar.theme.properties.Properties;
-import meteordevelopment.pulsar.utils.ListDirection;
-import meteordevelopment.pulsar.utils.Vec2;
-import meteordevelopment.pulsar.utils.Vec4;
+import meteordevelopment.pts.properties.Properties;
+import meteordevelopment.pts.utils.ListDirection;
+import meteordevelopment.pts.utils.Vec2;
+import meteordevelopment.pts.utils.Vec4;
 import meteordevelopment.pulsar.widgets.Cell;
 import meteordevelopment.pulsar.widgets.Widget;
 
@@ -53,7 +53,7 @@ public class HorizontalLayout extends Layout {
             if (cell.widget().shouldSkipLayout()) continue;
 
             cell.x = x;
-            cell.y = padding.bottom() + widget.y;
+            cell.y = padding.top() + widget.y;
 
             cell.width = cell.widget().width;
             cell.height = widget.height - padding.vertical();

@@ -1,5 +1,9 @@
 package meteordevelopment.pulsar.widgets;
 
+import meteordevelopment.pts.properties.Properties;
+import meteordevelopment.pts.utils.Color4;
+import meteordevelopment.pts.utils.Vec2;
+import meteordevelopment.pts.utils.Vec4;
 import meteordevelopment.pulsar.input.Event;
 import meteordevelopment.pulsar.input.EventType;
 import meteordevelopment.pulsar.input.MouseMovedEvent;
@@ -7,11 +11,7 @@ import meteordevelopment.pulsar.layout.BasicLayout;
 import meteordevelopment.pulsar.layout.HorizontalLayout;
 import meteordevelopment.pulsar.layout.VerticalLayout;
 import meteordevelopment.pulsar.rendering.Renderer;
-import meteordevelopment.pulsar.theme.properties.Properties;
-import meteordevelopment.pulsar.utils.Color4;
 import meteordevelopment.pulsar.utils.Utils;
-import meteordevelopment.pulsar.utils.Vec2;
-import meteordevelopment.pulsar.utils.Vec4;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -87,7 +87,7 @@ public class WDropdown<T> extends WPressable {
             Vec4 padding = valueW.get(Properties.PADDING);
             double size = textW.get(Properties.FONT_SIZE);
 
-            maxWidth = Math.max(maxWidth, padding.horizontal() + Renderer.INSTANCE.textWidth(string, size) + (iconW != null ? (spacing.x + iconW.width) : 0));
+            maxWidth = Math.max(maxWidth, padding.horizontal() + Renderer.INSTANCE.textWidth(get(Properties.FONT), string, size) + (iconW != null ? (spacing.x + iconW.width) : 0));
         }
 
         layout.calculateSize(this);
@@ -106,7 +106,7 @@ public class WDropdown<T> extends WPressable {
         Vec2 spacing = get(Properties.SPACING);
 
         root.x = x;
-        root.y = y - root.height - spacing.intY();
+        root.y = y + height + spacing.intY();
 
         root.layout.positionChildren(root);
     }
@@ -146,8 +146,10 @@ public class WDropdown<T> extends WPressable {
             if (animation == 0) return;
 
             renderer.after(() -> {
+                double preOffsetY = renderer.offsetY;
+
                 if (animation < 1) {
-                    renderer.offsetY = (root.height + get(Properties.SPACING).intY()) * (1 - animation);
+                    renderer.offsetY = -(root.height + get(Properties.SPACING).intY()) * (1 - animation);
                     renderer.beginScissor(root.x, root.y, root.width, root.height);
                 }
 
@@ -155,7 +157,7 @@ public class WDropdown<T> extends WPressable {
 
                 if (animation > 0 && animation < 1) {
                     renderer.endScissor();
-                    renderer.offsetY = 0;
+                    renderer.offsetY = preOffsetY;
                 }
             });
         }

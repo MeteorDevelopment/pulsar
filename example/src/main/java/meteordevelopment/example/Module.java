@@ -58,10 +58,12 @@ public class Module {
         renderer.setTheme(theme);
         renderer.window = window.handle;
 
-        WRoot root = new WRoot();
+        WRoot root = new WRoot(true);
         root.setWindowSize(window.getWidth(), window.getHeight());
 
-        root.add(createWindow());
+        WWindowManager windows = root.add(new WWindowManager()).expandX().widget();
+
+        windows.add(createWindow());
 
         window.onResized = root::setWindowSize;
         window.onEvent = root::dispatch;

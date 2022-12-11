@@ -1,8 +1,8 @@
 package meteordevelopment.pulsar.widgets;
 
-import meteordevelopment.pulsar.theme.properties.Properties;
-import meteordevelopment.pulsar.utils.AlignX;
-import meteordevelopment.pulsar.utils.AlignY;
+import meteordevelopment.pts.properties.Properties;
+import meteordevelopment.pts.utils.AlignX;
+import meteordevelopment.pts.utils.AlignY;
 
 /** Wrapper for a widget that is placed inside another widget. */
 public class Cell<T extends Widget> {
@@ -60,9 +60,9 @@ public class Cell<T extends Widget> {
         }
 
         switch (widget.get(Properties.ALIGN_Y)) {
-            case Bottom -> widget.y = y;
+            case Bottom -> widget.y = y + height - widget.height;
             case Center -> widget.y = y + height / 2 - widget.height / 2;
-            case Top -> widget.y = y + height - widget.height;
+            case Top -> widget.y = y;
         }
     }
 

@@ -17,15 +17,47 @@
             language="PTS"
             implementationClass="meteordevelopment.pts.PtsParserDefinition" />
 
+        <lang.ast.factory
+            language="PTS"
+            implementationClass="meteordevelopment.pts.PtsASTFactory" />
+
         <lang.syntaxHighlighterFactory
             language="PTS"
-            implementationClass="meteordevelopment.pts.PtsSyntaxHighlighterFactory" />
+            implementationClass="meteordevelopment.pts.highlight.PtsSyntaxHighlighterFactory" />
 
         <highlightVisitor
-            implementation="meteordevelopment.pts.PtsHighlighter" />
+            implementation="meteordevelopment.pts.highlight.PtsHighlighter" />
 
         <lang.foldingBuilder
             language="PTS"
             implementationClass="meteordevelopment.pts.PtsFoldingBuilder" />
+
+        <lang.commenter
+            language="PTS"
+            implementationClass="meteordevelopment.pts.PtsCommenter" />
+
+        <lang.quoteHandler
+            language="PTS"
+            implementationClass="meteordevelopment.pts.PtsQuoteHandler" />
+
+        <lang.braceMatcher
+            language="PTS"
+            implementationClass="meteordevelopment.pts.PtsBraceMatcher" />
+
+        <codeInsight.lineMarkerProvider
+            language="PTS"
+            implementationClass="meteordevelopment.pts.PtsColorLineMarkerProvider" />
+
+        <lang.psiStructureViewFactory
+            language="PTS"
+            implementationClass="meteordevelopment.pts.structure.PtsStructureViewFactory" />
+
+        <navbar implementation="meteordevelopment.pts.structure.PtsStructureAwareNavBar" />
+
+        <lookup.charFilter implementation="meteordevelopment.pts.completion.PtsCharFilter" />
+
+        <completion.contributor
+            language="PTS"
+            implementationClass="meteordevelopment.pts.completion.PtsCompletionContributor" />
     </extensions>
 </idea-plugin>

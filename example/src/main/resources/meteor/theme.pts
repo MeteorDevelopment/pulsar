@@ -1,8 +1,6 @@
 @title "Meteor";
 @authors [ "MineGame159" ];
 
-@font "Comfortaa.ttf";
-
 @var accent: Color4 = rgb(145, 61, 226);
 @var bg: Color4 = rgba(20, 20, 20, 200);
 @var bgH: Color4 = rgba(30, 30, 30, 200);
@@ -12,6 +10,7 @@
 @var olP: Color4 = rgb(20, 20, 20);
 
 text {
+    font: "Comfortaa.ttf";
     font-size: 18px;
     color: #FFFFFF;
 }
