@@ -18,7 +18,7 @@ public class Module {
     }
 
     private static WWindow createWindow() {
-        WWindow w = new WWindow("Module");
+        WWindow w = new WWindow("Module", false);
 
         w.add(new WText("Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quam ab impedit ratione in voluptates autem suscipit veritatis labore?")).tag("description");
 
@@ -44,7 +44,7 @@ public class Module {
         // Active
         w.add(new WHorizontalSeparator());
         WHorizontalList l = w.add(new WHorizontalList()).expandX().widget();
-        l.add(new WText("Active:"));
+        l.add(new WText("Active"));
         l.add(new WCheckbox(false));
 
         return w;

@@ -33,6 +33,10 @@ table {
 
 // Window
 
+window {
+    max-width: 700px;
+}
+
 window-header {
     background-color: !accent;
     padding: 6px;
