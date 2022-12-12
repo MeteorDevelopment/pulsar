@@ -17,12 +17,18 @@ public class WWindow extends Widget {
     private final WHeader header;
     private final WBody body;
 
-    private boolean expanded = true;
+    private boolean expandable, expanded = true;
     private double animation = 1;
 
     private int lastX = -1, lastY;
 
     public WWindow(String title) {
+        this(title, true);
+    }
+
+    public WWindow(String title, boolean expandable) {
+        this.expandable = expandable;
+
         header = super.add(new WHeader()).expandX().widget();
         header.add(new WText(title).tag("window-title"));
 
@@ -159,7 +165,7 @@ public class WWindow extends Widget {
 
         @Override
         protected void onMouseReleased(MouseButtonEvent event) {
-            if (shouldToggle && !moved) {
+            if (shouldToggle && !moved && expandable) {
                 expanded = !expanded;
                 if (expanded) animation = 0;
             }
