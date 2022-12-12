@@ -1,0 +1,20 @@
+@title "Cards";
+@authors [ "MineGame159" ];
+
+text {
+    font: "Comfortaa.ttf";
+    font-size: 28px;
+    color: #000000;
+}
+
+.card {
+    padding: 64px;
+
+    background-color: #FFFFFF;
+    shadow: 8px 8px;
+}
+
+horizontal-list {
+    spacing: 32px;
+    align-x: center;
+}
