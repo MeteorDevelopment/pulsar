@@ -11,7 +11,7 @@ public class WDoubleEdit extends WHorizontalList {
     protected static final String[] NAMES = combine(WHorizontalList.NAMES, "double-edit");
 
     public Runnable action, actionOnUnfocused;
-    public int decimalPlaces = 3;
+    public int decimalPlaces = 2;
 
     protected double value, min, max;
 
@@ -115,6 +115,7 @@ public class WDoubleEdit extends WHorizontalList {
     }
 
     protected String format() {
-        return String.format(Locale.US, "%." + decimalPlaces + "f", value);
+        String valueString = String.format(Locale.US, "%." + decimalPlaces + "f", value);
+        return valueString.replaceAll("\\.?0*$", "");
     }
 }
