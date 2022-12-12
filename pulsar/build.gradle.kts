@@ -4,7 +4,7 @@ plugins {
     id("maven-publish")
 }
 
-group = "meteordevelopment"
+group = "org.meteordev"
 version = "0.1.0"
 
 var snapshot = true

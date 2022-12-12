@@ -8,56 +8,56 @@
     <extensions defaultExtensionNs="com.intellij">
         <fileType
             name="PTS File"
-            implementationClass="meteordevelopment.pts.PtsFileType"
+            implementationClass="org.meteordev.pts.PtsFileType"
             fieldName="INSTANCE"
             language="PTS"
             extensions="pts" />
 
         <lang.parserDefinition
             language="PTS"
-            implementationClass="meteordevelopment.pts.PtsParserDefinition" />
+            implementationClass="org.meteordev.pts.PtsParserDefinition" />
 
         <lang.ast.factory
             language="PTS"
-            implementationClass="meteordevelopment.pts.PtsASTFactory" />
+            implementationClass="org.meteordev.pts.PtsASTFactory" />
 
         <lang.syntaxHighlighterFactory
             language="PTS"
-            implementationClass="meteordevelopment.pts.highlight.PtsSyntaxHighlighterFactory" />
+            implementationClass="org.meteordev.pts.highlight.PtsSyntaxHighlighterFactory" />
 
         <highlightVisitor
-            implementation="meteordevelopment.pts.highlight.PtsHighlighter" />
+            implementation="org.meteordev.pts.highlight.PtsHighlighter" />
 
         <lang.foldingBuilder
             language="PTS"
-            implementationClass="meteordevelopment.pts.PtsFoldingBuilder" />
+            implementationClass="org.meteordev.pts.PtsFoldingBuilder" />
 
         <lang.commenter
             language="PTS"
-            implementationClass="meteordevelopment.pts.PtsCommenter" />
+            implementationClass="org.meteordev.pts.PtsCommenter" />
 
         <lang.quoteHandler
             language="PTS"
-            implementationClass="meteordevelopment.pts.PtsQuoteHandler" />
+            implementationClass="org.meteordev.pts.PtsQuoteHandler" />
 
         <lang.braceMatcher
             language="PTS"
-            implementationClass="meteordevelopment.pts.PtsBraceMatcher" />
+            implementationClass="org.meteordev.pts.PtsBraceMatcher" />
 
         <codeInsight.lineMarkerProvider
             language="PTS"
-            implementationClass="meteordevelopment.pts.PtsColorLineMarkerProvider" />
+            implementationClass="org.meteordev.pts.PtsColorLineMarkerProvider" />
 
         <lang.psiStructureViewFactory
             language="PTS"
-            implementationClass="meteordevelopment.pts.structure.PtsStructureViewFactory" />
+            implementationClass="org.meteordev.pts.structure.PtsStructureViewFactory" />
 
-        <navbar implementation="meteordevelopment.pts.structure.PtsStructureAwareNavBar" />
+        <navbar implementation="org.meteordev.pts.structure.PtsStructureAwareNavBar" />
 
-        <lookup.charFilter implementation="meteordevelopment.pts.completion.PtsCharFilter" />
+        <lookup.charFilter implementation="org.meteordev.pts.completion.PtsCharFilter" />
 
         <completion.contributor
             language="PTS"
-            implementationClass="meteordevelopment.pts.completion.PtsCompletionContributor" />
+            implementationClass="org.meteordev.pts.completion.PtsCompletionContributor" />
     </extensions>
 </idea-plugin>

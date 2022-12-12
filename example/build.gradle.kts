@@ -3,7 +3,7 @@ plugins {
     id("application")
 }
 
-group = "meteordevelopment"
+group = "org.meteordev"
 version = "0.1.0"
 var mainClassName = "$group.example.musicplayer.MusicPlayer"
 

@@ -4,7 +4,7 @@ plugins {
     id("antlr")
 }
 
-group = "meteordevelopment"
+group = "org.meteordev"
 version = "0.1.0"
 
 repositories {
@@ -37,10 +37,10 @@ sourceSets {
 
 tasks.withType<AntlrTask> {
     maxHeapSize = "64m"
-    outputDirectory = file("${projectDir}/src/generated/java/meteordevelopment/pts")
+    outputDirectory = file("${projectDir}/src/generated/java/org.meteordev/pts")
 
     arguments.add("-package")
-    arguments.add("meteordevelopment.pts")
+    arguments.add("org.meteordev.pts")
     arguments.add("-visitor")
 }
 
