@@ -3,12 +3,13 @@ package org.meteordev.pulsar.widgets;
 import org.meteordev.pulsar.utils.CharFilters;
 import org.meteordev.pulsar.utils.Utils;
 
-import java.util.Locale;
+import java.text.DecimalFormat;
 
 import static org.meteordev.pulsar.utils.Utils.combine;
 
 public class WDoubleEdit extends WHorizontalList {
     protected static final String[] NAMES = combine(WHorizontalList.NAMES, "double-edit");
+    protected static DecimalFormat df = new DecimalFormat();
 
     public Runnable action, actionOnUnfocused;
     public int decimalPlaces = 2;
@@ -115,7 +116,12 @@ public class WDoubleEdit extends WHorizontalList {
     }
 
     protected String format() {
-        String valueString = String.format(Locale.US, "%." + decimalPlaces + "f", value);
-        return valueString.replaceAll("\\.?0*$", "");
+        df.setMaximumFractionDigits(decimalPlaces);
+        return df.format(value);
+    }
+
+    static {
+        df.setMinimumFractionDigits(0);
+        df.setGroupingUsed(false);
     }
 }

@@ -37,7 +37,7 @@ public class Module {
         t.row();
 
         s.add(new WText("Speed"));
-        s.add(new WDoubleEdit(1, 0.0, null, 0, 5)).expandX();
+        s.add(new WDoubleEdit(47.481, 0.0, null, 0, 100)).expandX();
         s.add(new WButton(null)).tag("reset");
         t.row();
 
