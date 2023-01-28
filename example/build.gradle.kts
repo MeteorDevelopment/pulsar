@@ -73,7 +73,7 @@ tasks.withType<JavaCompile> {
 tasks.withType<Jar> {
     dependsOn(project(":pulsar").tasks.withType<Jar>())
 
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     manifest {
         attributes("Main-Class" to mainClassName)

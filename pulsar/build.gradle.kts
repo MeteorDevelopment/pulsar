@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "org.meteordev"
-version = "0.1.0"
+version = "0.1.0-SNAPSHOT"
 
 var snapshot = true
 
@@ -20,6 +20,7 @@ repositories {
 
 dependencies {
     api(project(":pts"))
+    implementation(project(":pts"))
 
     compileOnly(platform("org.lwjgl:lwjgl-bom:3.3.1"))
 
@@ -46,6 +47,8 @@ tasks.withType<JavaCompile> {
 
 tasks.withType<Jar> {
     dependsOn(project(":pts").tasks.withType<Jar>())
+
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
 }
 
 publishing {
