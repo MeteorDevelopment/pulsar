@@ -1,10 +1,11 @@
 package org.meteordev.pulsar.rendering;
 
-import org.meteordev.pulsar.theme.Theme;
 import org.lwjgl.nanovg.NSVGImage;
 import org.lwjgl.nanovg.NanoSVG;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
+import org.meteordev.juno.api.texture.Texture;
+import org.meteordev.pulsar.theme.Theme;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -46,8 +47,8 @@ public class Icons {
         return region;
     }
 
-    public Texture bind() {
-        return atlas.bind();
+    public Texture getTexture() {
+        return atlas.getTexture();
     }
 
     private ByteBuffer terminate(ByteBuffer string) {

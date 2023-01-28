@@ -89,3 +89,25 @@ icon .play :hovered {
 icon .play :pressed {
     color: rgb(200, 200, 200);
 }
+
+.controls {
+    padding.right: 6px;
+}
+
+.slider-left {
+    size: 6px;
+    radius: 3px;
+    background-color: #B84242;
+}
+
+.slider-right {
+    size: 6px;
+    radius: 3px;
+    background-color: #2C1616;
+}
+
+slider-handle {
+    size: 18px;
+    radius: 9px;
+    background-color: #9ACE17;
+}

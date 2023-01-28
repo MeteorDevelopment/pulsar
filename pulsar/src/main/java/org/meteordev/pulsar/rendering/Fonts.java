@@ -1,17 +1,38 @@
 package org.meteordev.pulsar.rendering;
 
-import org.meteordev.pulsar.theme.Theme;
+import org.joml.Matrix4f;
+import org.meteordev.juno.api.Juno;
+import org.meteordev.juno.api.JunoProvider;
+import org.meteordev.juno.api.pipeline.Pipeline;
+import org.meteordev.juno.api.pipeline.PipelineInfo;
+import org.meteordev.juno.api.pipeline.state.BlendFunc;
+import org.meteordev.juno.api.pipeline.state.WriteMask;
+import org.meteordev.juno.api.pipeline.vertexformat.StandardFormats;
+import org.meteordev.juno.api.shader.ShaderInfo;
+import org.meteordev.juno.api.shader.ShaderType;
+import org.meteordev.juno.api.utils.MeshBuilder;
 import org.meteordev.pts.utils.Color4;
+import org.meteordev.pulsar.theme.Theme;
 
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Fonts {
     private final Theme theme;
 
-    private final Shader shader = new Shader("/pulsar/shaders/texture.vert", "/pulsar/shaders/text.frag");
+    private final Juno juno = JunoProvider.get();
+
+    private final Pipeline pipeline = juno.findPipeline(new PipelineInfo()
+            .setVertexFormat(StandardFormats.POSITION_2D_UV_COLOR)
+            .setShaders(
+                    ShaderInfo.resource(ShaderType.VERTEX, "/pulsar/shaders/texture.vert"),
+                    ShaderInfo.resource(ShaderType.FRAGMENT, "/pulsar/shaders/text.frag")
+            )
+            .setBlendFunc(BlendFunc.alphaBlend())
+            .setWriteMask(WriteMask.COLOR)
+    );
+
     private final Map<String, FontHolder> holders = new HashMap<>();
 
     public Fonts(Theme theme) {
@@ -26,7 +47,7 @@ public class Fonts {
         SizedFont sizedFont = get(font, size);
 
         if (!sizedFont.building) {
-            sizedFont.mesh.begin();
+            sizedFont.mb.begin();
             sizedFont.building = true;
         }
 
@@ -37,27 +58,27 @@ public class Fonts {
         if (font == null || font.isEmpty() || size <= 0) return;
 
         SizedFont sizedFont = getFontForRender(font, size);
-        sizedFont.font.render(sizedFont.mesh, text, x, y, color);
+        sizedFont.font.render(sizedFont.mb, text, x, y, color);
     }
 
     public void renderChars(String font, double x, double y, char c, int count, double size, Color4 color) {
         if (font == null || font.isEmpty() || count <= 0 || size <= 0) return;
 
         SizedFont sizedFont = getFontForRender(font, size);
-        sizedFont.font.renderChars(sizedFont.mesh, x, y, c, count, color);
+        sizedFont.font.renderChars(sizedFont.mb, x, y, c, count, color);
     }
 
-    public void end(FloatBuffer projection) {
-        shader.bind();
-        shader.set("u_Proj", projection);
+    public void end(Matrix4f projection) {
+        juno.bind(pipeline);
+        pipeline.getProgram().setUniform("u_Proj", projection);
 
         for (FontHolder holder : holders.values()) {
             for (SizedFont sizedFont : holder.fonts.values()) {
                 if (!sizedFont.building) continue;
                 sizedFont.building = false;
 
-                shader.set("u_Texture", sizedFont.font.getTexture().bind());
-                sizedFont.mesh.render();
+                pipeline.getProgram().setUniform("u_Texture", juno.bind(sizedFont.font.getTexture(), 0));
+                sizedFont.mb.draw();
             }
         }
     }
@@ -84,7 +105,7 @@ public class Fonts {
         }).get(size);
     }
 
-    private static class FontHolder {
+    private class FontHolder {
         private final FontInfo info;
         private final Map<Integer, SizedFont> fonts = new HashMap<>();
 
@@ -102,20 +123,20 @@ public class Fonts {
         }
     }
 
-    private static class SizedFont {
+    private class SizedFont {
         public final Font font;
-        public final Mesh mesh;
+        public final MeshBuilder mb;
 
         public boolean building;
 
         public SizedFont(FontInfo info, double size) {
             font = new Font(info, (int) size);
-            mesh = new Mesh(Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Color);
+            mb = new MeshBuilder(pipeline.getInfo().vertexFormat);
         }
 
         public void dispose() {
-            font.dispose();
-            mesh.dispose();
+            font.destroy();
+            mb.destroy();
         }
     }
 }

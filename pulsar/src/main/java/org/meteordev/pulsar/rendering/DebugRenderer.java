@@ -1,39 +1,57 @@
 package org.meteordev.pulsar.rendering;
 
+import org.joml.Matrix4f;
+import org.meteordev.juno.api.Juno;
+import org.meteordev.juno.api.JunoProvider;
+import org.meteordev.juno.api.pipeline.Pipeline;
+import org.meteordev.juno.api.pipeline.PipelineInfo;
+import org.meteordev.juno.api.pipeline.PrimitiveType;
+import org.meteordev.juno.api.pipeline.state.WriteMask;
+import org.meteordev.juno.api.pipeline.vertexformat.StandardFormats;
+import org.meteordev.juno.api.shader.ShaderInfo;
+import org.meteordev.juno.api.shader.ShaderType;
+import org.meteordev.juno.api.utils.MeshBuilder;
 import org.meteordev.pts.utils.ColorFactory;
 import org.meteordev.pts.utils.IColor;
-import org.meteordev.pulsar.utils.Matrix;
 import org.meteordev.pulsar.widgets.Cell;
 import org.meteordev.pulsar.widgets.Widget;
-import org.lwjgl.system.MemoryUtil;
-
-import java.nio.FloatBuffer;
 
 public class DebugRenderer {
     private static final IColor CELL_COLOR = ColorFactory.create(25, 225, 25, 255);
     private static final IColor WIDGET_COLOR = ColorFactory.create(25, 25, 225, 255);
 
-    private static final FloatBuffer PROJECTION = MemoryUtil.memAllocFloat(16);
-
-    private static Shader shader;
-    private static Mesh mesh;
+    private static Pipeline pipeline;
+    private static MeshBuilder mb;
 
     private static void lazyInit() {
-        if (shader == null) {
-            shader = new Shader("/pulsar/shaders/basic.vert", "/pulsar/shaders/basic.frag");
-            mesh = new Mesh(Mesh.Attrib.Vec2, Mesh.Attrib.Color);
+        if (pipeline == null) {
+            Juno juno = JunoProvider.get();
+
+            pipeline = juno.findPipeline(new PipelineInfo()
+                    .setPrimitiveType(PrimitiveType.LINES)
+                    .setVertexFormat(StandardFormats.POSITION_2D_COLOR)
+                    .setShaders(
+                            ShaderInfo.resource(ShaderType.VERTEX, "/pulsar/shaders/basic.vert"),
+                            ShaderInfo.resource(ShaderType.FRAGMENT, "/pulsar/shaders/basic.frag")
+                    )
+                    .setWriteMask(WriteMask.COLOR)
+            );
+
+            mb = new MeshBuilder(pipeline.getInfo().vertexFormat);
         }
     }
 
     public static void render(Widget widget, int windowWidth, int windowHeight) {
+        Juno juno = JunoProvider.get();
+
         lazyInit();
-        mesh.begin();
+        mb.begin();
 
         render(widget);
 
-        shader.bind();
-        shader.set("u_Proj", Matrix.ortho(PROJECTION, 0, windowWidth, windowHeight, 0, -10000, 10000));
-        mesh.render(true);
+        juno.bind(pipeline);
+        pipeline.getProgram().setUniform("u_Proj", new Matrix4f().ortho2D(0, windowWidth, windowHeight, 0));
+        mb.draw();
     }
 
     private static void render(Widget widget) {
@@ -53,9 +71,9 @@ public class DebugRenderer {
     }
 
     private static void line(double x1, double y1, double x2, double y2, IColor color) {
-        mesh.line(
-                mesh.vec2(x1, y1).color(color).next(),
-                mesh.vec2(x2, y2).color(color).next()
+        mb.line(
+                mb.float2(x1, y1).color(color.getR(), color.getG(), color.getB(), color.getA()).next(),
+                mb.float2(x2, y2).color(color.getR(), color.getG(), color.getB(), color.getA()).next()
         );
     }
 }

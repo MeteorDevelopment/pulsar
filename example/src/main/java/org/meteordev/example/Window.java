@@ -1,6 +1,8 @@
 package org.meteordev.example;
 
 import org.lwjgl.opengl.GL;
+import org.meteordev.juno.api.JunoProvider;
+import org.meteordev.juno.opengl.GLJuno;
 import org.meteordev.pulsar.input.*;
 
 import java.util.function.BiConsumer;
@@ -78,6 +80,8 @@ public class Window {
 
         glfwSwapInterval(1);
         glfwShowWindow(handle);
+
+        JunoProvider.set(new GLJuno());
     }
 
     public boolean shouldClose() {

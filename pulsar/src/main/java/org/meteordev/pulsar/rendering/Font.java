@@ -1,5 +1,11 @@
 package org.meteordev.pulsar.rendering;
 
+import org.meteordev.juno.api.JunoProvider;
+import org.meteordev.juno.api.texture.Filter;
+import org.meteordev.juno.api.texture.Format;
+import org.meteordev.juno.api.texture.Texture;
+import org.meteordev.juno.api.texture.Wrap;
+import org.meteordev.juno.api.utils.MeshBuilder;
 import org.meteordev.pts.utils.Color4;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBTTPackContext;
@@ -34,7 +40,9 @@ public class Font {
         info.buffer.rewind();
 
         // Create texture object and get font scale
-        texture = new Texture(2048, 2048, bitmap, true);
+        texture = JunoProvider.get().createTexture(2048, 2048, Format.R, Filter.LINEAR, Filter.LINEAR, Wrap.CLAMP_TO_BORDER);
+        texture.write(bitmap);
+
         scale = STBTruetype.stbtt_ScaleForPixelHeight(info.fontInfo, height);
 
         // Get font vertical ascent
@@ -65,8 +73,8 @@ public class Font {
         }
     }
 
-    public void dispose() {
-        texture.dispose();
+    public void destroy() {
+        texture.destroy();
     }
 
     public Texture getTexture() {
@@ -96,7 +104,7 @@ public class Font {
         return height;
     }
 
-    public double render(Mesh mesh, String string, double x, double y, Color4 color) {
+    public double render(MeshBuilder mb, String string, double x, double y, Color4 color) {
         y += ascent * scale + 1;
 
         for (int i = 0; i < string.length(); i++) {
@@ -104,7 +112,7 @@ public class Font {
             if (cp < 32 || cp > 128) cp = 32;
             CharData c = charData[cp - 32];
 
-            renderChar(mesh, x, y, c, color);
+            renderChar(mb, x, y, c, color);
 
             x += c.xAdvance();
         }
@@ -112,14 +120,14 @@ public class Font {
         return x;
     }
 
-    public double renderChars(Mesh mesh, double x, double y, char c, int count, Color4 color) {
+    public double renderChars(MeshBuilder mb, double x, double y, char c, int count, Color4 color) {
         y += ascent * scale + 1;
 
         CharData data = charData[c - 32];
         if (data == null) return x;
 
         for (int i = 0; i < count; i++) {
-            renderChar(mesh, x, y, data, color);
+            renderChar(mb, x, y, data, color);
 
             x += data.xAdvance();
         }
@@ -127,12 +135,12 @@ public class Font {
         return x;
     }
 
-    private void renderChar(Mesh mesh, double x, double y, CharData c, Color4 color) {
-        mesh.quad(
-                mesh.vec2(x + c.x0(), y + c.y0()).vec2(c.u0(), c.v0()).color(color.bottomLeft).next(),
-                mesh.vec2(x + c.x0(), y + c.y1()).vec2(c.u0(), c.v1()).color(color.topLeft).next(),
-                mesh.vec2(x + c.x1(), y + c.y1()).vec2(c.u1(), c.v1()).color(color.topRight).next(),
-                mesh.vec2(x + c.x1(), y + c.y0()).vec2(c.u1(), c.v0()).color(color.bottomRight).next()
+    private void renderChar(MeshBuilder mb, double x, double y, CharData c, Color4 color) {
+        mb.quad(
+                mb.float2(x + c.x0(), y + c.y0()).float2(c.u0(), c.v0()).color(color.bottomLeft.getR(), color.bottomLeft.getG(), color.bottomLeft.getB(), color.bottomLeft.getA()).next(),
+                mb.float2(x + c.x0(), y + c.y1()).float2(c.u0(), c.v1()).color(color.topLeft.getR(), color.topLeft.getG(), color.topLeft.getB(), color.topLeft.getA()).next(),
+                mb.float2(x + c.x1(), y + c.y1()).float2(c.u1(), c.v1()).color(color.topRight.getR(), color.topRight.getG(), color.topRight.getB(), color.topRight.getA()).next(),
+                mb.float2(x + c.x1(), y + c.y0()).float2(c.u1(), c.v0()).color(color.bottomRight.getR(), color.bottomRight.getG(), color.bottomRight.getB(), color.bottomRight.getA()).next()
         );
     }
 }

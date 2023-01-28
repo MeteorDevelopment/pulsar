@@ -1,8 +1,11 @@
 package org.meteordev.pulsar.widgets;
 
-import org.meteordev.pulsar.Pulsar;
+import org.meteordev.juno.api.JunoProvider;
+import org.meteordev.juno.api.texture.Filter;
+import org.meteordev.juno.api.texture.Format;
+import org.meteordev.juno.api.texture.Texture;
+import org.meteordev.juno.api.texture.Wrap;
 import org.meteordev.pulsar.rendering.Renderer;
-import org.lwjgl.opengl.GL33C;
 
 import java.nio.ByteBuffer;
 
@@ -11,25 +14,20 @@ import static org.meteordev.pulsar.utils.Utils.combine;
 public class WImage extends Widget {
     protected static final String[] NAMES = combine(Widget.NAMES, "image");
 
-    private final int glId;
+    private final Texture texture;
 
-    public WImage(int glId) {
-        this.glId = glId;
+    public WImage(Texture texture) {
+        this.texture = texture;
     }
 
     public WImage(ByteBuffer data, int width, int height) {
         if (data == null || width == 0 || height == 0) {
-            glId = 0;
+            texture = null;
             return;
         }
 
-        glId = GL33C.glGenTextures();
-        Pulsar.BIND_TEXTURE.accept(glId);
-
-        GL33C.glTexParameteri(GL33C.GL_TEXTURE_2D, GL33C.GL_TEXTURE_MIN_FILTER, GL33C.GL_NEAREST);
-        GL33C.glTexParameteri(GL33C.GL_TEXTURE_2D, GL33C.GL_TEXTURE_MAG_FILTER, GL33C.GL_NEAREST);
-
-        GL33C.glTexImage2D(GL33C.GL_TEXTURE_2D, 0, GL33C.GL_RGBA, width, height, 0, GL33C.GL_RGBA, GL33C.GL_UNSIGNED_BYTE, data);
+        texture = JunoProvider.get().createTexture(width, height, Format.RGBA, Filter.NEAREST, Filter.NEAREST, Wrap.CLAMP_TO_BORDER);
+        texture.write(data);
     }
 
     @Override
@@ -39,6 +37,6 @@ public class WImage extends Widget {
 
     @Override
     public void render(Renderer renderer, double delta) {
-        renderer.texture(x, y, width, height, glId, null);
+        renderer.texture(x, y, width, height, texture, null);
     }
 }

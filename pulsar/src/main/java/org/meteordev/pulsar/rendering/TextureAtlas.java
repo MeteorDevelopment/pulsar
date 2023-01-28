@@ -1,5 +1,11 @@
 package org.meteordev.pulsar.rendering;
 
+import org.meteordev.juno.api.JunoProvider;
+import org.meteordev.juno.api.texture.Filter;
+import org.meteordev.juno.api.texture.Format;
+import org.meteordev.juno.api.texture.Texture;
+import org.meteordev.juno.api.texture.Wrap;
+
 import java.nio.ByteBuffer;
 
 import static org.lwjgl.system.MemoryUtil.*;
@@ -15,7 +21,7 @@ public class TextureAtlas {
     private int rowHeight;
 
     public TextureAtlas() {
-        texture = new Texture(SIZE, SIZE, null, false);
+        texture = JunoProvider.get().createTexture(SIZE, SIZE, Format.RGBA, Filter.LINEAR, Filter.LINEAR, Wrap.CLAMP_TO_BORDER);
         buffer = memAlloc(SIZE * SIZE * 4);
     }
 
@@ -44,13 +50,13 @@ public class TextureAtlas {
         return region;
     }
 
-    public Texture bind() {
+    public Texture getTexture() {
         if (dirty) {
-            texture.upload(buffer);
+            texture.write(buffer);
             dirty = false;
         }
 
-        return texture.bind();
+        return texture;
     }
 
     private void checkPos(int width, int height) {

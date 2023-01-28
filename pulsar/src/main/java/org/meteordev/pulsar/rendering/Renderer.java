@@ -1,20 +1,28 @@
 package org.meteordev.pulsar.rendering;
 
 import com.github.bsideup.jabel.Desugar;
-import org.lwjgl.system.MemoryUtil;
+import org.joml.Matrix4f;
+import org.meteordev.juno.api.Juno;
+import org.meteordev.juno.api.JunoProvider;
+import org.meteordev.juno.api.pipeline.Pipeline;
+import org.meteordev.juno.api.pipeline.PipelineInfo;
+import org.meteordev.juno.api.pipeline.state.BlendFunc;
+import org.meteordev.juno.api.pipeline.state.WriteMask;
+import org.meteordev.juno.api.pipeline.vertexformat.*;
+import org.meteordev.juno.api.shader.ShaderInfo;
+import org.meteordev.juno.api.shader.ShaderType;
+import org.meteordev.juno.api.texture.Texture;
+import org.meteordev.juno.api.utils.MeshBuilder;
+import org.meteordev.juno.api.utils.ScissorStack;
 import org.meteordev.pts.utils.Color4;
 import org.meteordev.pts.utils.ColorFactory;
+import org.meteordev.pts.utils.IColor;
 import org.meteordev.pts.utils.Vec4;
-import org.meteordev.pulsar.Pulsar;
 import org.meteordev.pulsar.theme.Theme;
-import org.meteordev.pulsar.utils.Matrix;
 import org.meteordev.pulsar.utils.Utils;
 
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.lwjgl.opengl.GL11C.*;
 
 public class Renderer {
     private static final Color4 BLANK = new Color4(ColorFactory.create(0, 0, 0, 0));
@@ -28,29 +36,61 @@ public class Renderer {
     public double mouseX, mouseY;
     public double offsetY;
 
-    private final Scissor[] scissors = new Scissor[8];
-    private int scissorI = -1;
+    private final Juno juno = JunoProvider.get();
 
-    private final Shader rectangleShader = new Shader("/pulsar/shaders/rectangles.vert", "/pulsar/shaders/rectangles.frag");
-    private final Mesh rectangleMesh = new Mesh(Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Vec4, Mesh.Attrib.UByte, Mesh.Attrib.Color, Mesh.Attrib.Color, Mesh.Attrib.Float);
+    private final Pipeline rectanglesPipeline = juno.findPipeline(new PipelineInfo()
+            .setVertexFormat(new VertexFormat(
+                    StandardAttributes.POSITION_2D,
+                    StandardAttributes.POSITION_2D,
+                    StandardAttributes.POSITION_2D,
+                    new VertexAttribute(VertexType.FLOAT, 4, false),
+                    new VertexAttribute(VertexType.UNSIGNED_BYTE, 1, false),
+                    StandardAttributes.COLOR,
+                    StandardAttributes.COLOR,
+                    new VertexAttribute(VertexType.FLOAT, 1, false)
+            ))
+            .setShaders(
+                    ShaderInfo.resource(ShaderType.VERTEX, "/pulsar/shaders/rectangles.vert"),
+                    ShaderInfo.resource(ShaderType.FRAGMENT, "/pulsar/shaders/rectangles.frag")
+            )
+            .setBlendFunc(BlendFunc.alphaBlend())
+            .setWriteMask(WriteMask.COLOR)
+    );
+    private final MeshBuilder rectanglesMb = new MeshBuilder(rectanglesPipeline.getInfo().vertexFormat);
 
     private final Icons icons = new Icons();
-    private final Shader iconShader = new Shader("/pulsar/shaders/texture.vert", "/pulsar/shaders/icon.frag");
-    private final Mesh iconMesh = new Mesh(Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Color);
+    private final Pipeline iconsPipeline = juno.findPipeline(new PipelineInfo()
+            .setVertexFormat(StandardFormats.POSITION_2D_UV_COLOR)
+            .setShaders(
+                    ShaderInfo.resource(ShaderType.VERTEX, "/pulsar/shaders/texture.vert"),
+                    ShaderInfo.resource(ShaderType.FRAGMENT, "/pulsar/shaders/icon.frag")
+            )
+            .setBlendFunc(BlendFunc.alphaBlend())
+            .setWriteMask(WriteMask.COLOR)
+    );
+    private final MeshBuilder iconsMb = new MeshBuilder(iconsPipeline.getInfo().vertexFormat);
 
-    private final Shader textureShader = new Shader("/pulsar/shaders/texture.vert", "/pulsar/shaders/texture.frag");
-    private final List<Texture> textures = new ArrayList<>();
+    private final List<Texture_> textures = new ArrayList<>();
+    private final Pipeline texturesPipeline = juno.findPipeline(new PipelineInfo()
+            .setVertexFormat(iconsPipeline.getInfo().vertexFormat)
+            .setShaders(
+                    ShaderInfo.resource(ShaderType.VERTEX, "/pulsar/shaders/texture.vert"),
+                    ShaderInfo.resource(ShaderType.FRAGMENT, "/pulsar/shaders/texture.frag")
+            )
+            .setBlendFunc(BlendFunc.alphaBlend())
+            .setWriteMask(WriteMask.COLOR)
+    );
 
     private final List<Runnable> afterRunnables = new ArrayList<>();
     private Fonts fonts;
 
     private int windowWidth, windowHeight;
-    private final FloatBuffer projection = MemoryUtil.memAllocFloat(16);
+    private Matrix4f projection;
+
+    private final ScissorStack scissorStack = new ScissorStack();
 
     public Renderer() {
         INSTANCE = this;
-
-        for (int i = 0; i < scissors.length; i++) scissors[i] = new Scissor();
     }
 
     public void setTheme(Theme theme) {
@@ -65,14 +105,14 @@ public class Renderer {
     public void setup(int windowWidth, int windowHeight) {
         this.windowWidth = windowWidth;
         this.windowHeight = windowHeight;
-        Matrix.ortho(projection, 0, windowWidth, windowHeight, 0, -10000, 10000);
+        projection = new Matrix4f().ortho2D(0, windowWidth, windowHeight, 0);
 
         begin();
     }
 
     public void begin() {
-        rectangleMesh.begin();
-        iconMesh.begin();
+        rectanglesMb.begin();
+        iconsMb.begin();
     }
 
     public void render() {
@@ -90,37 +130,36 @@ public class Renderer {
 
     public void end() {
         // Rectangles
-        rectangleShader.bind();
-        rectangleShader.set("u_Proj", projection);
-        rectangleShader.set("u_WindowSize", windowWidth, windowHeight);
-        rectangleMesh.render();
+        juno.bind(rectanglesPipeline);
+        rectanglesPipeline.getProgram().setUniform("u_Proj", projection);
+        rectanglesPipeline.getProgram().setUniform("u_WindowSize", windowWidth, windowHeight);
+        rectanglesMb.draw();
 
         // Icons
-        iconShader.bind();
-        iconShader.set("u_Proj", projection);
-        iconShader.set("u_Texture", icons.bind());
-        iconMesh.render();
+        juno.bind(iconsPipeline);
+        iconsPipeline.getProgram().setUniform("u_Proj", projection);
+        iconsPipeline.getProgram().setUniform("u_Texture", juno.bind(icons.getTexture(), 0));
+        iconsMb.draw();
 
         // Textures
         if (textures.size() > 0) {
-            textureShader.bind();
-            textureShader.set("u_Proj", projection);
-            textureShader.set("u_Texture", 0);
+            juno.bind(texturesPipeline);
+            texturesPipeline.getProgram().setUniform("u_Proj", projection);
 
-            for (Texture texture : textures) {
-                Pulsar.BIND_TEXTURE.accept(texture.glId);
+            for (Texture_ texture : textures) {
+                texturesPipeline.getProgram().setUniform("u_Texture", juno.bind(texture.texture, 0));
 
                 Color4 color = texture.color;
                 if (color == null) color = WHITE;
 
-                iconMesh.begin();
-                iconMesh.quad(
-                        iconMesh.vec2(texture.x, texture.y).vec2(0, 0).color(color.topLeft).next(),
-                        iconMesh.vec2(texture.x, texture.y + texture.height).vec2(0, 1).color(color.bottomLeft).next(),
-                        iconMesh.vec2(texture.x + texture.width, texture.y + texture.height).vec2(1, 1).color(color.bottomRight).next(),
-                        iconMesh.vec2(texture.x + texture.width, texture.y).vec2(1, 0).color(color.topRight).next()
+                iconsMb.begin();
+                iconsMb.quad(
+                        iconVertex(texture.x, texture.y, 0, 0, color.topLeft),
+                        iconVertex(texture.x, texture.y + texture.height, 0, 1, color.bottomLeft),
+                        iconVertex(texture.x + texture.width, texture.y + texture.height, 1, 1, color.bottomRight),
+                        iconVertex(texture.x + texture.width, texture.y, 1, 0, color.topRight)
                 );
-                iconMesh.render();
+                iconsMb.draw();
             }
 
             textures.clear();
@@ -135,11 +174,8 @@ public class Renderer {
 
         end();
 
-        scissorI++;
-        if (scissorI >= scissors.length - 1) throw new RuntimeException("Maximum number of nested scissors " + scissors.length + " reached.");
-
-        if (scissorI == 0) glEnable(GL_SCISSOR_TEST);
-        scissors[scissorI].set(scissorI > 0 ? scissors[scissorI - 1] : null, (int) x, windowHeight - (int) (y + height), (int) width, (int) height);
+        ScissorStack.Entry scissor = scissorStack.push((int) x, windowHeight - (int) (y + height), (int) width, (int) height);
+        juno.enableScissor(scissor.x, scissor.y, scissor.width, scissor.height);
 
         begin();
     }
@@ -147,17 +183,15 @@ public class Renderer {
     public void endScissor() {
         end();
 
-        scissorI--;
-
-        if (scissorI == -1) glDisable(GL_SCISSOR_TEST);
-        else scissors[scissorI].apply();
+        scissorStack.pop();
+        if (scissorStack.peek() == null) juno.disableScissor();
 
         begin();
     }
 
     public void alpha(double alpha) {
-        rectangleMesh.alpha(alpha);
-        iconMesh.alpha(alpha);
+        rectanglesMb.setAlpha(alpha);
+        iconsMb.setAlpha(alpha);
     }
 
     public void quad(int x, int y, int width, int height, Vec4 radius, double outlineSize, Color4 backgroundColor, Color4 outlineColor) {
@@ -173,11 +207,11 @@ public class Renderer {
         double lx = Utils.clamp((width - hh) / hh, -1, 1);
         double ly = Utils.clamp((height - hw) / hw, -1, 1);
 
-        rectangleMesh.quad(
-                rectangleMesh.vec2(x, y).vec2(-1, -1).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.topLeft).color(outlineColor.topLeft).float_(outlineSize).next(),
-                rectangleMesh.vec2(x, y + height).vec2(-1, ly).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.bottomLeft).color(outlineColor.bottomLeft).float_(outlineSize).next(),
-                rectangleMesh.vec2(x + width, y + height).vec2(lx, ly).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.bottomRight).color(outlineColor.bottomRight).float_(outlineSize).next(),
-                rectangleMesh.vec2(x + width, y).vec2(lx, -1).vec2(width, height).vec4(radius).uByte(background).color(backgroundColor.topRight).color(outlineColor.topRight).float_(outlineSize).next()
+        rectanglesMb.quad(
+                rectangleVertex(x, y, -1, -1, width, height, radius, background, backgroundColor.topLeft, outlineColor.topLeft, outlineSize),
+                rectangleVertex(x, y + height, -1, ly, width, height, radius, background, backgroundColor.bottomLeft, outlineColor.bottomLeft, outlineSize),
+                rectangleVertex(x + width, y + height, lx, ly, width, height, radius, background, backgroundColor.bottomRight, outlineColor.bottomRight, outlineSize),
+                rectangleVertex(x + width, y, lx, -1, width, height, radius, background, backgroundColor.topRight, outlineColor.topRight, outlineSize)
         );
     }
 
@@ -195,16 +229,16 @@ public class Renderer {
         size = (int) size;
         TextureRegion region = icons.get(path, (int) size);
 
-        iconMesh.quad(
-                iconMesh.vec2(x, y).vec2(region.x1(), region.y2()).color(color.topLeft).next(),
-                iconMesh.vec2(x, y + size).vec2(region.x1(), region.y1()).color(color.bottomLeft).next(),
-                iconMesh.vec2(x + size, y + size).vec2(region.x2(), region.y1()).color(color.bottomRight).next(),
-                iconMesh.vec2(x + size, y).vec2(region.x2(), region.y2()).color(color.topRight).next()
+        iconsMb.quad(
+                iconVertex(x, y, region.x1(), region.y2(), color.topLeft),
+                iconVertex(x, y + size, region.x1(), region.y1(), color.bottomLeft),
+                iconVertex(x + size, y + size, region.x2(), region.y1(), color.bottomRight),
+                iconVertex(x + size, y, region.x2(), region.y2(), color.topRight)
         );
     }
 
-    public void texture(int x, int y, int width, int height, int glId, Color4 color) {
-        textures.add(new Texture(x, y + offsetY, width, height, glId, color));
+    public void texture(int x, int y, int width, int height, Texture texture, Color4 color) {
+        textures.add(new Texture_(x, y + offsetY, width, height, texture, color));
     }
 
     public int textWidth(String font, String text, double size) {
@@ -226,31 +260,27 @@ public class Renderer {
         afterRunnables.add(runnable);
     }
 
-    @Desugar
-    private record Texture(double x, double y, double width, double height, int glId, Color4 color) {}
-
-    private static class Scissor {
-        public int x, y, width, height;
-
-        public void set(Scissor parent, int x, int y, int width, int height) {
-            if (parent != null) {
-                if (x < parent.x) x = parent.x;
-                if (x + width > parent.x + parent.width) width -= (x + width) - (parent.x + parent.width);
-
-                if (y < parent.y) y = parent.y;
-                if (y + height > parent.y + parent.height) height -= (y + height) - (parent.y + parent.height);
-            }
-
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
-
-            apply();
-        }
-
-        public void apply() {
-            glScissor(x, y, width, height);
-        }
+    private int rectangleVertex(double x, double y, double x2, double y2, double width, double height, Vec4 radius, int background, IColor backgroundColor, IColor outlineColor, double outlineSize) {
+        return rectanglesMb
+                .float2(x, y)
+                .float2(x2, y2)
+                .float2(width, height)
+                .float4(radius.x, radius.y, radius.z, radius.w)
+                .uByte1(background)
+                .color(backgroundColor.getR(), backgroundColor.getG(), backgroundColor.getB(), backgroundColor.getA())
+                .color(outlineColor.getR(), outlineColor.getG(), outlineColor.getB(), outlineColor.getA())
+                .float1(outlineSize)
+                .next();
     }
+
+    private int iconVertex(double x, double y, double u, double v, IColor color) {
+        return iconsMb
+                .float2(x, y)
+                .float2(u, v)
+                .color(color.getR(), color.getG(), color.getB(), color.getA())
+                .next();
+    }
+
+    @Desugar
+    private record Texture_(double x, double y, double width, double height, Texture texture, Color4 color) {}
 }

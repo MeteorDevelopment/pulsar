@@ -1,5 +1,6 @@
 package org.meteordev.pulsar.widgets;
 
+import org.meteordev.juno.api.texture.Texture;
 import org.meteordev.pts.properties.Properties;
 import org.meteordev.pts.utils.Color4;
 import org.meteordev.pts.utils.ColorFactory;
@@ -12,11 +13,11 @@ public class WTexture extends Widget {
 
     protected static final String[] NAMES = combine(Widget.NAMES, "texture");
 
-    public final int glId;
+    public final Texture texture;
     private final int textureWidth, textureHeight;
 
-    public WTexture(int glId, int width, int height) {
-        this.glId = glId;
+    public WTexture(Texture texture, int width, int height) {
+        this.texture = texture;
         this.textureWidth = width;
         this.textureHeight = height;
     }
@@ -37,6 +38,6 @@ public class WTexture extends Widget {
         Color4 color = get(Properties.COLOR);
         if (color == null) color = WHITE;
 
-        renderer.texture(x, y, width, height, glId, color);
+        renderer.texture(x, y, width, height, texture, color);
     }
 }

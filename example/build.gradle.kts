@@ -9,6 +9,11 @@ var mainClassName = "$group.example.musicplayer.MusicPlayer"
 
 repositories {
     mavenCentral()
+
+    maven {
+        name = "Meteor - Snapshots"
+        setUrl("https://maven.meteordev.org/snapshots")
+    }
 }
 
 val lwjglNatives = Pair(
@@ -39,7 +44,10 @@ dependencies {
     implementation("com.badlogicgames.jlayer:jlayer:1.0.2-gdx")
     implementation("com.mpatric:mp3agic:0.9.1")
 
-    implementation(platform("org.lwjgl:lwjgl-bom:3.3.0"))
+    implementation("org.meteordev:juno-api:0.1.0-SNAPSHOT")
+    implementation("org.meteordev:juno-opengl:0.1.0-SNAPSHOT")
+
+    implementation(platform("org.lwjgl:lwjgl-bom:3.3.1"))
 
     implementation("org.lwjgl:lwjgl")
     implementation("org.lwjgl:lwjgl-glfw")
@@ -63,6 +71,8 @@ tasks.withType<JavaCompile> {
 }
 
 tasks.withType<Jar> {
+    dependsOn(project(":pulsar").tasks.withType<Jar>())
+
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
     manifest {
