@@ -2,10 +2,13 @@ plugins {
     id("java")
     id("java-library")
     id("antlr")
+    id("maven-publish")
 }
 
 group = "org.meteordev"
 version = "0.1.0"
+
+var snapshot = true
 
 repositories {
     mavenCentral()
@@ -57,4 +60,29 @@ tasks.withType<JavaCompile> {
 
 tasks.named("clean") {
     delete("${projectDir}/src/generated")
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("java") {
+            version = "${project.version}${if (snapshot) "-SNAPSHOT" else ""}"
+
+            from(components["java"])
+        }
+    }
+
+    repositories {
+        maven {
+            setUrl("https://maven.meteordev.org/${if (snapshot) "snapshots" else "releases"}")
+
+            credentials {
+                username = System.getenv("MAVEN_METEOR_ALIAS")
+                password = System.getenv("MAVEN_METEOR_TOKEN")
+            }
+
+            authentication {
+                create<BasicAuthentication>("basic")
+            }
+        }
+    }
 }
