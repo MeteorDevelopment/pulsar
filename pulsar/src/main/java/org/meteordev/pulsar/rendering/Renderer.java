@@ -131,23 +131,23 @@ public class Renderer {
     public void end() {
         // Rectangles
         juno.bind(rectanglesPipeline);
-        rectanglesPipeline.getProgram().setUniform("u_Proj", projection);
-        rectanglesPipeline.getProgram().setUniform("u_WindowSize", windowWidth, windowHeight);
+        rectanglesPipeline.getProgram().getMatrix4Uniform("u_Proj").set(projection);
+        rectanglesPipeline.getProgram().getFloat2Uniform("u_WindowSize").set(windowWidth, windowHeight);
         rectanglesMb.draw();
 
         // Icons
         juno.bind(iconsPipeline);
-        iconsPipeline.getProgram().setUniform("u_Proj", projection);
-        iconsPipeline.getProgram().setUniform("u_Texture", juno.bind(icons.getTexture(), 0));
+        iconsPipeline.getProgram().getMatrix4Uniform("u_Proj").set(projection);
+        iconsPipeline.getProgram().getTextureUniform("u_Texture").set(juno.bind(icons.getTexture(), 0));
         iconsMb.draw();
 
         // Textures
         if (textures.size() > 0) {
             juno.bind(texturesPipeline);
-            texturesPipeline.getProgram().setUniform("u_Proj", projection);
+            texturesPipeline.getProgram().getMatrix4Uniform("u_Proj").set(projection);
 
             for (Texture_ texture : textures) {
-                texturesPipeline.getProgram().setUniform("u_Texture", juno.bind(texture.texture, 0));
+                texturesPipeline.getProgram().getTextureUniform("u_Texture").set(juno.bind(texture.texture, 0));
 
                 Color4 color = texture.color;
                 if (color == null) color = WHITE;

@@ -70,14 +70,14 @@ public class Fonts {
 
     public void end(Matrix4f projection) {
         juno.bind(pipeline);
-        pipeline.getProgram().setUniform("u_Proj", projection);
+        pipeline.getProgram().getMatrix4Uniform("u_Proj").set(projection);
 
         for (FontHolder holder : holders.values()) {
             for (SizedFont sizedFont : holder.fonts.values()) {
                 if (!sizedFont.building) continue;
                 sizedFont.building = false;
 
-                pipeline.getProgram().setUniform("u_Texture", juno.bind(sizedFont.font.getTexture(), 0));
+                pipeline.getProgram().getTextureUniform("u_Texture").set(juno.bind(sizedFont.font.getTexture(), 0));
                 sizedFont.mb.draw();
             }
         }

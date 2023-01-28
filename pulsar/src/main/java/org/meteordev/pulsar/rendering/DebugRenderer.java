@@ -50,7 +50,7 @@ public class DebugRenderer {
         render(widget);
 
         juno.bind(pipeline);
-        pipeline.getProgram().setUniform("u_Proj", new Matrix4f().ortho2D(0, windowWidth, windowHeight, 0));
+        pipeline.getProgram().getMatrix4Uniform("u_Proj").set(new Matrix4f().ortho2D(0, windowWidth, windowHeight, 0));
         mb.draw();
     }
 
