@@ -2,7 +2,7 @@ import org.jetbrains.intellij.tasks.BuildSearchableOptionsTask
 
 plugins {
     id("java")
-    id("org.jetbrains.intellij") version "1.9.0"
+    id("org.jetbrains.intellij") version "1.12.0"
 }
 
 group = "meteordevelopment"
@@ -19,11 +19,16 @@ dependencies {
 }
 
 intellij {
-    version.set("2022.2.3")
+    version.set("2022.3")
 }
 
 tasks.withType<BuildSearchableOptionsTask> {
     enabled = false
+}
+
+tasks.withType<JavaCompile> {
+    sourceCompatibility = JavaVersion.VERSION_17.toString()
+    targetCompatibility = JavaVersion.VERSION_17.toString()
 }
 
 tasks.withType<Jar> {
